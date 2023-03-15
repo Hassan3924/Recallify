@@ -144,44 +144,10 @@ class GuardianSideQuestActivity : AppCompatActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        backgroundColor = MaterialTheme.colors.background,
-                        elevation = 1.dp,
-                    ) {
-//                        Column(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(16.dp),
-//                            verticalArrangement = Arrangement.Center
-//                        ) {
-////                            Row(
-////                                modifier = Modifier.fillMaxWidth(),
-////                                horizontalArrangement = Arrangement.SpaceBetween,
-////                                verticalAlignment = Alignment.CenterVertically
-////                            ) {
-////                                Text(
-////                                    "Tap to play game",
-////                                    style = MaterialTheme.typography.button.copy(
-////                                        fontSize = 16.sp
-////                                    ),
-////                                    modifier = Modifier.padding(vertical = 16.dp)
-////                                )
-////                                Icon(
-////                                    painter = painterResource(id = R.drawable.round_arrow_forward_24),
-////                                    contentDescription = "let's play thinkfast",
-////                                    modifier = Modifier
-////                                        .size(32.dp)
-////
-////                                )
-////                            }
-//                        }
-                    }
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Card(
                             modifier = Modifier
