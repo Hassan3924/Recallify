@@ -1,8 +1,8 @@
 package com.example.recallify.model.repo
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.example.recallify.data.application.Activity
 import com.example.recallify.view.ui.resource.modules.Resource
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
