@@ -27,10 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.accounts.AccountsActivity
-import com.example.recallify.view.ui.feature.application.accounts.GuardianAccountsActivity
 import com.example.recallify.view.ui.feature.application.dashboard.DashboardActivity
-import com.example.recallify.view.ui.feature.application.guardiandashboard.GuardiansDashboardActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
 import com.example.recallify.view.ui.feature.security.forgotpassword.ForgotPasswordActivity
 import com.example.recallify.view.ui.feature.security.signup.RegisterActivity
 import com.example.recallify.view.ui.theme.RecallifyTheme

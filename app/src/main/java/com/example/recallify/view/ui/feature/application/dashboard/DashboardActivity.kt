@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.accounts.AccountsActivity
 import com.example.recallify.view.ui.feature.application.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.feature.application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.application.guardianthinkfast.GuardianThinkFastActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
 import com.example.recallify.view.ui.feature.application.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller

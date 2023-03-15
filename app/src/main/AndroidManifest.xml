@@ -68,31 +68,31 @@
             android:name=".view.ui.feature.application.accounts.AccountsActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.accounts.GuardianAccountsActivity"
+            android:name=".view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.application.dailydiary.DailyDiaryActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.guardiandailydiary.GuardianDailyDairyActivity"
+            android:name=".view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.application.dashboard.DashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.guardiandashboard.GuardiansDashboardActivity"
+            android:name=".view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.application.sidequest.SideQuestActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.guardiansidequest.GuardianSideQuestActivity"
+            android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.application.thinkfast.ThinkFastActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.guardianthinkfast.GuardianThinkFastActivity"
+            android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.security.forgotpassword.ForgotPasswordActivity"

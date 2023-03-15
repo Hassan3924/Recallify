@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.accounts.AccountsActivity
-import com.example.recallify.view.ui.feature.application.accounts.GuardianAccountsActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.firebase.auth.ktx.auth

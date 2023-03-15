@@ -1,4 +1,4 @@
-package com.example.recallify.view.ui.feature.application.guardiandashboard
+package com.example.recallify.view.ui.feature.guradian_application.guardiandashboard
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,10 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.accounts.GuardianAccountsActivity
-import com.example.recallify.view.ui.feature.application.guardiandailydiary.GuardianDailyDairyActivity
-import com.example.recallify.view.ui.feature.application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.application.guardianthinkfast.GuardianThinkFastActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView

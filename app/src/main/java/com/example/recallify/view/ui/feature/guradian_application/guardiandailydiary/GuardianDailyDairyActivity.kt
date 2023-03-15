@@ -1,4 +1,4 @@
-package com.example.recallify.view.ui.feature.application.guardiandailydiary
+package com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -25,16 +24,12 @@ import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
-import com.example.recallify.view.ui.feature.application.accounts.AccountsActivity
-import com.example.recallify.view.ui.feature.application.accounts.GuardianAccountsActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
 import com.example.recallify.view.ui.feature.application.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.dailydiary.daily_log.DailyLogActivity
-import com.example.recallify.view.ui.feature.application.dashboard.DashboardActivity
-import com.example.recallify.view.ui.feature.application.guardiandashboard.GuardiansDashboardActivity
-import com.example.recallify.view.ui.feature.application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.application.guardianthinkfast.GuardianThinkFastActivity
-import com.example.recallify.view.ui.feature.application.sidequest.SideQuestActivity
-import com.example.recallify.view.ui.feature.application.thinkfast.ThinkFastActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -64,7 +59,7 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
                     true
                 }
                 R.id.bottom_think_fast -> {
-                    startActivity(Intent(applicationContext,GuardianThinkFastActivity::class.java))
+                    startActivity(Intent(applicationContext, GuardianThinkFastActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true

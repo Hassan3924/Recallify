@@ -1,4 +1,4 @@
-package com.example.recallify.view.ui.feature.application.guardianthinkfast
+package com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast
 
 import android.content.Intent
 import android.os.Bundle
@@ -21,14 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.accounts.AccountsActivity
-import com.example.recallify.view.ui.feature.application.accounts.GuardianAccountsActivity
-import com.example.recallify.view.ui.feature.application.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.feature.application.dashboard.DashboardActivity
-import com.example.recallify.view.ui.feature.application.guardiandailydiary.GuardianDailyDairyActivity
-import com.example.recallify.view.ui.feature.application.guardiandashboard.GuardiansDashboardActivity
-import com.example.recallify.view.ui.feature.application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.application.sidequest.SideQuestActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
 import com.example.recallify.view.ui.feature.application.thinkfast.ThinkfastAnalysisActivity
 import com.example.recallify.view.ui.feature.application.thinkfast.ThinkfastProgressActivity
 import com.example.recallify.view.ui.feature.application.thinkfast.ThinkfastRulesActivity

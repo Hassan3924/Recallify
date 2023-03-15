@@ -1,13 +1,11 @@
-package com.example.recallify.view.ui.feature.application.accounts
+package com.example.recallify.view.ui.feature.guradian_application.guardian_account
 
 import android.content.Intent
-import android.icu.number.NumberFormatter.UnitWidth
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -21,14 +19,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.feature.application.dashboard.DashboardActivity
-import com.example.recallify.view.ui.feature.application.guardiandailydiary.GuardianDailyDairyActivity
-import com.example.recallify.view.ui.feature.application.guardiandashboard.GuardiansDashboardActivity
-import com.example.recallify.view.ui.feature.application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.application.guardianthinkfast.GuardianThinkFastActivity
-import com.example.recallify.view.ui.feature.application.sidequest.SideQuestActivity
-import com.example.recallify.view.ui.feature.application.thinkfast.ThinkFastActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
