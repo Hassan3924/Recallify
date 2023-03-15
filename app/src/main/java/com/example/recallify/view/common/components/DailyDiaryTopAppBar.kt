@@ -1,4 +1,4 @@
-package com.example.recallify.view.common.components
+ package com.example.recallify.view.common.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -19,7 +19,7 @@ fun DiaryTopAppBar(
             .fillMaxWidth()
     ) {
         TopAppBar(
-            title = { Text("Diary") },
+            title = { Text("Daily Diary") },
             backgroundColor = MaterialTheme.colors.background,
             modifier = Modifier.fillMaxWidth(),
             actions = {

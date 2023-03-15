@@ -86,7 +86,10 @@ class DailyDiaryActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun DailyDiaryScreen() {
-        val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
+        val state = rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden,
+            skipHalfExpanded = true
+        )
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         var tabPage by remember { mutableStateOf(TabPage.Activity) }
@@ -136,27 +139,26 @@ class DailyDiaryActivity : AppCompatActivity() {
                         }
                         Spacer(modifier = Modifier.padding(vertical = 6.dp))
                         ActionSheetItem(
-                            context = context,
                             icon = R.drawable.daily_activity,
                             text = "Daily activity",
                             onStart = {
-                                val intent = Intent(this@DailyDiaryActivity, DailyActivity::class.java)
+                                val intent =
+                                    Intent(this@DailyDiaryActivity, DailyActivity::class.java)
                                 startActivity(intent)
                             }
                         )
                         Spacer(modifier = Modifier.padding(vertical = 5.dp))
                         ActionSheetItem(
-                            context = context,
                             icon = R.drawable.daily_log,
                             text = "Daily log",
                             onStart = {
-                                val intent = Intent(this@DailyDiaryActivity, DailyLogActivity::class.java)
+                                val intent =
+                                    Intent(this@DailyDiaryActivity, DailyLogActivity::class.java)
                                 startActivity(intent)
                             }
                         )
                         Spacer(modifier = Modifier.padding(vertical = 5.dp))
                         ActionSheetItem(
-                            context = context,
                             icon = R.drawable.moment_snap,
                             text = "Moment snap",
                             onStart = {
@@ -169,7 +171,7 @@ class DailyDiaryActivity : AppCompatActivity() {
                     sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     sheetState = state,
 
-                ) {
+                    ) {
                     Column {
                         TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
                         when (tabPage.ordinal) {
@@ -185,6 +187,8 @@ class DailyDiaryActivity : AppCompatActivity() {
 
                                     Text("Daily Activities", color = MaterialTheme.colors.onSurface)
                                     // fixme: add composable list here
+
+
                                 }
 
                                 BackHandler(
@@ -192,7 +196,10 @@ class DailyDiaryActivity : AppCompatActivity() {
                                             state.currentValue == ModalBottomSheetValue.Expanded),
                                     onBack = {
                                         scope.launch {
-                                            state.animateTo(ModalBottomSheetValue.Hidden, tween(400))
+                                            state.animateTo(
+                                                ModalBottomSheetValue.Hidden,
+                                                tween(400)
+                                            )
                                         }
                                     }
                                 )
@@ -207,9 +214,10 @@ class DailyDiaryActivity : AppCompatActivity() {
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-
                                     Text("Daily Activity", color = MaterialTheme.colors.onSurface)
                                     // fixme: add composable list here
+
+
                                 }
 
                                 BackHandler(
@@ -217,7 +225,10 @@ class DailyDiaryActivity : AppCompatActivity() {
                                             state.currentValue == ModalBottomSheetValue.Expanded),
                                     onBack = {
                                         scope.launch {
-                                            state.animateTo(ModalBottomSheetValue.Hidden, tween(300))
+                                            state.animateTo(
+                                                ModalBottomSheetValue.Hidden,
+                                                tween(300)
+                                            )
                                         }
                                     }
                                 )
@@ -230,15 +241,12 @@ class DailyDiaryActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun ActionSheetItem(context: Context, icon: Int, text: String, onStart: () -> Unit) {
+    fun ActionSheetItem(icon: Int, text: String, onStart: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Channel: $text", Toast.LENGTH_SHORT)
-                        .show()
                     onStart()
                 },
             verticalAlignment = Alignment.CenterVertically
@@ -250,7 +258,11 @@ class DailyDiaryActivity : AppCompatActivity() {
                 tint = MaterialTheme.colors.onSurface
             )
             Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-            Text(text, style = MaterialTheme.typography.button, color = MaterialTheme.colors.onSurface)
+            Text(
+                text,
+                style = MaterialTheme.typography.button,
+                color = MaterialTheme.colors.onSurface
+            )
         }
     }
 
