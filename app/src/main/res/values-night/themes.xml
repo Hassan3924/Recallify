@@ -1,0 +1,33 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Recallify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/dark_Primary</item>
+        <item name="colorPrimaryVariant">@color/dark_PrimaryVariant</item>
+        <item name="colorOnPrimary">@color/dark_onPrimary</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/dark_Secondary</item>
+        <item name="colorSecondaryVariant">@color/dark_SecondaryVariant</item>
+        <item name="colorOnSecondary">@color/dark_onSecondary</item>
+
+        <!-- Background -->
+        <item name="background">@color/dark_Background</item>
+        <item name="colorOnBackground">@color/dark_onBackground</item>
+
+        <!-- Surface -->
+        <item name="colorSurface">@color/dark_Surface</item>
+        <item name="colorOnSurface">@color/dark_onSurface</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/dark_Error</item>
+        <item name="colorOnError">@color/dark_onError</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/dark_Surface</item>
+
+        <!-- Customize your theme here. -->
+
+    </style>
+</resources>

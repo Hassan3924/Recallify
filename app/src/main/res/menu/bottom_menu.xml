@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottom_home"
+        android:icon="@drawable/home_48"
+        android:title="Home"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/bottom_daily_diary"
+        android:icon="@drawable/daily_diary_48"
+        android:title="Daily Diary"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/bottom_side_quest"
+        android:icon="@drawable/sidequest_58"
+        android:title="Side Quest"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/bottom_think_fast"
+        android:icon="@drawable/thinkfast_48"
+        android:title="Think Fast"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/bottom_accounts"
+        android:icon="@drawable/account"
+        android:title="Account"
+        tools:ignore="HardcodedText" />
+</menu>

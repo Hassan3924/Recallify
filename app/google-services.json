@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "314704821775",
+    "firebase_url": "https://csci-recallify-default-rtdb.firebaseio.com",
+    "project_id": "csci-recallify",
+    "storage_bucket": "csci-recallify.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314704821775:android:d3c8ace79455039c3a6d7a",
+        "android_client_info": {
+          "package_name": "com.example.recallify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314704821775-tc5tq2cod2m5llpgitp9socl4hmajsn7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWHyOaQ2PqjH63FwwbOogf74wI67hgAlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314704821775-tc5tq2cod2m5llpgitp9socl4hmajsn7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314704821775:android:3574fed8234af4ea3a6d7a",
+        "android_client_info": {
+          "package_name": "com.example.recallifyappthinkfast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314704821775-fvi5vg3n4dch6u8r0atrhvdo38bkef25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.recallifyappthinkfast",
+            "certificate_hash": "fc570ae34ec1db32a88d17f4aee115e7f8065959"
+          }
+        },
+        {
+          "client_id": "314704821775-tc5tq2cod2m5llpgitp9socl4hmajsn7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWHyOaQ2PqjH63FwwbOogf74wI67hgAlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314704821775-tc5tq2cod2m5llpgitp9socl4hmajsn7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

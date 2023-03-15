@@ -1,0 +1,35 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.Recallify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/light_Primary</item>
+        <item name="colorPrimaryVariant">@color/light_PrimaryVariant</item>
+        <item name="colorOnPrimary">@color/light_onPrimary</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/light_Secondary</item>
+        <item name="colorSecondaryVariant">@color/light_SecondaryVariant</item>
+        <item name="colorOnSecondary">@color/light_onSecondary</item>
+
+        <!-- Background -->
+        <item name="background">@color/light_Background</item>
+        <item name="colorOnBackground">@color/light_onBackground</item>
+
+        <!-- Surface -->
+        <item name="colorSurface">@color/light_Surface</item>
+        <item name="colorOnSurface">@color/light_onSurface</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/light_Error</item>
+        <item name="colorOnError">@color/light_onError</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/light_Surface</item>
+        <!-- Customize your theme here. -->
+    </style>
+    <style name="SlideActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+    </style>
+</resources>

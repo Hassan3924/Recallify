@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.ui.feature.application.sidequest.SideQuestProgressActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutInfo"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+
+
+        android:background="@color/light_Primary"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Side Quest Progress Filter"
+            android:textColor="@color/light_onPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutSelect"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="140dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/SelectDateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:text="To filter please select a date: "
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/SelectDateTextViewValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
+            android:text="0000-00-00"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="280dp"
+        android:background="@color/dark_Secondary"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <DatePicker
+            android:id="@+id/date_Picker"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonAnalyzeP"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:textStyle="bold"
+            android:background="@color/dark_SecondaryVariant"
+            android:text="Filter"
+            android:textColor="@color/light_onPrimary"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

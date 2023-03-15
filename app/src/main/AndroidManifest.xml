@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Recallify"
+        tools:targetApi="31">
+        <activity
+            android:name=".view.ui.feature.application.dailydiary.daily_log.DailyLogActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.sidequest.AnalyzeProgressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.sidequest.SideQuestDisplayResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.sidequest.SideQuestQuizActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.sidequest.SideQuestLoadingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.sidequest.SideQuestAnalysisActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.sidequest.SideQuestProgressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.ProgressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.ThinkfastAnalysisActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.ThinkfastProgressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.DisplayResultsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.QuizActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.DisplayImageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.dailydiary.daily_activity.DailyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.dailydiary.moment_snap.MomentSnapActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.ThinkFastLoadingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.ThinkfastRulesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.accounts.AccountsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.accounts.GuardianAccountsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.dailydiary.DailyDiaryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.guardiandailydiary.GuardianDailyDairyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.dashboard.DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.guardiandashboard.GuardiansDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.sidequest.SideQuestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.guardiansidequest.GuardianSideQuestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.thinkfast.ThinkFastActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.guardianthinkfast.GuardianThinkFastActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.security.forgotpassword.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.security.signup.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.security.signin.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
