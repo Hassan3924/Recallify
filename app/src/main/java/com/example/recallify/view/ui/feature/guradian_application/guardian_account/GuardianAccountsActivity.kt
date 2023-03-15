@@ -133,7 +133,9 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
                     .padding(top = 50.dp)
-                    .padding(bottom = 8.dp)) {
+                    .padding(bottom = 8.dp),
+                Arrangement.Center,
+                Alignment.CenterHorizontally) {
 
                     var firstName: String by remember { mutableStateOf("") }
                     var lastName: String by remember { mutableStateOf("") }
@@ -255,7 +257,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                                 }
                             }
 
-                    Button(
+                    Button(modifier = Modifier.padding(top = 10.dp),
                         onClick = {
                             // Encode email address to use as key in Firebase database
                             val encodedEmail = tbiEmail.replace(".", "_")
@@ -290,59 +292,8 @@ class GuardianAccountsActivity : AppCompatActivity() {
 //                        enabled = showEmailField && tbiEmail.isNotBlank()
                     ) {
                         Text("Save")
+                        }
                     }
-
-
-//                    LaunchedEffect(isDataChanged) {
-//                        database.child(current).child("profile").addListenerForSingleValueEvent(object : ValueEventListener {
-//                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                                firstName = dataSnapshot.child("firstname").getValue(String::class.java) ?: ""
-//                                lastName = dataSnapshot.child("lastname").getValue(String::class.java) ?: ""
-//                                email = dataSnapshot.child("email").getValue(String::class.java) ?: ""
-//                                password = dataSnapshot.child("password").getValue(String::class.java) ?: ""
-//                                tbiEmail = dataSnapshot.child("TBI Email").getValue(String::class.java) ?: ""
-//
-//                                // Add listener for changes in the email value
-//                                val emailRef = database.child(current).child("profile").child("TBI Email")
-//                                emailRef.addValueEventListener(object : ValueEventListener {
-//                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                                        val email = dataSnapshot.getValue(String::class.java) ?: ""
-//
-//                                        val encodedEmail = email.replace(".", ",")
-//                                        // Query the database for the UID associated with the email
-//                                        val userRef = database.child("users").child("connections").child(encodedEmail)
-//
-//                                        Log.d("GuardianAccountActivity", "onDataChange called")
-//                                        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                                                if (dataSnapshot.exists()) {
-//                                                    val uid = dataSnapshot.getValue(String::class.java)
-//
-//                                                    // Set the uid value to a variable in JetPack Compose
-//                                                    // Replace "uidValue" with the name of the variable you want to use
-//                                                    var uidValue = uid
-//                                                    database.child("testing_connection").child("UID").setValue(uid)
-//
-//                                                }
-//                                            }
-//
-//                                            override fun onCancelled(databaseError: DatabaseError) {
-//                                                Log.w("GuardianAccountsActivity", "LoadProfile:onCancelled", databaseError.toException())
-//
-//                                            }
-//                                        })
-//                                    }
-//                                    override fun onCancelled(databaseError: DatabaseError) {
-//                                        Log.w("GuardianAccountsActivity", "LoadProfile:onCancelled", databaseError.toException())
-//                                    }
-//                                })
-//                            }
-//                            override fun onCancelled(error: DatabaseError) {
-//                                TODO()
-//                            }
-//                        })
-//                    }
-                }
                 }
             }
         }

@@ -2,6 +2,8 @@ package com.example.recallify.view.ui.feature.guradian_application.guardiandashb
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +13,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
@@ -75,6 +79,9 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
     @Composable
     fun DashBoardScreen() {
+
+
+
         Scaffold(
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
