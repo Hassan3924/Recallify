@@ -10,9 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -154,6 +152,8 @@ class LoginActivity : AppCompatActivity() {
                             verticalArrangement = Arrangement.Center
                         ) {
 
+                            var isEmailValid by remember { mutableStateOf(false) }
+
                             OutlinedTextField(
                                 value = email.value,
                                 onValueChange = { email.value = it },
@@ -179,7 +179,10 @@ class LoginActivity : AppCompatActivity() {
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth()
+
                             )
+
+                            var isPasswordValid by remember { mutableStateOf(false) }
 
                             OutlinedTextField(
                                 value = password.value,
@@ -216,6 +219,7 @@ class LoginActivity : AppCompatActivity() {
                                 keyboardActions = KeyboardActions(
                                     onDone = {
                                         focusManager.clearFocus()
+                                        isPasswordValid = !password.value.isBlank()
                                     }
                                 )
                             )
@@ -229,14 +233,15 @@ class LoginActivity : AppCompatActivity() {
                             )
                             Button(
                                 onClick = {
-                                    val auth = Firebase.auth
-                                    val email = email.value
-                                    val password = password.value
+                                    val email = email.value.trim()
+                                    val password = password.value.trim()
+
+                                    if (email.isEmpty() || password.isEmpty()) {
+                                        Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                                        return@Button
+                                    }
+
                                     loading.value = true
-//                                    val user = auth.currentUser?.uid.toString()
-//                                    val database = Firebase.database.reference
-//                                    val userRole = database.child("users").child(user).child("profile").child("role")
-//                                    loading.value = true
                                     auth.signInWithEmailAndPassword(email, password)
                                         .addOnCompleteListener { task ->
                                             loading.value = false
