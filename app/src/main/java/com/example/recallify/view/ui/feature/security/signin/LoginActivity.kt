@@ -286,6 +286,53 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+        override fun onStart() {
+        super.onStart()
+
+        val auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser
+        val database = Firebase.database.reference
+        val userRole = database.child("users").child(auth.uid.toString()).child("profile").child("role")
+        userRole.addListenerForSingleValueEvent(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val role = snapshot.getValue(String::class.java)
+                if (role == "TBI") {
+                    // Navigate to a specific destination for users with role "TBI"
+                    if (user != null){
+                        Toast.makeText(applicationContext,"Welcome to Quiz Game",Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@LoginActivity,DashboardActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+
+                    } else {
+                    // Navigate to a different destination for users with other roles
+                    if (user != null) {
+                        if (role == "Guardian") {
+                            Toast.makeText(
+                                applicationContext,
+                                "Welcome to Quiz Game",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            val intent =
+                                Intent(this@LoginActivity, GuardiansDashboardActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error here
+            }
+        })
+
+
+
+    }
 }
 
 
