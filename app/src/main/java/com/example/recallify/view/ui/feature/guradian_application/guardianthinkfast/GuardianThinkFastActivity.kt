@@ -206,7 +206,6 @@ class GuardianThinkFastActivity : AppCompatActivity() {
                         }
                     }
 
-
                     Card(
                         modifier = Modifier
                             .weight(1f)

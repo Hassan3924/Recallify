@@ -27,6 +27,8 @@ import com.example.recallify.view.ui.feature.application.dailydiary.DailyDiaryAc
 import com.example.recallify.view.ui.feature.application.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.thinkfast.ThinkFastActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
+import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.gms.tasks.Task
@@ -128,11 +130,13 @@ class AccountsActivity : AppCompatActivity() {
                     Text(style = TextStyle(fontSize = 24.sp), text = "Account Settings")
 
                 }
-                Column(modifier = Modifier
+                Column( modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
                     .padding(top = 50.dp)
-                    .padding(bottom = 8.dp)) {
+                    .padding(bottom = 8.dp),
+                    Arrangement.Center,
+                    Alignment.CenterHorizontally) {
 
                     var firstName: String by remember { mutableStateOf("") }
                     var lastName: String by remember { mutableStateOf("") }
@@ -231,13 +235,24 @@ class AccountsActivity : AppCompatActivity() {
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = password)
                     }
-
-
+                    LogoutButton(activity = this@AccountsActivity)
                 }
             }
         }
     }
 
-
+    @Composable
+    fun LogoutButton(activity: AccountsActivity) {
+        Button(onClick = {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(activity, LoginActivity::class.java)
+            activity.startActivity(intent)
+            activity.finish()
+        }) {
+            Text(text = "Log Out")
+        }
+    }
 }
+
+
 

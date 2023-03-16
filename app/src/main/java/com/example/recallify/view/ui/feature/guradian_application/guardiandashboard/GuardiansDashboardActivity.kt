@@ -1,5 +1,6 @@
 package com.example.recallify.view.ui.feature.guradian_application.guardiandashboard
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -23,13 +24,17 @@ import com.example.recallify.view.ui.feature.guradian_application.guardian_accou
 import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
+import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
+import com.example.speech_to_text_jetpack.navigation.AudioScreens
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class GuardiansDashboardActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_dashboard)
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
@@ -73,14 +78,25 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                 DashBoardScreen()
             }
         }
-
-
     }
+
+//    override fun onBackPressed() {
+//
+//        val sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+//        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+//
+//        if (isLoggedIn) {
+//            // User is logged in, don't allow them to go back to the login screen
+//            super.onBackPressedDispatcher
+//
+//        } else {
+//            // User is not logged in, allow them to go back to the login screen
+//            Toast.makeText(this, "Please log in to continue", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
     @Composable
     fun DashBoardScreen() {
-
-
 
         Scaffold(
             bottomBar = { BottomBarFiller() },

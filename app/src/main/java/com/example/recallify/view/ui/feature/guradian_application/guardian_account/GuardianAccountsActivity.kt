@@ -1,8 +1,10 @@
 package com.example.recallify.view.ui.feature.guradian_application.guardian_account
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,12 +21,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
+import com.example.recallify.view.ui.feature.BaseActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
+import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
+import com.example.speech_to_text_jetpack.navigation.AudioScreens
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -85,6 +90,8 @@ class GuardianAccountsActivity : AppCompatActivity() {
         }
     }
 
+
+
     @Composable
     fun AccountsScreen() {
 
@@ -94,11 +101,12 @@ class GuardianAccountsActivity : AppCompatActivity() {
         val current = auth.currentUser?.uid!!
         val childValue = remember { mutableStateOf("") }
         var tbiEmail = remember { mutableStateOf(TextFieldValue()) }
-        var showEmailField by remember { mutableStateOf(true)}
+        var showEmailField by remember { mutableStateOf(true) }
         var isDataChanged by remember { mutableStateOf(false) }
         var uid by remember { mutableStateOf("") }
-
-
+        val sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+        
 
         Scaffold(
             bottomBar = { BottomBarFiller() },
@@ -129,13 +137,15 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     Text(style = TextStyle(fontSize = 24.sp), text = "Account Settings")
 
                 }
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
-                    .padding(top = 50.dp)
-                    .padding(bottom = 8.dp),
-                Arrangement.Center,
-                Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                        .padding(top = 50.dp)
+                        .padding(bottom = 8.dp),
+                    Arrangement.Center,
+                    Alignment.CenterHorizontally
+                ) {
 
                     var firstName: String by remember { mutableStateOf("") }
                     var lastName: String by remember { mutableStateOf("") }
@@ -160,7 +170,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         database.child(current).child("profile").child("lastname")
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    lastName = dataSnapshot.getValue(String::class.java) ?:""
+                                    lastName = dataSnapshot.getValue(String::class.java) ?: ""
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
@@ -234,39 +244,42 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = password)
                     }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
-                            ) {
-                                Text(text = "TBI Email:")
-                                Spacer(modifier = Modifier.weight(1f))
-                                if (showEmailField) {
-                                    TextField(
-                                        value = tbiEmail,
-                                        onValueChange = { newValue -> tbiEmail = newValue },
-                                        label = { Text("Enter new email") },
-                                        modifier = Modifier.width(200.dp)
-                                    )
-                                } else {
-                                    Text(
-                                        text = "",
-                                        color = Color.Gray,
-                                        modifier = Modifier.clickable { showEmailField = true }
-                                    )
-                                }
-                            }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
+                    ) {
+                        Text(text = "TBI Email:")
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (showEmailField) {
+                            TextField(
+                                value = tbiEmail,
+                                onValueChange = { newValue -> tbiEmail = newValue },
+                                label = { Text("Enter new email") },
+                                modifier = Modifier.width(200.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "",
+                                color = Color.Gray,
+                                modifier = Modifier.clickable { showEmailField = true }
+                            )
+                        }
+                    }
 
-                    Button(modifier = Modifier.padding(top = 10.dp),
+                    Button(
+                        modifier = Modifier.padding(top = 10.dp),
                         onClick = {
                             // Encode email address to use as key in Firebase database
                             val encodedEmail = tbiEmail.replace(".", "_")
 
                             // Set TBI Email value in database
-                            database.child(current).child("profile").child("TBI Email").setValue(tbiEmail)
+                            database.child(current).child("profile").child("TBI Email")
+                                .setValue(tbiEmail)
 
                             // Update UID value in testing_connection node
-                            val userRef = database.child("connections").child(encodedEmail).child("userID")
+                            val userRef =
+                                database.child("connections").child(encodedEmail).child("userID")
 
                             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -275,13 +288,18 @@ class GuardianAccountsActivity : AppCompatActivity() {
                                         var uid = dataSnapshot.getValue(String::class.java)
                                         Log.i("This is the uid", uid!!)
                                         // Create a new node called "testing_connection" and set its UID value
-                                        database.child("GuardiansLinkTable").child(current).child("TBIID").setValue(uid)
+                                        database.child("GuardiansLinkTable").child(current)
+                                            .child("TBIID").setValue(uid)
 
                                     }
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {
-                                    Log.w("GuardianAccountsActivity", "LoadProfile:onCancelled", databaseError.toException())
+                                    Log.w(
+                                        "GuardianAccountsActivity",
+                                        "LoadProfile:onCancelled",
+                                        databaseError.toException()
+                                    )
                                 }
                             })
 
@@ -292,9 +310,23 @@ class GuardianAccountsActivity : AppCompatActivity() {
 //                        enabled = showEmailField && tbiEmail.isNotBlank()
                     ) {
                         Text("Save")
-                        }
                     }
+                    LogoutButton(activity = this@GuardianAccountsActivity)
                 }
             }
+          }
+        }
+
+    @Composable
+    fun LogoutButton(activity: GuardianAccountsActivity) {
+        Button(onClick = {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(activity, LoginActivity::class.java)
+            activity.startActivity(intent)
+            activity.finish()
+        }) {
+            Text(text = "Log Out")
         }
     }
+}
+
