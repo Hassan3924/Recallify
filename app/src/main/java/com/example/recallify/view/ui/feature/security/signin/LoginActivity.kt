@@ -323,6 +323,11 @@ class LoginActivity : AppCompatActivity() {
                                                     )
                                                 }
                                             }
+                                            else{ //code Added to make sure the email is correct and if its in correct format
+
+                                                Toast.makeText(applicationContext,task.exception?.localizedMessage,Toast.LENGTH_SHORT).show()
+
+                                            }
                                         }
                                 },
                                 modifier = Modifier
