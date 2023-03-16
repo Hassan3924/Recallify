@@ -300,7 +300,7 @@ class LoginActivity : AppCompatActivity() {
                 if (role == "TBI") {
                     // Navigate to a specific destination for users with role "TBI"
                     if (user != null){
-                        Toast.makeText(applicationContext,"Welcome to Quiz Game",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext,"Welcome to Recallify",Toast.LENGTH_SHORT).show()
                         val intent = Intent(this@LoginActivity,DashboardActivity::class.java)
                         startActivity(intent)
                         finish()
