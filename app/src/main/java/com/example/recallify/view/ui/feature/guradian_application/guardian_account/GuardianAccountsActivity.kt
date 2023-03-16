@@ -242,7 +242,11 @@ class GuardianAccountsActivity : AppCompatActivity() {
 
                         Text(text = "Password:")
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = password)
+                        Text(text = buildString {
+                            for (i in 1..password.length) {
+                                append("*")
+                            }
+                        })
                     }
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,

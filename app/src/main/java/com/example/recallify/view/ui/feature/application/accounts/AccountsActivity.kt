@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -142,6 +143,7 @@ class AccountsActivity : AppCompatActivity() {
                     var lastName: String by remember { mutableStateOf("") }
                     var email: String by remember { mutableStateOf("") }
                     var password: String by remember { mutableStateOf("") }
+//                    var password by rememberSaveable { mutableStateOf("") }
 
 
                     LaunchedEffect(Unit) {
@@ -228,12 +230,17 @@ class AccountsActivity : AppCompatActivity() {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 20.dp)
                     ) {
 
                         Text(text = "Password:")
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = password)
+                        Text(text = buildString {
+                            for (i in 1..password.length) {
+                                append("*")
+                            }
+                        })
+                        
                     }
                     LogoutButton(activity = this@AccountsActivity)
                 }
@@ -243,7 +250,7 @@ class AccountsActivity : AppCompatActivity() {
 
     @Composable
     fun LogoutButton(activity: AccountsActivity) {
-        Button(onClick = {
+        Button(modifier = Modifier.padding(top = 20.dp), onClick = {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(activity, LoginActivity::class.java)
             activity.startActivity(intent)
