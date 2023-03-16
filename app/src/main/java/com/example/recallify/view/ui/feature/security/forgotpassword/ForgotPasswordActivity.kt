@@ -26,8 +26,10 @@ import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.theme.RecallifyTheme
+import com.google.firebase.auth.FirebaseAuth
 
 class ForgotPasswordActivity : AppCompatActivity() {
+    val auth = FirebaseAuth.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
