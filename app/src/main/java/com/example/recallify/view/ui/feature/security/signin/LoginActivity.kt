@@ -230,34 +230,93 @@ class LoginActivity : AppCompatActivity() {
                             Button(
                                 onClick = {
                                     val auth = Firebase.auth
-                                    val database = Firebase.database.reference
-                                    val userRole = database.child("users").child(auth.uid.toString()).child("profile").child("role")
+                                    val email = email.value
+                                    val password = password.value
                                     loading.value = true
-                                    auth.signInWithEmailAndPassword(email.value, password.value)
+//                                    val user = auth.currentUser?.uid.toString()
+//                                    val database = Firebase.database.reference
+//                                    val userRole = database.child("users").child(user).child("profile").child("role")
+//                                    loading.value = true
+                                    auth.signInWithEmailAndPassword(email, password)
                                         .addOnCompleteListener { task ->
                                             loading.value = false
                                             if (task.isSuccessful) {
-                                                userRole.addListenerForSingleValueEvent(object :
-                                                    ValueEventListener {
-                                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                                        val role = snapshot.getValue(String::class.java)
-                                                        if (role == "TBI") {
-                                                            // Navigate to a specific destination for users with role "TBI"
-                                                            onNavToTBIHome()
+                                                val user = auth.currentUser
+                                                if (user != null) {
+                                                    val uid = user.uid
+                                                    val database = Firebase.database.reference
+                                                    val userRole =
+                                                        database.child("users").child(uid)
+                                                            .child("profile").child("role")
+                                                    userRole.addListenerForSingleValueEvent(object :
+                                                        ValueEventListener {
+                                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                                            val role =
+                                                                snapshot.getValue(String::class.java)
 
-                                                        } else {
-                                                            // Navigate to a different destination for users with other roles
-                                                            onNavToGuardianHome()
+                                                            Log.d(
+                                                                "UserRole",
+                                                                "Retrieved user role: $role"
+                                                            )
+
+                                                            if (role == "TBI") {
+                                                                // Navigate to a specific destination for users with role "TBI"
+                                                                onNavToTBIHome()
+                                                                val auth = Firebase.auth
+                                                                auth.addAuthStateListener { auth ->
+                                                                    if (auth.currentUser != null) {
+                                                                        Log.d(
+                                                                            "AuthStateListener",
+                                                                            "User is logged in"
+                                                                        )
+                                                                    } else {
+                                                                        Log.d(
+                                                                            "AuthStateListener",
+                                                                            "User is logged out"
+                                                                        )
+                                                                    }
+                                                                }
+
+                                                            } else {
+                                                                // Navigate to a different destination for users with other roles
+                                                                onNavToGuardianHome()
+                                                                val auth = Firebase.auth
+                                                                auth.addAuthStateListener { auth ->
+                                                                    if (auth.currentUser != null) {
+                                                                        Log.d(
+                                                                            "AuthStateListener",
+                                                                            "User is logged in"
+                                                                        )
+                                                                    } else {
+                                                                        Log.d(
+                                                                            "AuthStateListener",
+                                                                            "User is logged out"
+                                                                        )
+                                                                    }
+                                                                }
+
+                                                            }
                                                         }
-                                                    }
 
-                                                    override fun onCancelled(error: DatabaseError) {
-                                                        // Handle error here
-                                                    }
-                                                })
-                                            } else {
-                                                Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT).show()
-                                                Log.w("LoginActivity", "SignInFailure : (Query related) : ->", task.exception)
+                                                        override fun onCancelled(error: DatabaseError) {
+                                                            Log.e(
+                                                                "UserRole",
+                                                                "Failed to retrieve user role: ${error.message}"
+                                                            )
+                                                        }
+                                                    })
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Login failed!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                    Log.w(
+                                                        "LoginActivity",
+                                                        "SignInFailure : (Query related) : ->",
+                                                        task.exception
+                                                    )
+                                                }
                                             }
                                         }
                                 },
@@ -290,13 +349,13 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
 
         val auth = FirebaseAuth.getInstance()
-        val user = auth.currentUser
+        val user = auth.currentUser?.uid.toString()
         val database = Firebase.database.reference
-        val userRole = database.child("users").child(auth.uid.toString()).child("profile").child("role")
-        userRole.addListenerForSingleValueEvent(object :
-            ValueEventListener {
+        val userRole = database.child("users").child(user).child("profile").child("role")
+        userRole.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val role = snapshot.getValue(String::class.java)
+                Log.d("UserRole", "Retrieved user role by Ridinbal: $role")
                 if (role == "TBI") {
                     // Navigate to a specific destination for users with role "TBI"
                     if (user != null){
