@@ -312,7 +312,7 @@ class LoginActivity : AppCompatActivity() {
                         if (role == "Guardian") {
                             Toast.makeText(
                                 applicationContext,
-                                "Welcome to Quiz Game",
+                                "Welcome to Recallify",
                                 Toast.LENGTH_SHORT
                             ).show()
                             val intent =
