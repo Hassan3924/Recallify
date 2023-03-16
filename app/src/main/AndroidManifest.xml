@@ -95,6 +95,18 @@
             android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity"
             android:exported="false" />
         <activity
+            android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianSelectDateAnalyzeProgressThinkFast"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianAnalyzeProgressThinkFast"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianSelectDateScoreThinkFast"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianDisplayResultsThinkFast"
+            android:exported="false" />
+        <activity
             android:name=".view.ui.feature.security.forgotpassword.ForgotPasswordActivity"
             android:exported="false" />
         <activity
