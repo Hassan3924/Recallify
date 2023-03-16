@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryTopAppBar
+import com.example.recallify.view.common.components.DiaryTopAppBarGuardian
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
@@ -93,16 +94,7 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
         Scaffold(
             bottomBar = { BottomBarFiller() },
             topBar = {
-                DiaryTopAppBar(
-                    clickCreate = {
-                        scope.launch {
-                            if (state.currentValue == ModalBottomSheetValue.Hidden) {
-                                state.animateTo(ModalBottomSheetValue.Expanded, tween(500))
-                            } else {
-                                state.animateTo(ModalBottomSheetValue.Hidden, tween(500))
-                            }
-                        }
-                    },
+                DiaryTopAppBarGuardian(
                     clickFilter = {
                         Toast.makeText(context, "Filtering...", Toast.LENGTH_SHORT).show()
                     }

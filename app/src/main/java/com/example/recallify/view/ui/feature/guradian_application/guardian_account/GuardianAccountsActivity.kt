@@ -261,6 +261,8 @@ class GuardianAccountsActivity : AppCompatActivity() {
                                 onValueChange = { newValue -> tbiEmail = newValue },
                                 label = { Text("Enter new email") },
                                 modifier = Modifier.width(200.dp)
+                                    .height(40.dp)
+                                    .align(Alignment.CenterVertically)
                             )
                         } else {
                             Text(
@@ -272,7 +274,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     }
 
                     Button(
-                        modifier = Modifier.padding(top = 10.dp),
+                        modifier = Modifier.padding(top = 20.dp),
                         onClick = {
                             // Encode email address to use as key in Firebase database
                             val encodedEmail = tbiEmail.replace(".", "_")
@@ -315,7 +317,10 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     ) {
                         Text("Save")
                     }
-                    LogoutButton(activity = this@GuardianAccountsActivity)
+                    Row(modifier =Modifier.padding(top = 20.dp)){
+                        LogoutButton(activity = this@GuardianAccountsActivity)
+
+                    }
                 }
             }
           }

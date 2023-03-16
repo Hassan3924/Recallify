@@ -8,6 +8,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.recallify.R
 
+
+ @Composable
+ fun DiaryTopAppBarGuardian(
+     clickFilter: () -> Unit,
+ ) {
+     Box(
+         modifier = Modifier
+             .height(56.dp)
+             .fillMaxWidth()
+     ) {
+         TopAppBar(
+             title = { Text("Daily Diary") },
+             backgroundColor = MaterialTheme.colors.background,
+             modifier = Modifier.fillMaxWidth(),
+             actions = {
+                 FilterAction(
+                     onClickFilter = clickFilter
+                 )
+             }
+         )
+     }
+ }
 @Composable
 fun DiaryTopAppBar(
     clickCreate: () -> Unit,
