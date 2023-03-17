@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class ForgotPasswordActivity : AppCompatActivity() {
     val auth = FirebaseAuth.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
@@ -39,7 +40,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 val context = LocalContext.current
                 ForgotPasswordScreen(
                     processEmailLink = {
-                        Toast.makeText(context, "Email link sent successfully", Toast.LENGTH_SHORT).show()
+                      //  Toast.makeText(context, "Email link sent successfully", Toast.LENGTH_SHORT).show()
                     },
                     onNavToLogin = {
                         val intent = Intent(context, LoginActivity::class.java)
@@ -57,9 +58,10 @@ class ForgotPasswordActivity : AppCompatActivity() {
         onNavToLogin: () -> Unit,
     ) {
 
-        var email by remember {
+        var email by remember { //
             mutableStateOf("")
         }
+
 
         Scaffold(backgroundColor = MaterialTheme.colors.surface) { paddingValue ->
             Column(
@@ -158,7 +160,22 @@ class ForgotPasswordActivity : AppCompatActivity() {
                                     .fillMaxWidth()
                             )
                             Button(
-                                onClick = { processEmailLink() },
+                                onClick = { processEmailLink()
+                                    auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+
+                                        if (task.isSuccessful){
+
+                                            Toast.makeText(applicationContext,"We sent a password reset mail to your email address",Toast.LENGTH_SHORT).show()
+                                            finish() //once page is closed, it will return to login page
+
+                                        }else{
+
+                                            Toast.makeText(applicationContext,task.exception?.localizedMessage,Toast.LENGTH_SHORT).show()
+
+                                        }
+
+                                    }
+                                          },
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp, vertical = 8.dp)
                                     .fillMaxWidth()
