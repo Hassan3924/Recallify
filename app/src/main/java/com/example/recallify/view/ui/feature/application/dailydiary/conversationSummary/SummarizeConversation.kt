@@ -34,8 +34,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class SummarizeConversation : AppCompatActivity() {
+
     lateinit var speechRecognizer : SpeechRecognizer
-    lateinit var mainBinding:ActivitySummarizeConversationBinding
+    lateinit var mainBinding : ActivitySummarizeConversationBinding
     lateinit var speechIntent : Intent
     var conversationText=""
 var response_saved = ""
@@ -80,6 +81,7 @@ var response_saved = ""
 
         //when the user clicks buttonStop, the mic. will close manually.
         mainBinding.buttonStop.setOnClickListener {
+
             speechRecognizer.stopListening()
             speechRecognizer.cancel()
             speechRecognizer.destroy()

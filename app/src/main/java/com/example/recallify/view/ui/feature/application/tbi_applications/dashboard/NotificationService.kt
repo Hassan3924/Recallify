@@ -11,6 +11,7 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.example.recallify.R
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 
 class NotificationService : Service() {
     private lateinit var notificationManager: NotificationManager
@@ -39,7 +40,7 @@ class NotificationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notificationIntent = Intent(this, DashboardActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val notification = notificationBuilder
             .setContentIntent(pendingIntent)

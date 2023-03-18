@@ -24,6 +24,7 @@ import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
+import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
@@ -139,6 +140,17 @@ class DailyDiaryActivity : AppCompatActivity() {
                         Spacer(modifier = Modifier.padding(vertical = 6.dp))
                         ActionSheetItem(
                             icon = R.drawable.daily_activity,
+                            text = "Summarised Text",
+                            onStart = {
+                                val intent =
+                                    Intent(this@DailyDiaryActivity, SummarizeConversation::class.java)
+                                startActivity(intent)
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.padding(vertical = 6.dp))
+                        ActionSheetItem(
+                            icon = R.drawable.daily_activity,
                             text = "Daily activity",
                             onStart = {
                                 val intent =
@@ -175,7 +187,6 @@ class DailyDiaryActivity : AppCompatActivity() {
                         TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
                         when (tabPage.ordinal) {
                             0 -> {
-                                ItemCount(text = "10")
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -205,7 +216,6 @@ class DailyDiaryActivity : AppCompatActivity() {
 
                             }
                             1 -> {
-                                ItemCount(text = "20")
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
