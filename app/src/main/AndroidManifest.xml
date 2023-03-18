@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,9 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Recallify"
         tools:targetApi="31">
+        <service android:name=".view.ui.feature.application.dashboard.NotificationService" />
         <activity
             android:name=".view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation"
+            android:exported="false" />
+
         <activity
             android:name=".view.ui.feature.application.tbi_applications.sidequest.AnalyzeProgressActivity"
             android:exported="false" />
