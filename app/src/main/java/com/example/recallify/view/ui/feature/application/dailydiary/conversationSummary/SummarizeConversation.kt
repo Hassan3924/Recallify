@@ -207,7 +207,7 @@ conversationText=myText.plus(" .").plus(data[0])
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
 //        val url = "http://yourflaskserver.com/summarize"
-        val url = "http://ridzbmd.pythonanywhere.com/summarize"
+        val url = "https://ridzbmd.pythonanywhere.com/summarize"
 
         // Request a response from the provided URL.
         val stringRequest = object : StringRequest(
