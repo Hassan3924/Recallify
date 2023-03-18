@@ -14,85 +14,109 @@
         android:theme="@style/Theme.Recallify"
         tools:targetApi="31">
         <activity
-            android:name=".view.ui.feature.application.dailydiary.daily_log.DailyLogActivity"
+            android:name=".view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.sidequest.AnalyzeProgressActivity"
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.AnalyzeProgressActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.sidequest.SideQuestDisplayResultActivity"
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestDisplayResultActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.sidequest.SideQuestQuizActivity"
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestQuizActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.sidequest.SideQuestLoadingActivity"
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestLoadingActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.sidequest.SideQuestAnalysisActivity"
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestAnalysisActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.sidequest.SideQuestProgressActivity"
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestProgressActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.ProgressActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.ProgressActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.ThinkfastAnalysisActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.ThinkfastAnalysisActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.ThinkfastProgressActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.ThinkfastProgressActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.DisplayResultsActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.DisplayResultsActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.QuizActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.QuizActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.DisplayImageActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.DisplayImageActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.dailydiary.daily_activity.DailyActivity"
+            android:name=".view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.dailydiary.moment_snap.MomentSnapActivity"
+            android:name=".view.ui.feature.application.tbi_applications.dailydiary.moment_snap.MomentSnapActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.ThinkFastLoadingActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.ThinkFastLoadingActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.ThinkfastRulesActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.ThinkfastRulesActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.accounts.AccountsActivity"
+            android:name=".view.ui.feature.application.tbi_applications.accounts.AccountsActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.dailydiary.DailyDiaryActivity"
+            android:name=".view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.dashboard.DashboardActivity"
+            android:name=".view.ui.feature.application.tbi_applications.dashboard.DashboardActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.sidequest.SideQuestActivity"
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.feature.application.thinkfast.ThinkFastActivity"
+            android:name=".view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.guradian_application.mainsettingpages.PrivacyAndSecurity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.tbi_applications.tbimainsettings.PrivacyAndSecurityTBI"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.guradian_application.mainsettingpages.TermsAndConditions"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.tbi_applications.tbimainsettings.TermsAndConditionsTBI"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.guradian_application.mainsettingpages.HelpAndSupport"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.tbi_applications.tbimainsettings.HelpAndSupportTBI"
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.guradian_application.guardianthinkfast.GuardianSelectDateAnalyzeProgressThinkFast"

@@ -21,13 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.application.thinkfast.ThinkfastAnalysisActivity
-import com.example.recallify.view.ui.feature.application.thinkfast.ThinkfastProgressActivity
-import com.example.recallify.view.ui.feature.application.thinkfast.ThinkfastRulesActivity
+import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.CommonColor
 import com.example.recallify.view.ui.theme.RecallifyTheme
@@ -63,7 +60,7 @@ class GuardianThinkFastActivity : AppCompatActivity() {
                 }
                 R.id.bottom_think_fast -> true
                 R.id.bottom_accounts -> {
-                    startActivity(Intent(applicationContext, GuardianAccountsActivity::class.java))
+                    startActivity(Intent(applicationContext, GuardianMainSettings::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true

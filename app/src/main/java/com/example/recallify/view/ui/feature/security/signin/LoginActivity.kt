@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.dashboard.DashboardActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
 import com.example.recallify.view.ui.feature.security.forgotpassword.ForgotPasswordActivity
 import com.example.recallify.view.ui.feature.security.signup.RegisterActivity
@@ -264,7 +264,7 @@ class LoginActivity : AppCompatActivity() {
                                                                 "Retrieved user role: $role"
                                                             )
 
-                                                            if (role == "TBI") {
+                                                            if (role == "TBI Patient") {
                                                                 // Navigate to a specific destination for users with role "TBI"
                                                                 onNavToTBIHome()
                                                                 val auth = Firebase.auth
@@ -366,11 +366,11 @@ class LoginActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val role = snapshot.getValue(String::class.java)
                 Log.d("UserRole", "Retrieved user role by Ridinbal: $role")
-                if (role == "TBI") {
+                if (role == "TBI Patient") {
                     // Navigate to a specific destination for users with role "TBI"
                     if (user != null){
                         Toast.makeText(applicationContext,"Welcome to Recallify",Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@LoginActivity,DashboardActivity::class.java)
+                        val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
                         startActivity(intent)
                         finish()
                     }
@@ -390,7 +390,6 @@ class LoginActivity : AppCompatActivity() {
                             finish()
                         }
                     }
-
                 }
             }
 

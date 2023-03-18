@@ -82,7 +82,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.round_arrow_back_24),
-                            contentDescription = "go back to login",
+                            contentDescription = "Go back to Main Settings",
                             modifier = Modifier
                                 .size(42.dp)
                                 .border(

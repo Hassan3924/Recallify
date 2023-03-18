@@ -24,11 +24,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.accounts.AccountsActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.AccountsActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardian_account.GuardianAccountsActivity
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.theme.RecallifyTheme
@@ -37,6 +38,44 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : AppCompatActivity() {
+
+    @Composable
+    fun TextFieldWithError(
+        modifier: Modifier = Modifier,
+        value: String,
+        onValueChange: (String) -> Unit,
+        isError: Boolean,
+        label: String,
+        errorMessage: String,
+        placeholder: String? = null,
+        leadingIcon: (@Composable () -> Unit)? = null,
+        trailingIcon: (@Composable () -> Unit)? = null,
+        keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+        visualTransformation: VisualTransformation = VisualTransformation.None
+    ) {
+        val textColor = if (isError) Color.Red else Color.Black
+        OutlinedTextField(
+            modifier = modifier.fillMaxWidth(),
+            value = value,
+            onValueChange = onValueChange,
+            label = { Text(text = label, color = textColor) },
+            placeholder = { placeholder?.let { Text(text = it, color = textColor) } },
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            keyboardOptions = keyboardOptions,
+            visualTransformation = visualTransformation,
+            isError = isError
+        )
+        if (isError) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,10 +113,17 @@ class RegisterActivity : AppCompatActivity() {
         var role by remember {
             mutableStateOf("")
         }
-
+        var PIN by remember {
+            mutableStateOf("")
+        }
         var isExpanded by remember {
             mutableStateOf(false)
         }
+        val errors = mutableListOf<String>()
+
+        PIN = FourNumberGenerator()
+
+
 
         Scaffold(
             scaffoldState = rememberScaffoldState(),
@@ -96,6 +142,7 @@ class RegisterActivity : AppCompatActivity() {
                         .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
+
                     IconButton(
                         onClick = {
                             val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
@@ -103,6 +150,7 @@ class RegisterActivity : AppCompatActivity() {
                             finish()
                         }
                     ) {
+
                         Icon(
                             painter = painterResource(id = R.drawable.round_arrow_back_24),
                             contentDescription = "go back to login",
@@ -116,7 +164,7 @@ class RegisterActivity : AppCompatActivity() {
                     }
                 }
                 Text(
-                    text = "Sign Up, right here.",
+                    text = "Sign up, right here.",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp)
@@ -124,7 +172,7 @@ class RegisterActivity : AppCompatActivity() {
                     style = MaterialTheme.typography.h4
                 )
                 Text(
-                    text = "These will just take some few minutes",
+                    text = "These will just take a few minutes",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
@@ -339,16 +387,16 @@ class RegisterActivity : AppCompatActivity() {
                                 ) {
                                     DropdownMenuItem(
                                         content = {
-                                            Text(text = "TBI")
+                                            Text(text = "TBI Patient")
                                         },
                                         onClick = {
-                                            role = "TBI"
+                                            role = "TBI Patient"
                                             isExpanded = false
                                         }
                                     )
                                     DropdownMenuItem(
                                         content = {
-                                            Text(text = "GUARDIAN")
+                                            Text(text = "Guardian")
                                         },
                                         onClick = {
                                             role = "Guardian"
@@ -369,7 +417,8 @@ class RegisterActivity : AppCompatActivity() {
                                                     "lastname" to lastname,
                                                     "email" to email,
                                                     "password" to password,
-                                                    "role" to role
+                                                    "role" to role,
+                                                    "pin" to PIN
                                                 )
                                                 database.child("users")
                                                     .child(user?.uid.toString())
@@ -384,17 +433,26 @@ class RegisterActivity : AppCompatActivity() {
 
                                                 val sanitizedEmail = email.replace(Regex("[.#$\\[\\]]"), "_")
 
-
-                                                if (role == "TBI") {
+                                                if (role == "TBI Patient") {
 
                                                     // Adding the UID under connection1
                                                     database.child("users")
                                                         .child("connections")
                                                         .child(sanitizedEmail)
                                                         .child("userID").setValue(user?.uid.toString())
+                                                    database.child("users")
+                                                        .child(user?.uid.toString())
+                                                        .child("profile")
+                                                        .child("PIN").setValue(PIN)
+                                                    database.child("users")
+                                                        .child("connections")
+                                                        .child(sanitizedEmail)
+                                                        .child("PIN").setValue(PIN)
+
                                                     val intent = Intent(context, AccountsActivity::class.java)
                                                     startActivity(intent)
                                                     finish()
+
                                                 }
                                                 else {
 
@@ -437,5 +495,17 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    @Composable
+    fun FourNumberGenerator(): String {
+        val numbers = remember { mutableStateListOf<Int>() }
+        while (numbers.size < 4) {
+            val newNumber = (0..9).random()
+            if (newNumber !in numbers) {
+                numbers.add(newNumber)
+            }
+        }
+        return numbers.joinToString(separator = "")
     }
 }

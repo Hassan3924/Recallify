@@ -1,4 +1,4 @@
-package com.example.recallify.view.ui.feature.guradian_application.guardiansidequest
+package com.example.recallify.view.ui.feature.application.tbi_applications.sidequest
 
 import android.content.Intent
 import android.os.Bundle
@@ -21,16 +21,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
-import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
+import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.CommonColor
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class GuardianSideQuestActivity : AppCompatActivity() {
+class SideQuestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_side_quest)
@@ -41,26 +41,26 @@ class GuardianSideQuestActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.bottom_home -> {
-                    startActivity(Intent(applicationContext, GuardiansDashboardActivity::class.java))
+                    startActivity(Intent(applicationContext, DashboardActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
                 }
                 R.id.bottom_daily_diary -> {
-                    startActivity(Intent(applicationContext, GuardianDailyDairyActivity::class.java))
+                    startActivity(Intent(applicationContext, DailyDiaryActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
                 }
                 R.id.bottom_side_quest -> true
                 R.id.bottom_think_fast -> {
-                    startActivity(Intent(applicationContext, GuardianThinkFastActivity::class.java))
+                    startActivity(Intent(applicationContext, ThinkFastActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
                 }
                 R.id.bottom_accounts -> {
-                    startActivity(Intent(applicationContext, GuardianMainSettings::class.java))
+                    startActivity(Intent(applicationContext, MainSettingsTBI::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
@@ -74,15 +74,20 @@ class GuardianSideQuestActivity : AppCompatActivity() {
             val context = LocalContext.current
             RecallifyTheme {
                 SideQuestScreen(
+                    playGame = {
+                        val intent = Intent(context, SideQuestQuizActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    },
                     viewScore = {
-//                        val intent = Intent(context, SideQuestProgressActivity::class.java)
-//                        startActivity(intent)
-//                        finish()
+                        val intent = Intent(context, SideQuestProgressActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     },
                     viewAnalysis = {
-//                        val intent = Intent(context, SideQuestAnalysisActivity::class.java)
-//                        startActivity(intent)
-//                        finish()
+                        val intent = Intent(context, SideQuestAnalysisActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     }
                 )
             }
@@ -90,10 +95,9 @@ class GuardianSideQuestActivity : AppCompatActivity() {
     }
 
 
-
     @Composable
     private fun SideQuestScreen(
-//        playGame: () -> Unit,
+        playGame: () -> Unit,
         viewScore: () -> Unit,
         viewAnalysis: () -> Unit,
     ) {
@@ -144,10 +148,45 @@ class GuardianSideQuestActivity : AppCompatActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(horizontal = 16.dp)
                 ) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
+                            .clickable(onClick = playGame),
+                        shape = RoundedCornerShape(8.dp),
+                        backgroundColor = MaterialTheme.colors.background,
+                        elevation = 1.dp,
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    "Tap to play game",
+                                    style = MaterialTheme.typography.button.copy(
+                                        fontSize = 16.sp
+                                    ),
+                                    modifier = Modifier.padding(vertical = 16.dp)
+                                )
+                                Icon(
+                                    painter = painterResource(id = R.drawable.round_arrow_forward_24),
+                                    contentDescription = "let's play thinkfast",
+                                    modifier = Modifier
+                                        .size(32.dp)
+
+                                )
+                            }
+                        }
+                    }
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Card(
                             modifier = Modifier

@@ -1,12 +1,12 @@
-package com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary
+package com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -21,21 +21,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.recallify.R
-import com.example.recallify.view.common.components.DiaryTopAppBarGuardian
+import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
-import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
-import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
+import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
-class GuardianDailyDairyActivity  : AppCompatActivity(){
+class DailyDiaryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_daily_diary)
@@ -46,26 +46,26 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.bottom_home -> {
-                    startActivity(Intent(applicationContext, GuardiansDashboardActivity::class.java))
+                    startActivity(Intent(applicationContext, DashboardActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
                 }
                 R.id.bottom_daily_diary -> true
                 R.id.bottom_side_quest -> {
-                    startActivity(Intent(applicationContext, GuardianSideQuestActivity::class.java))
+                    startActivity(Intent(applicationContext, SideQuestActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
                 }
                 R.id.bottom_think_fast -> {
-                    startActivity(Intent(applicationContext, GuardianThinkFastActivity::class.java))
+                    startActivity(Intent(applicationContext, ThinkFastActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
                 }
                 R.id.bottom_accounts -> {
-                    startActivity(Intent(applicationContext, GuardianMainSettings::class.java))
+                    startActivity(Intent(applicationContext, MainSettingsTBI::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
@@ -85,7 +85,10 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun DailyDiaryScreen() {
-        val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
+        val state = rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden,
+            skipHalfExpanded = true
+        )
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         var tabPage by remember { mutableStateOf(TabPage.Activity) }
@@ -93,7 +96,16 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
         Scaffold(
             bottomBar = { BottomBarFiller() },
             topBar = {
-                DiaryTopAppBarGuardian(
+                DiaryTopAppBar(
+                    clickCreate = {
+                        scope.launch {
+                            if (state.currentValue == ModalBottomSheetValue.Hidden) {
+                                state.animateTo(ModalBottomSheetValue.Expanded, tween(500))
+                            } else {
+                                state.animateTo(ModalBottomSheetValue.Hidden, tween(500))
+                            }
+                        }
+                    },
                     clickFilter = {
                         Toast.makeText(context, "Filtering...", Toast.LENGTH_SHORT).show()
                     }
@@ -109,50 +121,49 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
             ) {
                 ModalBottomSheetLayout(
                     sheetContent = {
-//                        Surface(modifier = Modifier.background(MaterialTheme.colors.primaryVariant)) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .fillMaxWidth()
-//                                    .height(40.dp)
-//                                    .background(MaterialTheme.colors.secondary),
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                Text(
-//                                    "+ Create",
-//                                    style = MaterialTheme.typography.h6,
-//                                    modifier = Modifier.padding(6.dp)
-//                                )
-//                            }
-//                        }
+                        Surface(modifier = Modifier.background(MaterialTheme.colors.primaryVariant)) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .background(MaterialTheme.colors.secondary),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "+ Create",
+                                    style = MaterialTheme.typography.h6,
+                                    modifier = Modifier.padding(6.dp)
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.padding(vertical = 6.dp))
                         ActionSheetItem(
-                            context = context,
                             icon = R.drawable.daily_activity,
                             text = "Daily activity",
                             onStart = {
-                                val intent = Intent(this@GuardianDailyDairyActivity, DailyActivity::class.java)
+                                val intent =
+                                    Intent(this@DailyDiaryActivity, DailyActivity::class.java)
                                 startActivity(intent)
                             }
                         )
                         Spacer(modifier = Modifier.padding(vertical = 5.dp))
                         ActionSheetItem(
-                            context = context,
                             icon = R.drawable.daily_log,
                             text = "Daily log",
                             onStart = {
-                                val intent = Intent(this@GuardianDailyDairyActivity, DailyLogActivity::class.java)
+                                val intent =
+                                    Intent(this@DailyDiaryActivity, DailyLogActivity::class.java)
                                 startActivity(intent)
                             }
                         )
-//                        Spacer(modifier = Modifier.padding(vertical = 5.dp))
-//                        ActionSheetItem(
-//                            context = context,
-//                            icon = R.drawable.moment_snap,
-//                            text = "Moment snap",
-//                            onStart = {
-//
-//                            }
-//                        )
+                        Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                        ActionSheetItem(
+                            icon = R.drawable.moment_snap,
+                            text = "Moment snap",
+                            onStart = {
+
+                            }
+                        )
                     },
                     sheetBackgroundColor = MaterialTheme.colors.background,
                     sheetElevation = 5.dp,
@@ -175,6 +186,8 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
 
                                     Text("Daily Activities", color = MaterialTheme.colors.onSurface)
                                     // fixme: add composable list here
+
+
                                 }
 
                                 BackHandler(
@@ -182,7 +195,10 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                                             state.currentValue == ModalBottomSheetValue.Expanded),
                                     onBack = {
                                         scope.launch {
-                                            state.animateTo(ModalBottomSheetValue.Hidden, tween(400))
+                                            state.animateTo(
+                                                ModalBottomSheetValue.Hidden,
+                                                tween(400)
+                                            )
                                         }
                                     }
                                 )
@@ -197,9 +213,10 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-
                                     Text("Daily Activity", color = MaterialTheme.colors.onSurface)
                                     // fixme: add composable list here
+
+
                                 }
 
                                 BackHandler(
@@ -207,7 +224,10 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                                             state.currentValue == ModalBottomSheetValue.Expanded),
                                     onBack = {
                                         scope.launch {
-                                            state.animateTo(ModalBottomSheetValue.Hidden, tween(300))
+                                            state.animateTo(
+                                                ModalBottomSheetValue.Hidden,
+                                                tween(300)
+                                            )
                                         }
                                     }
                                 )
@@ -220,15 +240,12 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
     }
 
     @Composable
-    fun ActionSheetItem(context: Context, icon: Int, text: String, onStart: () -> Unit) {
+    fun ActionSheetItem(icon: Int, text: String, onStart: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Channel: $text", Toast.LENGTH_SHORT)
-                        .show()
                     onStart()
                 },
             verticalAlignment = Alignment.CenterVertically
@@ -240,7 +257,11 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                 tint = MaterialTheme.colors.onSurface
             )
             Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-            Text(text, style = MaterialTheme.typography.button, color = MaterialTheme.colors.onSurface)
+            Text(
+                text,
+                style = MaterialTheme.typography.button,
+                color = MaterialTheme.colors.onSurface
+            )
         }
     }
 
