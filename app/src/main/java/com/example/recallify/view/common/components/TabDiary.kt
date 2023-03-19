@@ -35,7 +35,7 @@ fun TabDiary(selectTabIndex: Int, onSelectTab: (TabPage) -> Unit) {
                 icon = {
                     Icon(
                         painterResource(id = tabPage.icon),
-                        contentDescription = "tab icon(activity or log)",
+                        contentDescription = "Tab Icon (Activity or Log)",
                         modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colors.onSurface
                     )

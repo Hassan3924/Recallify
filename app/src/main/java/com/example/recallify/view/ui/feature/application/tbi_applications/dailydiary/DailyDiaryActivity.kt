@@ -1,15 +1,23 @@
 package com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary
 
+import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -19,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryTopAppBar
@@ -34,9 +43,25 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.thinkf
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class DailyDiaryActivity : AppCompatActivity() {
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_daily_diary)
@@ -83,9 +108,11 @@ class DailyDiaryActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun DailyDiaryScreen() {
+
         val state = rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
             skipHalfExpanded = true
@@ -93,6 +120,46 @@ class DailyDiaryActivity : AppCompatActivity() {
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         var tabPage by remember { mutableStateOf(TabPage.Activity) }
+
+        val database = Firebase.database
+        val auth = Firebase.auth
+        val currentUser = auth.currentUser?.uid!!
+//        val ref = database.getReference("users").child(currentUser).child("conversation-summary").child(getCurrentDate())
+
+        val children = remember { mutableStateListOf<DataSnapshot>() }
+
+        var isLoading by remember { mutableStateOf(true) }
+
+        var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+
+
+//        Log.d("DatePicked", "$selectedDate")
+//        Log.d("Children", children.joinToString())
+
+        LaunchedEffect(selectedDate) {
+
+            val ref = database.getReference("users").child(currentUser).child("conversation-summary").child(selectedDate.toString())
+
+            ref.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("Snapshot", snapshot.toString()) // add this line
+
+                    children.clear()
+
+                    snapshot.children.forEach { child ->
+                        children.add(child)
+                    }
+
+                    isLoading = false
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    isLoading = false
+                }
+            })
+        }
+
 
         Scaffold(
             bottomBar = { BottomBarFiller() },
@@ -108,7 +175,10 @@ class DailyDiaryActivity : AppCompatActivity() {
                         }
                     },
                     clickFilter = {
-                        Toast.makeText(context, "Filtering...", Toast.LENGTH_SHORT).show()
+                        pickDate(context = context) {
+                            selectedDate = it.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+                        }
                     }
                 )
             },
@@ -133,11 +203,12 @@ class DailyDiaryActivity : AppCompatActivity() {
                                 Text(
                                     "+ Create",
                                     style = MaterialTheme.typography.h6,
-                                    modifier = Modifier.padding(6.dp)
+                                    modifier = Modifier.padding(0.dp)
                                 )
                             }
                         }
                         Spacer(modifier = Modifier.padding(vertical = 6.dp))
+
                         ActionSheetItem(
                             icon = R.drawable.daily_activity,
                             text = "Summarised Text",
@@ -223,11 +294,40 @@ class DailyDiaryActivity : AppCompatActivity() {
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text("Daily Activity", color = MaterialTheme.colors.onSurface)
-                                    // fixme: add composable list here
+                                    when {
 
+                                        children.isNullOrEmpty() -> {
 
+                                            Text(
+                                                text = "No data available for ${selectedDate.format(DateTimeFormatter.ISO_DATE)}",
+                                                modifier = Modifier.padding(16.dp),
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+
+                                        else -> {
+                                            LazyColumn {
+
+                                                items(children) { child ->
+                                                    Card(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(16.dp),
+                                                        elevation = 8.dp,
+                                                    ) {
+                                                        Text(
+                                                            text = child.value.toString(),
+                                                            modifier = Modifier.padding(16.dp)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
+
+
+
 
                                 BackHandler(
                                     enabled = (state.currentValue == ModalBottomSheetValue.HalfExpanded ||
@@ -249,8 +349,24 @@ class DailyDiaryActivity : AppCompatActivity() {
         }
     }
 
+    fun pickDate(context: Context, onDateSelected: (Date) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val datePicker = DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                onDateSelected(calendar.time)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePicker.show()
+    }
+
     @Composable
     fun ActionSheetItem(icon: Int, text: String, onStart: () -> Unit) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -276,6 +392,8 @@ class DailyDiaryActivity : AppCompatActivity() {
     }
 
 
+
+
     @Composable
     fun ItemCount(text: String) {
         Text(
@@ -286,6 +404,16 @@ class DailyDiaryActivity : AppCompatActivity() {
                 .padding(12.dp)
                 .fillMaxWidth()
         )
+    }
+
+
+
+    fun getCurrentDate(): String {
+
+        val date = Date().time
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return formatter.format(date)
+
     }
 
 }

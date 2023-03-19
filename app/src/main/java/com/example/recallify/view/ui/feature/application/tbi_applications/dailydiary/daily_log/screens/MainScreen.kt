@@ -40,7 +40,8 @@ fun MainScreen(
     val reference: DatabaseReference = database.reference.child("users")
     val auth: FirebaseAuth = Firebase.auth
     val currentUser = auth.currentUser?.uid!!
-    reference.child(currentUser).child("daily-diary-recordings").child(getCurrentDate())
+    val currentDate = getCurrentDate().replace("-", "_")
+    reference.child(currentUser).child("daily-diary-recordings").child(currentDate)
     reference.child(currentUser).child("daily-diary-recordings")
         .child(getCurrentDate())
 
@@ -147,6 +148,7 @@ fun MainScreen(
 
 
 fun getCurrentDate(): String {
+
     val date = Date().time
     val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     return formatter.format(date)

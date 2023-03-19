@@ -100,7 +100,6 @@ fun RecordRow(movie: String) {
     ) {
         Text(modifier = Modifier.padding(10.dp), text = movie)
     }
-
 }
 
 
