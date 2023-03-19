@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.AccountsActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
@@ -66,7 +67,7 @@ class MainSettingsTBI : AppCompatActivity() {
                 }
 
                 R.id.bottom_daily_diary -> {
-                    startActivity(Intent(applicationContext, DailyActivity::class.java))
+                    startActivity(Intent(applicationContext, DailyDiaryActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
