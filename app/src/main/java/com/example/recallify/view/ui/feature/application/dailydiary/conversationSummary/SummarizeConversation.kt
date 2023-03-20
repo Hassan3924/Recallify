@@ -35,7 +35,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
+//
 class SummarizeConversation : AppCompatActivity() {
     lateinit var speechRecognizer : SpeechRecognizer
     lateinit var mainBinding:ActivitySummarizeConversationBinding
