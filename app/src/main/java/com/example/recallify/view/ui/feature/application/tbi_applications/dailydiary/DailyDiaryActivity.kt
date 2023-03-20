@@ -141,7 +141,9 @@ class DailyDiaryActivity : AppCompatActivity() {
             val ref = database.getReference("users").child(currentUser).child("conversation-summary").child(selectedDate.toString())
 
             ref.addValueEventListener(object : ValueEventListener {
+
                 override fun onDataChange(snapshot: DataSnapshot) {
+
                     Log.d("Snapshot", snapshot.toString()) // add this line
 
                     children.clear()

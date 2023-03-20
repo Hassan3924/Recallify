@@ -1,15 +1,22 @@
 package com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -19,13 +26,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.memory.MemoryCache
 import com.example.recallify.R
+import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.DiaryTopAppBarGuardian
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
+import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
+import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
 import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
@@ -33,9 +48,24 @@ import com.example.recallify.view.ui.feature.guradian_application.guardianthinkf
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
 
-class GuardianDailyDairyActivity  : AppCompatActivity(){
+class GuardianDailyDairyActivity  : AppCompatActivity() {
+
+    private var tbi_uid : String = ""
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_daily_diary)
@@ -77,25 +107,115 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
         val dailyDiaryCompose: ComposeView = findViewById(R.id.activity_daily_diary_screen)
         dailyDiaryCompose.setContent {
             RecallifyTheme {
-                DailyDiaryScreen()
+                GuardianDailyDiaryScreen()
             }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
-    fun DailyDiaryScreen() {
-        val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
+    fun GuardianDailyDiaryScreen() {
+
+        val state = rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden,
+            skipHalfExpanded = true
+        )
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         var tabPage by remember { mutableStateOf(TabPage.Activity) }
+
+        val database = Firebase.database
+        val auth = Firebase.auth
+        val currentUser = auth.currentUser?.uid!!
+//        val ref = database.getReference("users").child(currentUser).child("conversation-summary").child(getCurrentDate())
+
+        val children = remember { mutableStateListOf<DataSnapshot>() }
+
+        var isLoading by remember { mutableStateOf(true) }
+
+        var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+
+        var tbiEmail : String = ""
+
+        var tbiGULinkID : String = ""
+
+
+//        Log.d("DatePicked", "$selectedDate")
+//        Log.d("Children", children.joinToString())
+
+        LaunchedEffect(selectedDate, tbiEmail, tbiGULinkID) {
+
+
+
+            // Getting the TBI Email from Guardian account
+            var tbiEmailRef  = database.getReference("users").child(currentUser).child("profile").child("TBI Email")
+
+            // Getting the TBI ID from Guardian's Link Table
+
+            val conversationSum = database.getReference("users").child(tbi_uid).child("conversation-summary").child(selectedDate.toString())
+
+            Log.d("GuardianLinkRef2", "$tbi_uid")
+
+            tbiEmailRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    tbiEmail = snapshot.getValue(String::class.java).toString()
+                    Log.d("GuardianLink", "$tbiEmail")
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error retrieving data", error.toException())
+                }
+            })
+
+
+            val guardianLinkRef = database.getReference("users").child("GuardiansLinkTable").child(currentUser).child("TBI_ID")
+
+            guardianLinkRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    tbi_uid = snapshot.getValue(String::class.java).toString()
+                    Log.d("GuardianLinkRef", "$tbiGULinkID")
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+
+
+            conversationSum.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("Snapshot", snapshot.toString()) // add this line
+
+                    children.clear()
+
+                    snapshot.children.forEach { child ->
+                        children.add(child)
+                    }
+
+                    isLoading = false
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    isLoading = false
+                }
+            })
+        }
 
         Scaffold(
             bottomBar = { BottomBarFiller() },
             topBar = {
                 DiaryTopAppBarGuardian(
+
                     clickFilter = {
-                        Toast.makeText(context, "Filtering...", Toast.LENGTH_SHORT).show()
+                        pickDate(context = context) {
+                            selectedDate = it.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+                        }
                     }
                 )
             },
@@ -107,64 +227,10 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                     .padding(paddingValues = paddingValues),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ModalBottomSheetLayout(
-                    sheetContent = {
-//                        Surface(modifier = Modifier.background(MaterialTheme.colors.primaryVariant)) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .fillMaxWidth()
-//                                    .height(40.dp)
-//                                    .background(MaterialTheme.colors.secondary),
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                Text(
-//                                    "+ Create",
-//                                    style = MaterialTheme.typography.h6,
-//                                    modifier = Modifier.padding(6.dp)
-//                                )
-//                            }
-//                        }
-                        Spacer(modifier = Modifier.padding(vertical = 6.dp))
-                        ActionSheetItem(
-                            context = context,
-                            icon = R.drawable.daily_activity,
-                            text = "Daily activity",
-                            onStart = {
-                                val intent = Intent(this@GuardianDailyDairyActivity, DailyActivity::class.java)
-                                startActivity(intent)
-                            }
-                        )
-                        Spacer(modifier = Modifier.padding(vertical = 5.dp))
-                        ActionSheetItem(
-                            context = context,
-                            icon = R.drawable.daily_log,
-                            text = "Daily log",
-                            onStart = {
-                                val intent = Intent(this@GuardianDailyDairyActivity, DailyLogActivity::class.java)
-                                startActivity(intent)
-                            }
-                        )
-//                        Spacer(modifier = Modifier.padding(vertical = 5.dp))
-//                        ActionSheetItem(
-//                            context = context,
-//                            icon = R.drawable.moment_snap,
-//                            text = "Moment snap",
-//                            onStart = {
-//
-//                            }
-//                        )
-                    },
-                    sheetBackgroundColor = MaterialTheme.colors.background,
-                    sheetElevation = 5.dp,
-                    sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                    sheetState = state,
-
-                    ) {
                     Column {
                         TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
                         when (tabPage.ordinal) {
                             0 -> {
-                                ItemCount(text = "10")
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -175,6 +241,8 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
 
                                     Text("Daily Activities", color = MaterialTheme.colors.onSurface)
                                     // fixme: add composable list here
+
+
                                 }
 
                                 BackHandler(
@@ -182,14 +250,16 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                                             state.currentValue == ModalBottomSheetValue.Expanded),
                                     onBack = {
                                         scope.launch {
-                                            state.animateTo(ModalBottomSheetValue.Hidden, tween(400))
+                                            state.animateTo(
+                                                ModalBottomSheetValue.Hidden,
+                                                tween(400)
+                                            )
                                         }
                                     }
                                 )
 
                             }
                             1 -> {
-                                ItemCount(text = "20")
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -197,38 +267,84 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
+                                    when {
 
-                                    Text("Daily Activity", color = MaterialTheme.colors.onSurface)
-                                    // fixme: add composable list here
+                                        children.isNullOrEmpty() -> {
+
+                                            Text(
+                                                text = "No data available for ${selectedDate.format(DateTimeFormatter.ISO_DATE)}",
+                                                modifier = Modifier.padding(16.dp),
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+
+                                        else -> {
+                                            LazyColumn {
+
+                                                items(children) { child ->
+                                                    Card(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(16.dp),
+                                                        elevation = 8.dp,
+                                                    ) {
+                                                        Text(
+                                                            text = child.value.toString(),
+                                                            modifier = Modifier.padding(16.dp)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
+
+
+
 
                                 BackHandler(
                                     enabled = (state.currentValue == ModalBottomSheetValue.HalfExpanded ||
                                             state.currentValue == ModalBottomSheetValue.Expanded),
                                     onBack = {
                                         scope.launch {
-                                            state.animateTo(ModalBottomSheetValue.Hidden, tween(300))
+                                            state.animateTo(
+                                                ModalBottomSheetValue.Hidden,
+                                                tween(300)
+                                            )
                                         }
                                     }
                                 )
                             }
                         }
-                    }
+
                 }
             }
         }
     }
 
+    fun pickDate(context: Context, onDateSelected: (Date) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val datePicker = DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                onDateSelected(calendar.time)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePicker.show()
+    }
+
     @Composable
-    fun ActionSheetItem(context: Context, icon: Int, text: String, onStart: () -> Unit) {
+    fun ActionSheetItem(icon: Int, text: String, onStart: () -> Unit) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Channel: $text", Toast.LENGTH_SHORT)
-                        .show()
                     onStart()
                 },
             verticalAlignment = Alignment.CenterVertically
@@ -240,9 +356,15 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                 tint = MaterialTheme.colors.onSurface
             )
             Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-            Text(text, style = MaterialTheme.typography.button, color = MaterialTheme.colors.onSurface)
+            Text(
+                text,
+                style = MaterialTheme.typography.button,
+                color = MaterialTheme.colors.onSurface
+            )
         }
     }
+
+
 
 
     @Composable
@@ -255,6 +377,16 @@ class GuardianDailyDairyActivity  : AppCompatActivity(){
                 .padding(12.dp)
                 .fillMaxWidth()
         )
+    }
+
+
+
+    fun getCurrentDate(): String {
+
+        val date = Date().time
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return formatter.format(date)
+
     }
 
 }

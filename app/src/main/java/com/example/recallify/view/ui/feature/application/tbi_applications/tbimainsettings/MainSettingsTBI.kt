@@ -181,7 +181,7 @@ class MainSettingsTBI : AppCompatActivity() {
                                             finish()
                                         })
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
-                                        .fillMaxWidth()
+                                        .fillMaxWidth() 
                                 ) {
                                     Text(text = "Account Setting")
                                 }

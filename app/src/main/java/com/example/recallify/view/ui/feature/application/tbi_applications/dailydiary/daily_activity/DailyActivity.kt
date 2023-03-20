@@ -2,6 +2,7 @@ package com.example.recallify.view.ui.feature.application.tbi_applications.daily
 
 import android.Manifest
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -125,6 +126,7 @@ class DailyActivity : AppCompatActivity() {
                         Button(onClick = {
                             if (permissionState.status.isGranted) {
                                 galleryLauncher.launch("image/*")
+                                Log.d("Status", "$permissionState.status")
                             } else
                                 permissionState.launchPermissionRequest()
                         }) {
