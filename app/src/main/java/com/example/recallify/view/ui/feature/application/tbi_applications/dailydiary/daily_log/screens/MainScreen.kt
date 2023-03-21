@@ -147,10 +147,15 @@ fun MainScreen(
 }
 
 
+/**
+ * This gets the current date of when a log or activity is being made.
+ *
+ * @return The formatted date in format **YYYY-MM-DD, year-month-date**.
+ *
+ * @author Hassan A
+ * */
 fun getCurrentDate(): String {
-
     val date = Date().time
     val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     return formatter.format(date)
-
 }

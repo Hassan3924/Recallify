@@ -15,42 +15,35 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainViewModel : ViewModel() {
+
     private var counter: Int = 1
-
-    private fun getCurrentDate(): String {
-
-        val date = Date().time
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return formatter.format(date)
-
-    }
-
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val reference: DatabaseReference = database.reference.child("users")
     private val auth: FirebaseAuth = Firebase.auth
     private val currentUser = auth.currentUser?.uid!!
-
     private var state by mutableStateOf(MainScreenState())
 
-    fun changeTextValue(text: String) {
-
-        var modifiedText: String
-
-        viewModelScope.launch {
-
-            state = state.copy(
-                text = text
-            )
-
-            modifiedText = text.replace("[", "").replace("]", "")
-            reference.child(currentUser).child("daily-diary-recordings").child(getCurrentDate())
-                .child(counter.toString()).setValue(modifiedText)
-            counter += 1
-
-        }
-
-
+    private fun getCurrentDate(): String {
+        val date = Date().time
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return formatter.format(date)
     }
 
+    fun changeTextValue(text: String) {
+        var modifiedText: String
+        viewModelScope.launch {
+            state = state.copy(text = text)
+            modifiedText = text
+                .replace("[", "")
+                .replace("]", "")
+
+            reference.child(currentUser)
+                .child("daily-diary-recordings")
+                .child(getCurrentDate())
+                .child(counter.toString())
+                .setValue(modifiedText)
+            counter += 1
+        }
+    }
 }
 

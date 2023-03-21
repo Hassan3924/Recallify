@@ -121,9 +121,7 @@ class RegisterActivity : AppCompatActivity() {
         }
         val errors = mutableListOf<String>()
 
-        PIN = FourNumberGenerator()
-
-
+        PIN = fourNumberGenerator()
 
         Scaffold(
             scaffoldState = rememberScaffoldState(),
@@ -497,8 +495,12 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *
+     * @author hassan
+     * */
     @Composable
-    fun FourNumberGenerator(): String {
+    fun fourNumberGenerator(): String {
         val numbers = remember { mutableStateListOf<Int>() }
         while (numbers.size < 4) {
             val newNumber = (0..9).random()
