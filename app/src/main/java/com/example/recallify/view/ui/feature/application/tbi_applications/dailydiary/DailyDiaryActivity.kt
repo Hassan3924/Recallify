@@ -44,6 +44,7 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.dailyd
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.resource.modules.ActivityDataState
@@ -131,7 +132,7 @@ class DailyDiaryActivity : AppCompatActivity() {
 
                 // path to the Accounts screen
                 R.id.bottom_accounts -> {
-                    startActivity(Intent(applicationContext, AccountsActivity::class.java))
+                    startActivity(Intent(applicationContext, MainSettingsTBI::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
