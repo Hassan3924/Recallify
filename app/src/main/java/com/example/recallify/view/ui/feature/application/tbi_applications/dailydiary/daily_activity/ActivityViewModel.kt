@@ -125,7 +125,6 @@ class ActivityViewModel : ViewModel() {
      * preparation for retrieving data from the database. The functions called are;
      *
      * 1. fetchDataFromFirebase()
-     * 2. fetchConfigurationState()
      *
      * @author enoabasi
      * */
@@ -168,7 +167,7 @@ class ActivityViewModel : ViewModel() {
      *
      * @author enoabasi
      * */
-    private fun onImageChange(images: List<Uri>?) {
+    private fun onImageChange(images: List<Uri?>) {
         state = state.copy(images = images)
     }
 
@@ -230,7 +229,7 @@ class ActivityViewModel : ViewModel() {
      *
      * @author
      * */
-    private fun addImageToFirebaseStorage(imageUri: List<Uri?>) {
+    fun addImageToFirebaseStorage(imageUri: List<Uri?>) {
         try {
             Response.Loading
 
@@ -240,6 +239,7 @@ class ActivityViewModel : ViewModel() {
              * @author enoabasi
              * */
             val imageFolder = storage
+            val downloadUris : MutableList<Uri?> = emptyList<Uri?>().toMutableList()
 
             for (uri in imageUri.indices) {
 
@@ -256,13 +256,15 @@ class ActivityViewModel : ViewModel() {
                  * @author enoabasi
                  * */
                 val imageName = imageFolder
-                    .child("Image${singleImage?.lastPathSegment}")
+                    .child("${singleImage?.lastPathSegment}")
 
                 imageName.putFile(singleImage!!).addOnSuccessListener {
                     imageName.downloadUrl.addOnSuccessListener {
                         Response.Success(it)
+                        downloadUris.add(it)
                     }
                 }
+                addImageToFirebaseDatabase(downloadUris)
             }
         } catch (message: Exception) {
             Response.Failure(message)
@@ -277,13 +279,13 @@ class ActivityViewModel : ViewModel() {
      *
      * @author enoabasi
      * */
-    fun addImageToFirebaseDatabase(downloadUrl: List<Uri?>) {
+    private fun addImageToFirebaseDatabase(downloadUrl: List<Uri?>) {
         try {
             Response.Loading
 
             for (url in downloadUrl) {
                 database
-                    .setValue(
+                    .updateChildren(
                         hashMapOf<String, Any>(
                             "/$userID/${getCurrentDate()}/${activityKeyIncrementer}" to url!!
                         )
@@ -339,11 +341,10 @@ class ActivityViewModel : ViewModel() {
      * @author enoabasi
      * */
     fun updateSelectedImageList(listOfImages: List<Uri>) {
-        val updatedImageList = state.images?.toMutableList()
+        val updatedImageList = state.images.toMutableList()
         viewModelScope.launch {
-            updatedImageList!! += listOfImages
+            updatedImageList += listOfImages
             onImageChange(updatedImageList.distinct())
-            addImageToFirebaseStorage(updatedImageList)
         }
     }
 
@@ -355,10 +356,10 @@ class ActivityViewModel : ViewModel() {
      * @author enoabasi
      * */
     fun onItemRemove(index: Int) {
-        val updatedImageList = state.images?.toMutableList()
+        val updatedImageList = state.images.toMutableList()
         viewModelScope.launch {
-            updatedImageList?.removeAt(index)
-            onImageChange(images = updatedImageList?.distinct())
+            updatedImageList.removeAt(index)
+            onImageChange(images = updatedImageList.distinct())
         }
     }
 
@@ -375,7 +376,7 @@ class ActivityViewModel : ViewModel() {
      * @author enoabasi
      * */
     fun createActivity(
-        scaffoldState: ScaffoldState
+        scaffoldState: ScaffoldState,
     ) = viewModelScope.launch {
         try {
             if (!validateActivityPost()) {
@@ -384,8 +385,6 @@ class ActivityViewModel : ViewModel() {
                     duration = SnackbarDuration.Short
                 )
             }
-
-//            response.value = ActivityDataState.Loading
 
             val activityState = ActivityState(
                 userId = userID,

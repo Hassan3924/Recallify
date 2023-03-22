@@ -46,7 +46,8 @@ class SummarizeConversation : AppCompatActivity() {
 
     var conversationText=""
 
-var response_saved = ""
+    var responseSaved = ""
+
     val database = FirebaseDatabase.getInstance()
 
     val auth = FirebaseAuth.getInstance()
@@ -69,7 +70,7 @@ var response_saved = ""
     val currentTime = timeFormatted.toString()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val formatted = current.format(formatter)
+    val formatted: String = current.format(formatter)
 
     @RequiresApi(Build.VERSION_CODES.O)
     var currentDate:String = formatted.toString()
@@ -116,9 +117,9 @@ var response_saved = ""
                 Toast.makeText(this,"Please enter the name of the person who you talked to",Toast.LENGTH_SHORT).show()
             }
             else {
-                SendSummary(response_saved, person_name)
+                SendSummary(responseSaved, person_name)
                 Toast.makeText(this, "Saved Successfully!", Toast.LENGTH_SHORT).show()
-                Log.d("ResponseSummary", response_saved)
+                Log.d("ResponseSummary", responseSaved)
                 mainBinding.textViewResult.text = ""
                 mainBinding.EnterName.text.clear()
             }
@@ -248,7 +249,7 @@ var response_saved = ""
 //               mainBinding.summaryTextView.text = response
 //                Log.d("ResponseSummary2",response)
 
-                response_saved=response
+                responseSaved=response
                 //mainBinding.buttonDone.setOnClickListener {
                 //SendSummary(response)
                 //Toast.makeText(this,"Saved To Database",Toast.LENGTH_SHORT).show()
@@ -287,10 +288,11 @@ var response_saved = ""
 //                    if(childCount==0){
 //                        childCount=childCount+1
 //                    }
-                    childCount=childCount + 1
+                    childCount += 1
 
                  //   var name_summary = "Today on $currentDate at $currentTime  I talked to " +mainBinding.EnterName.text.toString() + " and here is the summarized conversation" + response
-                    var name_summary = "Today on $currentDate at $currentTime  I talked to $person_name and here is the summarized conversation" + response
+                    var name_summary =
+                        "Today on $currentDate at $currentTime  I talked to $person_name and here is the summarized conversation$response"
                     dataRef.child("users").child(uid).child("conversation-summary").child(currentDate).child(childCount.toString()).setValue(name_summary)
                     //mainBinding.textViewResult.text = ""
 

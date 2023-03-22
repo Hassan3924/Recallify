@@ -25,7 +25,7 @@ import java.util.*
 data class ActivityState(
     val userId: String? = "",
     val activityId: String? = "",
-    val images: List<Uri>? = emptyList(),
+    val images: List<Uri?> = emptyList(),
     var title: String? = "",
     var description: String? = "",
     val location: String? = "",

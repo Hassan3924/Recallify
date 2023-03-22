@@ -4,9 +4,9 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
@@ -39,14 +38,14 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 class DailyActivity : AppCompatActivity() {
 
-//    /**
-//     * The view-model of Daily Dairy Activity.
-//     *
-//     * @since 1.0.0
-//     *
-//     * @author enoabasi
-//     * */
-//    private val activityViewModel: ActivityViewModel by viewModels()
+    /**
+     * The view-model of Daily Dairy Activity.
+     *
+     * @since 1.0.0
+     *
+     * @author enoabasi
+     * */
+    private val activityViewModel: ActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +61,8 @@ class DailyActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    fun DailyActivityScreen(activityViewModel: ActivityViewModel = viewModel()) {
+    fun DailyActivityScreen() {
+
         /**
          * @author enoabasi
          * */
@@ -139,14 +139,6 @@ class DailyActivity : AppCompatActivity() {
          * */
         val context = LocalContext.current
 
-        /*
-            ██╗      █████╗ ██╗   ██╗ ██████╗ ██╗   ██╗████████╗
-            ██║     ██╔══██╗╚██╗ ██╔╝██╔═══██╗██║   ██║╚══██╔══╝
-            ██║     ███████║ ╚████╔╝ ██║   ██║██║   ██║   ██║
-            ██║     ██╔══██║  ╚██╔╝  ██║   ██║██║   ██║   ██║
-            ███████╗██║  ██║   ██║   ╚██████╔╝╚██████╔╝   ██║
-            ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝    ╚═╝
-        */
         Scaffold(
             scaffoldState = rememberScaffoldState(),
             topBar = { DiaryActivityTopAppBar() },
@@ -176,7 +168,7 @@ class DailyActivity : AppCompatActivity() {
                             .fillMaxWidth()
                             .height(screenHeight * 0.35f)
                     ) {
-                        if (state.images?.isEmpty() == true) {
+                        if (state.images.isEmpty()) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
@@ -185,18 +177,22 @@ class DailyActivity : AppCompatActivity() {
                             }
                         }
 
-                        if (state.images?.isNotEmpty() == true) {
+                        if (state.images.isNotEmpty()) {
                             LazyRow(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .align(Alignment.Center)
                             ) {
                                 itemsIndexed(state.images) { index, uri ->
-                                    ImagePreviewItem(uri = uri,
-                                        height = screenHeight * 0.5f,
-                                        width = screenWidth * 0.6f,
-                                        onClick = { activityViewModel.onItemRemove(index) }
-                                    )
+                                    if (uri != null) {
+                                        ImagePreviewItem(uri = uri,
+                                            height = screenHeight * 0.5f,
+                                            width = screenWidth * 0.6f,
+                                            onClick = { activityViewModel.onItemRemove(index) }
+                                        )
+                                    } else {
+                                        Text(text = "no image to display")
+                                    }
                                     Spacer(modifier = Modifier.width(3.dp))
                                 }
                             }
@@ -209,7 +205,6 @@ class DailyActivity : AppCompatActivity() {
                     ) {
                         Button(onClick = {
                             if (permissionState.status.isGranted) {
-                                Toast.makeText(context,"The button is working", Toast.LENGTH_SHORT).show()
                                 galleryLauncher.launch("image/*")
                             } else
                                 permissionState.launchPermissionRequest()
@@ -389,12 +384,9 @@ class DailyActivity : AppCompatActivity() {
                                     activityViewModel.addImageToStorageResponse) {
                                     is Response.Loading -> {}
                                     is Response.Success -> {
-
                                         val imageList = listOf(addImageToStorageResponse.data)
-                                        activityViewModel.addImageToFirebaseDatabase(downloadUrl = imageList)
-                                            .apply {
-                                                activityViewModel.createActivity(scaffoldState = scaffoldState)
-                                            }
+                                        activityViewModel.addImageToFirebaseStorage(imageList)
+                                        activityViewModel.createActivity(scaffoldState = scaffoldState)
                                         postDialog = false
 
                                     }
