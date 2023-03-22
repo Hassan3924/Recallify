@@ -1,25 +1,20 @@
 package com.example.recallify.view.ui.feature.application.tbi_applications.dashboard
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
@@ -29,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.dashboard.NotificationService
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
@@ -41,9 +37,38 @@ import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.example.recallify.view.ui.theme.light_Primary
 import com.example.recallify.view.ui.theme.light_Secondary
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.TopCenter
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
+import com.example.recallify.view.common.components.TabPage
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.PropertyName
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import okio.ProtocolException
+import java.time.LocalDate
+import java.time.format.DateTimeParseException
+import kotlin.math.roundToInt
 
 class DashboardActivity : AppCompatActivity() {
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
@@ -92,8 +117,32 @@ class DashboardActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun DashBoardScreen() {
+
+        val isLoading = remember { mutableStateOf(true) }
+
+        var showDescription by remember {
+            mutableStateOf(false)
+        }
+
+        var selectedBar by remember {
+            mutableStateOf(-1)
+        }
+
+        val auth: FirebaseAuth = Firebase.auth
+
+        val chartData = remember { mutableStateOf(emptyList<BarCharInput>()) }
+
+        LaunchedEffect(Unit) {
+            FirebaseChartData { fetchedData ->
+                chartData.value = fetchedData
+                isLoading.value = false
+            }
+        }
+
+
         Scaffold(
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
@@ -108,17 +157,239 @@ class DashboardActivity : AppCompatActivity() {
                         .padding(top = 8.dp)
                         .padding(horizontal = 16.dp)
                         .padding(4.dp)
+                        .fillMaxWidth()
                 ) {
-                    Column {
-                        HeaderUI()
-                        TaskCardUI()
-                        StatisticUI()
-                        DescriptionUI()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(30.dp),
+                        contentAlignment = TopCenter
+                    ) {
+                        Column(
+                            modifier = Modifier,
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "Think Fast Progress",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                fontSize = 30.sp,
+                                textAlign = TextAlign.Center
+                            )
+
+                            Text(text = "Score",
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.Black,
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center)
+
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                if(isLoading.value) {
+                                    CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                                }
+                                else {
+                                    BarChart(
+                                        // First value as date, second value as score of that date
+                                        chartData.value,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        selectedBar = selectedBar
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
+        Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
+
+        val auth: FirebaseAuth = Firebase.auth
+
+        val database =
+            Firebase.database.reference.child("analyzeProgressTable").child(auth.currentUser?.uid!!)
+        val colors = listOf<Color>(
+            Color.White,
+            Color.Gray,
+            Color.Yellow,
+            Color.Cyan,
+            Color.Magenta,
+            Color.Blue
+        )
+
+        val sevenDays = (0..5).map { LocalDate.now().minusDays(it.toLong())}
+
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                Log.d("FirebaseChartData", "onDataChange called")
+
+                val rawData = snapshot.children.toList()
+                Log.d("FirebaseChartData", "User data: ${snapshot.getValue()}")
+
+
+                val barCharInputData = sevenDays.map { date ->
+                    val dataSnapshot = snapshot.child(date.toString())
+                    val totalCorrect =
+                        dataSnapshot.child("totalCorrect").getValue(Int::class.java) ?: 0
+                    val totalPlay = dataSnapshot.child("totalPlay").getValue(Int::class.java) ?: 0
+
+                    val score = totalCorrect
+
+                    Log.d(
+                        "FirebaseChartData2",
+                        "Fetched Date: $date, totalCorrect: $totalCorrect, totalPlay: $totalPlay"
+                    )
+
+                    BarCharInput(
+                        score,
+                        date.toString(),
+                        colors[sevenDays.indexOf(date) % colors.size],
+                        date.toString()
+                    )
+                }.filterNotNull()
+
+                Log.d("FirebaseChartData", "Fetched data: $barCharInputData")
+
+                onDataFetched(barCharInputData)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseChartDataonCancelled", "onCalled called ${error.message}")
+            }
+
+        })
+    }
+
+
+    @Composable
+    fun BarChart(
+        inputList: List<BarCharInput>,
+        modifier: Modifier = Modifier,
+        selectedBar: Int,
+
+    ) {
+
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            val maxValue by remember {
+                mutableStateOf(inputList.maxOfOrNull { it.value } ?: 0)
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+
+                inputList.forEachIndexed { index, input ->
+
+                    Bar(
+                        modifier = Modifier,
+                        primaryColor = input.color,
+                        value = input.value,
+                        maxValue = maxValue,
+                        description = input.description,
+                        date = input.date,
+                        showDescription = selectedBar == index
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun Bar(
+        modifier: Modifier = Modifier,
+        primaryColor: Color,
+        value: Int,
+        maxValue : Int,
+        description: String,
+        date: String,
+        showDescription: Boolean
+    ) {
+
+        val barWidth = 40.dp
+        val minHeight = 16.dp
+        val barHeight = maxOf(minHeight, if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp)
+
+
+        Log.d("BarHeight", "Value: $value, MaxValue: $maxValue, BarHeight: $barHeight")
+
+        Column(
+            modifier = modifier
+                .height(300.dp)
+                .width(barWidth)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Box(
+                modifier = modifier
+                    .height(barHeight)
+                    .width(barWidth)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Gray, primaryColor),
+                            startY = 0f,
+                            endY = Float.POSITIVE_INFINITY
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "$value",
+                    style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.Center
+                )
+            }
+//            if (showDescription) {
+//                Text(
+//                    text = date,
+//                    style = MaterialTheme.typography.caption,
+//                    textAlign = TextAlign.Center,
+//                    modifier = Modifier.width(barWidth)
+//                )
+//            }
+            Text(text = date,
+            style = MaterialTheme.typography.caption,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.width(barWidth)
+                .padding(top = 5.dp)
+            )
+        }
+    }
+
+
+
+    data class BarCharInput(
+        val value : Int,
+        val description : String,
+        val color: Color,
+        val date: String
+    )
+
+    data class ScoreData(
+        @JvmField
+        @PropertyName("date")
+        val date: String = "",
+
+        @JvmField
+        @PropertyName("score")
+        val score: Int = 0,
+        )
 
     @Composable
     fun DescriptionUI() {
@@ -446,6 +717,80 @@ class DashboardActivity : AppCompatActivity() {
             )
         }
     }
+
+    @Composable
+    fun LineChart(dataPoints: List<Float>, modifier: Modifier = Modifier) {
+
+        val strokeWidth = 4.dp
+        val stroke = Stroke(width = strokeWidth.value, cap = StrokeCap.Round)
+
+        Canvas (
+            modifier = modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                ) {
+            val width = size.width
+            val height = size.height
+            val maxValue = dataPoints.maxOrNull() ?: 0f
+            val minValue = dataPoints.minOrNull() ?: 0f
+            val yScale = (maxValue - minValue) / height
+            val xScale = width / (dataPoints.size - 1)
+
+            for (i in 0 until dataPoints.size - 1) {
+                val startX = i * xScale
+                val startY = height - (dataPoints[i] - minValue) / yScale
+                val endX = (i + 1) * xScale
+                val endY = height - (dataPoints[i + 1] - minValue) / yScale
+
+                drawLine(
+                    color = Color.Blue,
+                    start = Offset(startX, startY),
+                    end = Offset(endX, endY),
+                    strokeWidth = strokeWidth.value,
+                    cap = StrokeCap.Round
+                )
+
+            }
+
+        }
+
+    }
+
+    private fun listenForDataUpdates(database: DatabaseReference, onDataUpdate: (List<Float>) -> Unit) {
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val dataPoints: List<Float> = parseDataSnapshot(dataSnapshot)
+                onDataUpdate(dataPoints)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    private fun parseDataSnapshot(dataSnapshot: DataSnapshot): List<Float> {
+        val dataPoints = mutableListOf<Float>()
+
+        dataSnapshot.children.forEach { childSnapshot ->
+            val dataPoint = childSnapshot.getValue(Float::class.java)
+            dataPoint?.let {dataPoints.add(it)}
+        }
+
+        return dataPoints
+    }
+//
+//    @Composable
+//    fun LineChart(modifier: Modifier = Modifier, lineData: LineData) {
+//        Box(modifier) {
+//            AndroidView(factory = { context ->
+//                LineChart(context).apply {
+//                    data = lineData
+//                }
+//            })
+//        }
+//    }
 
 //    @Composable
 //    fun StatisticIndicatorUI() {

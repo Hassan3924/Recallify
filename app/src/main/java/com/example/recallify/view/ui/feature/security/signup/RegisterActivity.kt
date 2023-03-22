@@ -336,7 +336,7 @@ class RegisterActivity : AppCompatActivity() {
                                 },
                                 trailingIcon = {
                                     IconButton(onClick = {
-                                        TODO("Implement password change")
+//                                        password.value != password.value
                                     }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.visibility_48),
