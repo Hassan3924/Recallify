@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -63,8 +64,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import okio.ProtocolException
 import java.time.LocalDate
-import java.time.format.DateTimeParseException
-import kotlin.math.roundToInt
+
 
 import android.Manifest
 
@@ -109,6 +109,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
+
             super.onLocationResult(locationResult)
             val location = locationResult.lastLocation
             if (location != null) {
@@ -227,7 +228,7 @@ class DashboardActivity : AppCompatActivity() {
         }
 
 
-        Scaffold(
+        Scaffold (
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValue ->
@@ -235,6 +236,7 @@ class DashboardActivity : AppCompatActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValue)
+//                    .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
@@ -278,15 +280,31 @@ class DashboardActivity : AppCompatActivity() {
                                     CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                                 }
                                 else {
-                                    BarChart(
-                                        // First value as date, second value as score of that date
-                                        chartData.value,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        selectedBar = selectedBar
-                                    )
+
+                                        BarChart(
+                                            // First value as date, second value as score of that date
+                                            chartData.value,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            selectedBar = selectedBar,
+                                        )
+
                                 }
                             }
                         }
+//
+//                        Column(
+//                            modifier = Modifier,
+//                            verticalArrangement = Arrangement.spacedBy(20.dp),
+//                            horizontalAlignment = Alignment.CenterHorizontally
+//                        ) {
+//                            Text(
+//                                "Side Quest Progress",
+//                                fontWeight = FontWeight.Bold,
+//                                color = Color.Black,
+//                                fontSize = 30.sp,
+//                                textAlign = TextAlign.Center
+//                            )
+//                        }
                     }
                 }
             }
@@ -359,7 +377,6 @@ class DashboardActivity : AppCompatActivity() {
         inputList: List<BarCharInput>,
         modifier: Modifier = Modifier,
         selectedBar: Int,
-
     ) {
 
         Column(
@@ -380,15 +397,15 @@ class DashboardActivity : AppCompatActivity() {
 
                 inputList.forEachIndexed { index, input ->
 
-                    Bar(
-                        modifier = Modifier,
-                        primaryColor = input.color,
-                        value = input.value,
-                        maxValue = maxValue,
-                        description = input.description,
-                        date = input.date,
-                        showDescription = selectedBar == index
-                    )
+                        Bar(
+                            modifier = Modifier,
+                            primaryColor = input.color,
+                            value = input.value,
+                            maxValue = maxValue,
+                            description = input.description,
+                            date = input.date,
+                            showDescription = selectedBar == index
+                        )
                 }
             }
         }
@@ -450,7 +467,8 @@ class DashboardActivity : AppCompatActivity() {
             Text(text = date,
             style = MaterialTheme.typography.caption,
             textAlign = TextAlign.Center,
-            modifier = Modifier.width(barWidth)
+            modifier = Modifier
+                .width(barWidth)
                 .padding(top = 5.dp)
             )
         }

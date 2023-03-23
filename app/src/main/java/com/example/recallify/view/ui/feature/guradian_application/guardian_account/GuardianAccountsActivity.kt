@@ -386,9 +386,9 @@ class GuardianAccountsActivity : AppCompatActivity() {
         Button(
             onClick = {
             FirebaseAuth.getInstance().signOut()
-            val intent = Intent(activity, LoginActivity::class.java)
-            activity.startActivity(intent)
-            activity.finish()
+            val intent = Intent(this@GuardianAccountsActivity, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }) {
             Text(text = "Log Out")
         }
