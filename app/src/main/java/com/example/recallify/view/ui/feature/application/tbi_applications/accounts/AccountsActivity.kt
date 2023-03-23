@@ -390,8 +390,10 @@ class AccountsActivity : AppCompatActivity() {
 
     private fun createLocationRequest() {
         locationRequest = LocationRequest.create().apply {
-            interval = LOCATION_UPDATE_INTERVAL
-            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
+//            interval = LOCATION_UPDATE_INTERVAL
+//            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
+            interval = 5 * 60 * 1000 // 5 minutes in milliseconds
+            fastestInterval = 1000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }
