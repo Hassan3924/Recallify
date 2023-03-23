@@ -280,7 +280,7 @@ class DashboardActivity : AppCompatActivity() {
                                         )
 
                                 }
-//                                LogoutButton(activity = this@DashboardActivity)
+                                LogoutButton(activity = this@DashboardActivity)
                             }
                         }
 //
@@ -305,17 +305,17 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-//    @Composable
-//    fun LogoutButton(activity: DashboardActivity) {
-//        Button(modifier = Modifier.padding(top = 20.dp), onClick = {
-//            FirebaseAuth.getInstance().signOut()
-//            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
-//            startActivity(intent)
-//            finish()
-//        }) {
-//            Text(text = "Log Out")
-//        }
-//    }
+    @Composable
+    fun LogoutButton(activity: DashboardActivity) {
+        Button(modifier = Modifier.padding(top = 20.dp), onClick = {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }) {
+            Text(text = "Log Out")
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
