@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.dashboard.NotificationService
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
@@ -41,17 +40,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.TopCenter
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
-import com.example.recallify.view.common.components.TabPage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -62,7 +55,6 @@ import com.google.firebase.database.PropertyName
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import okio.ProtocolException
 import java.time.LocalDate
 
 
@@ -71,7 +63,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
-import android.net.Uri
 
 import android.os.Looper
 
@@ -79,6 +70,7 @@ import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import com.example.recallify.databinding.ActivityDashboardBinding
+import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -125,7 +117,6 @@ class DashboardActivity : AppCompatActivity() {
                 addLiveLocation(lat,lng,address)
 
             }
-
         }
     }
 
@@ -289,6 +280,7 @@ class DashboardActivity : AppCompatActivity() {
                                         )
 
                                 }
+//                                LogoutButton(activity = this@DashboardActivity)
                             }
                         }
 //
@@ -306,10 +298,24 @@ class DashboardActivity : AppCompatActivity() {
 //                            )
 //                        }
                     }
+
                 }
+
             }
         }
     }
+
+//    @Composable
+//    fun LogoutButton(activity: DashboardActivity) {
+//        Button(modifier = Modifier.padding(top = 20.dp), onClick = {
+//            FirebaseAuth.getInstance().signOut()
+//            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }) {
+//            Text(text = "Log Out")
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
@@ -1014,6 +1020,7 @@ class DashboardActivity : AppCompatActivity() {
         private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
     }
     private fun getAddressName(lat:Double, lon:Double): String{
+
         var addressName = ""
         var geoCoder = Geocoder(this, Locale.getDefault())
         var address = geoCoder.getFromLocation(lat,lon,1)
