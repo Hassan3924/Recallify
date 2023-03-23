@@ -14,12 +14,10 @@ import java.util.*
  *
  * @author enoabasi
  * */
-fun getDateFromTimeStamp(timestamp: MutableMap<String, String>) : String {
+fun getDateFromTimeStamp(timestamp: String) : String {
 
     return try{
-        val key = timestamp.keys.toString()
-        val longKey = key.toLong()
-        val parseDate = Date(longKey)
+        val parseDate = Date(timestamp.toLong())
         val simpleDate = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
         simpleDate.format(parseDate)
     } catch (e: Exception) {
@@ -38,10 +36,9 @@ fun getDateFromTimeStamp(timestamp: MutableMap<String, String>) : String {
  *
  * @author enoabasi
  * */
-fun getTimeFromTimeSTamp(timestamp: MutableMap<String, String>) : String {
+fun getTimeFromTimeSTamp(timestamp: String) : String {
     return try{
-        val key = timestamp.keys.toString()
-        val longKey = key.toLong()
+        val longKey = timestamp.toLong()
         val parseDate = Date(longKey)
         val simpleDate = SimpleDateFormat("h:mm a", Locale.getDefault())
         simpleDate.format(parseDate)

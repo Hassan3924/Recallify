@@ -8,7 +8,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -23,9 +22,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
@@ -119,14 +118,6 @@ class DailyActivity : AppCompatActivity() {
          * @author enoabasi
          */
         var cancelDialog by remember {
-            mutableStateOf(false)
-        }
-
-        /**
-         * The dialog receiver for posting an activity to the firebase console.
-         * @author enoabasi
-         * */
-        var postDialog by remember {
             mutableStateOf(false)
         }
 
@@ -240,7 +231,10 @@ class DailyActivity : AppCompatActivity() {
                             value = state.title ?: "",
                             onValueChange = { activityViewModel.onTitleChange(it) },
                             modifier = Modifier.fillMaxWidth(),
-                            textStyle = MaterialTheme.typography.subtitle2,
+                            textStyle = MaterialTheme.typography.subtitle2.copy(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal
+                            ),
                             placeholder = { Text(text = "Title") },
                             trailingIcon = {
                                 IconButton(onClick = {
@@ -254,6 +248,7 @@ class DailyActivity : AppCompatActivity() {
                                     )
                                 }
                             },
+                            singleLine = false,
                             maxLines = 3,
                             shape = RoundedCornerShape(6.dp),
                             colors = TextFieldDefaults.textFieldColors(
@@ -275,7 +270,10 @@ class DailyActivity : AppCompatActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(250.dp),
-                            textStyle = MaterialTheme.typography.body2,
+                            textStyle = MaterialTheme.typography.body2.copy(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal
+                            ),
                             placeholder = { Text(text = "Description") },
                             shape = RoundedCornerShape(4.dp),
                             colors = TextFieldDefaults.textFieldColors(
@@ -330,38 +328,6 @@ class DailyActivity : AppCompatActivity() {
                         )
                     }
 
-                    if (postDialog) {
-                        Dialog(
-                            onDismissRequest = { postDialog = false },
-                            DialogProperties(
-                                dismissOnBackPress = false,
-                                dismissOnClickOutside = false
-                            )
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .background(White, shape = RoundedCornerShape(8.dp))
-                            ) {
-                                Column {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.padding(
-                                            6.dp,
-                                            0.dp,
-                                            0.dp,
-                                            0.dp
-                                        )
-                                    )
-                                    Text(
-                                        text = "Posting activity to feed...",
-                                        Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -385,10 +351,10 @@ class DailyActivity : AppCompatActivity() {
                                     is Response.Loading -> {}
                                     is Response.Success -> {
                                         val imageList = listOf(addImageToStorageResponse.data)
-                                        activityViewModel.addImageToFirebaseStorage(imageList)
-                                        activityViewModel.createActivity(scaffoldState = scaffoldState)
-                                        postDialog = false
-
+                                        activityViewModel.createActivity(
+                                            scaffoldState = scaffoldState,
+                                            imageUri = imageList
+                                        )
                                     }
                                     is Response.Failure -> {
                                         Response.Failure(addImageToStorageResponse.message)
