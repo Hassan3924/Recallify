@@ -38,14 +38,98 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
+import android.Manifest
 
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.os.Build
+
+import android.os.Looper
+import android.util.Log
+import androidx.annotation.RequiresApi
+
+
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.MutableLiveData
+import com.example.recallify.databinding.ActivityDashboardBinding
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.firebase.database.FirebaseDatabase
+
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class AccountsActivity : AppCompatActivity() {
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var currentLocation: MutableLiveData<LatLng>
+    var locationText=""
+    private val label = "User Location"
+    val database = FirebaseDatabase.getInstance()
+    val locationAdd = database.reference
+    val auth = FirebaseAuth.getInstance()
+    val user = auth.currentUser
+    @RequiresApi(Build.VERSION_CODES.O)
+    val current = LocalDateTime.now()
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatted = current.format(formatter)
+    @RequiresApi(Build.VERSION_CODES.O)
+    val currentDate:String = formatted.toString()
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+
+            super.onLocationResult(locationResult)
+            val location = locationResult.lastLocation
+            if (location != null) {
+                currentLocation.value = LatLng(location.latitude, location.longitude)
+            }
+            locationResult ?: return
+            for (location in locationResult.locations) {
+                val lat = location.latitude
+                val lng = location.longitude
+                locationText= "Current location: $lat, $lng"
+                var address = getAddressName(location.latitude,location.longitude)
+                Log.d("Currentlocation : ",locationText)
+                addLiveLocation(lat,lng,address)
+
+            }
+        }
+    }
+
+    fun addLiveLocation(lat:Double,lng:Double,address:String){
+        user?.let {
+            val userUID = it.uid
+            locationAdd.child("users").child(userUID).child("liveLocation").child("lat").setValue(lat)
+            locationAdd.child("users").child(userUID).child("liveLocation").child("long").setValue(lng)
+            locationAdd.child("users").child(userUID).child("liveLocation").child("address").setValue(address)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_accounts)
+
+                // Request location permissions
+        requestLocationPermissions()
+
+        // Initialize location services
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        createLocationRequest()
+
+        // Initialize currentLocation variable
+        currentLocation = MutableLiveData()
+        getCurrentLocation()
+
+        // Start receiving location updates
+        startLocationUpdates()
 
         val accountsCompose: ComposeView = findViewById(R.id.activity_accounts_screen)
         accountsCompose.setContent {
@@ -220,6 +304,7 @@ class AccountsActivity : AppCompatActivity() {
     @Composable
     fun LogoutButton(activity: AccountsActivity) {
         Button(modifier = Modifier.padding(top = 20.dp), onClick = {
+              fusedLocationClient.removeLocationUpdates(locationCallback) //to stop the location tracking
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this@AccountsActivity, LoginActivity::class.java)
             startActivity(intent)
@@ -278,6 +363,106 @@ class AccountsActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+
+        //Live location Tracking functions #Ridinbal
+    private fun requestLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private fun createLocationRequest() {
+        locationRequest = LocationRequest.create().apply {
+            interval = LOCATION_UPDATE_INTERVAL
+            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+    }
+
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    currentLocation.value = LatLng(location.latitude, location.longitude)
+                }
+            }
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 100
+        private const val LOCATION_UPDATE_INTERVAL: Long = 5000
+        private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
+    }
+    private fun getAddressName(lat:Double, lon:Double): String{
+
+        var addressName = ""
+        var geoCoder = Geocoder(this, Locale.getDefault())
+        var address = geoCoder.getFromLocation(lat,lon,1)
+
+        if (address != null) {
+            addressName = address[0].getAddressLine(0)
+
+        }
+        return addressName
     }
 }
 
