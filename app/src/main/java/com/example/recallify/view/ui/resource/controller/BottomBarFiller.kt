@@ -29,7 +29,7 @@ fun BottomBarFiller() {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "_")
+//                Text(text = "_")
             }
         }
     }

@@ -221,9 +221,9 @@ class AccountsActivity : AppCompatActivity() {
     fun LogoutButton(activity: AccountsActivity) {
         Button(modifier = Modifier.padding(top = 20.dp), onClick = {
             FirebaseAuth.getInstance().signOut()
-            val intent = Intent(activity, LoginActivity::class.java)
-            activity.startActivity(intent)
-            activity.finish()
+            val intent = Intent(this@AccountsActivity, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }) {
             Text(text = "Log Out")
         }
