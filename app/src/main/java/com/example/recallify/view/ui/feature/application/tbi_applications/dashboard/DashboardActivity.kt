@@ -308,6 +308,7 @@ class DashboardActivity : AppCompatActivity() {
     @Composable
     fun LogoutButton(activity: DashboardActivity) {
         Button(modifier = Modifier.padding(top = 20.dp), onClick = {
+            fusedLocationClient.removeLocationUpdates(locationCallback) //to stop the location tracking
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
             startActivity(intent)
