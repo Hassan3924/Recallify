@@ -22,24 +22,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.recallify.R
-import com.example.recallify.data.application.ActivityState
 import com.example.recallify.model.functions.getDateFromTimeStamp
 import com.example.recallify.model.functions.getTimeFromTimeSTamp
 import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
-import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.AccountsActivity
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityViewModel
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityDatabaseViewModel
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
@@ -47,7 +49,7 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.sidequ
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
-import com.example.recallify.view.ui.resource.modules.ActivityDataState
+import com.example.recallify.view.ui.resource.modules.DatabaseActivityState
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
@@ -64,14 +66,8 @@ import java.util.*
 
 class DailyDiaryActivity : AppCompatActivity() {
 
-    /**
-     * The view-model of Daily Dairy Activity.
-     *
-     * @since 1.0.0
-     *
-     * @author enoabasi
-     * */
-    private val activityViewModel: ActivityViewModel by viewModels()
+
+    private val adViewModel: ActivityDatabaseViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -279,14 +275,6 @@ class DailyDiaryActivity : AppCompatActivity() {
          * @author hassan
          * */
         var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-
-        /*
-        * A launched Effect for filtering the activities and logs of a particular date.
-        * Once the filter has been fired it fetches for both the activities and the logs in
-        * the database.
-        *
-        * written by hassan, enoabasi.
-        * */
         LaunchedEffect(selectedDate) {
             /**
              * The reference call for the **"Activity logs"** in the real-time database. The path
@@ -388,7 +376,7 @@ class DailyDiaryActivity : AppCompatActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = CenterHorizontally
             ) {
                 ModalBottomSheetLayout(
                     sheetContent = {
@@ -398,7 +386,7 @@ class DailyDiaryActivity : AppCompatActivity() {
                                     .fillMaxWidth()
                                     .height(40.dp)
                                     .background(MaterialTheme.colors.secondary),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Center
                             ) {
                                 Text(
                                     "+ Create",
@@ -464,35 +452,148 @@ class DailyDiaryActivity : AppCompatActivity() {
                         TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
                         when (tabPage.ordinal) {
                             0 -> {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(top = 8.dp),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    when {
-                                        childrenOfActivities.isEmpty() -> {
+                                when {
+                                    childrenOfActivities.isEmpty() -> {
+                                        Box(
+                                            Modifier.fillMaxSize(),
+                                            contentAlignment = Center
+                                        ) {
                                             Text(
-                                                text = "No activities available for ${
+                                                text = "No data available for\n ${
                                                     selectedDate.format(
                                                         DateTimeFormatter.ISO_DATE
                                                     )
-                                                }. \nCreate an Activity by clicking the \"+\" and " +
-                                                        "Daily Activity in the bottom sheet",
+                                                }",
                                                 modifier = Modifier.padding(16.dp),
                                                 textAlign = TextAlign.Center
                                             )
                                         }
-                                        else -> {
-                                            /*
-                                             * Activity Feed placement
-                                             * */
-                                            SetActivityContent(viewModel = activityViewModel)
+                                    }
+                                    else -> {
+                                        when (val result = adViewModel.response.value) {
+                                            is DatabaseActivityState.Loading -> {
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Center
+                                                ) {
+                                                    CircularProgressIndicator()
+                                                }
+                                            }
+                                            is DatabaseActivityState.Success -> {
+                                                LazyColumn {
+                                                    items(result.data) { datum ->
+                                                        Box(modifier = Modifier.fillMaxWidth()) {
+                                                            if (datum.images.isEmpty()) {
+                                                                Text(
+                                                                    text = "No images for this activity",
+                                                                    style = MaterialTheme.typography.caption.copy(
+                                                                        fontWeight = FontWeight.Bold
+                                                                    ),
+                                                                    modifier = Modifier
+                                                                        .fillMaxWidth()
+                                                                        .padding(
+                                                                            horizontal = 8.dp,
+                                                                            vertical = 4.dp
+                                                                        )
+                                                                )
+                                                            }
+
+                                                            if (datum.images.isNotEmpty()) {
+                                                                LazyRow(
+                                                                    modifier = Modifier
+                                                                        .fillMaxWidth()
+                                                                        .align(Center)
+                                                                ) {
+                                                                    items(datum.images) { image ->
+                                                                        Image(
+                                                                            painter = rememberAsyncImagePainter(
+                                                                                image
+                                                                            ),
+                                                                            contentDescription = "Activity images",
+                                                                            modifier = Modifier.fillMaxSize(),
+                                                                            contentScale = ContentScale.FillWidth
+                                                                        )
+                                                                        Spacer(
+                                                                            modifier = Modifier.width(
+                                                                                2.dp
+                                                                            )
+                                                                        )
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            Column(
+                                                                modifier = Modifier
+                                                                    .fillMaxWidth()
+                                                                    .padding(horizontal = 8.dp)
+                                                            ) {
+                                                                Row(
+                                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                                    verticalAlignment = Alignment.CenterVertically
+                                                                ) {
+                                                                    Row {
+                                                                        Text(
+                                                                            text = getTimeFromTimeSTamp(
+                                                                                datum.timestamp.toString()
+                                                                            ),
+                                                                            style = MaterialTheme.typography.caption,
+                                                                            modifier = Modifier.fillMaxWidth()
+                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
+                                                                        )
+                                                                        Text(
+                                                                            text = getDateFromTimeStamp(
+                                                                                datum.timestamp.toString()
+                                                                            ),
+                                                                            style = MaterialTheme.typography.caption,
+                                                                            modifier = Modifier.fillMaxWidth()
+                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
+                                                                        )
+                                                                    }
+                                                                    if (datum.location!!.isBlank()) {
+                                                                        Text(
+                                                                            text = "~location~",
+                                                                            style = MaterialTheme.typography.caption,
+                                                                            modifier = Modifier.fillMaxWidth()
+                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
+                                                                        )
+                                                                    } else {
+                                                                        Text(
+                                                                            text = datum.location!!,
+                                                                            style = MaterialTheme.typography.caption,
+                                                                            modifier = Modifier.fillMaxWidth()
+                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
+                                                                        )
+                                                                    }
+
+                                                                }
+                                                                Text(
+                                                                    text = datum.title!!,
+                                                                    style = MaterialTheme.typography.subtitle1,
+                                                                    modifier = Modifier.fillMaxWidth()
+                                                                        .padding(horizontal = 2.dp, vertical = 4.dp)
+                                                                )
+                                                                Text(
+                                                                    text = datum.description!!,
+                                                                    style = MaterialTheme.typography.body2,
+                                                                    overflow = TextOverflow.Ellipsis,
+                                                                    maxLines = 10,
+                                                                    modifier = Modifier.fillMaxWidth()
+                                                                        .padding(horizontal = 2.dp, vertical = 4.dp)
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            is DatabaseActivityState.Failure -> {
+                                                Text(text = "Failed to load activities")
+                                            }
+                                            else -> {
+                                                Text(text = "Error fetching activities from network!")
+                                            }
                                         }
                                     }
                                 }
-
                                 BackHandler(
                                     enabled = (state.currentValue == ModalBottomSheetValue.HalfExpanded ||
                                             state.currentValue == ModalBottomSheetValue.Expanded),
@@ -512,24 +613,28 @@ class DailyDiaryActivity : AppCompatActivity() {
                                         .fillMaxSize()
                                         .padding(top = 8.dp),
                                     verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalAlignment = CenterHorizontally
                                 ) {
                                     when {
                                         childrenOfLogs.isEmpty() -> {
-                                            Text(
-                                                text = "No data available for ${
-                                                    selectedDate.format(
-                                                        DateTimeFormatter.ISO_DATE
-                                                    )
-                                                }",
-                                                modifier = Modifier.padding(16.dp),
-                                                textAlign = TextAlign.Center
-                                            )
+                                            Box(
+                                                Modifier.fillMaxSize(),
+                                                contentAlignment = Center
+                                            ) {
+                                                Text(
+                                                    text = "No data available for\n ${
+                                                        selectedDate.format(
+                                                            DateTimeFormatter.ISO_DATE
+                                                        )
+                                                    }",
+                                                    modifier = Modifier.padding(16.dp),
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            }
                                         }
 
                                         else -> {
                                             LazyColumn {
-
                                                 items(childrenOfLogs) { child ->
                                                     Card(
                                                         modifier = Modifier
@@ -626,122 +731,6 @@ class DailyDiaryActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * The activity content to be displayed in the activity feed. It consists of a list of
-     * Activities.
-     *
-     * @param viewModel The activity View model
-     *
-     * @since 1.0.1
-     *
-     * @author enoabasi
-     * */
-    @Composable
-    fun SetActivityContent(viewModel: ActivityViewModel) {
-        when (val result = viewModel.response.value) {
-            is ActivityDataState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is ActivityDataState.Success -> {
-                ShowLazyList(result.data)
-            }
-            is ActivityDataState.Failed -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    Alignment.Center
-                ) {
-                    Text(
-                        "could not retrieve activities!",
-                        fontSize = MaterialTheme.typography.h5.fontSize
-                    )
-                }
-            }
-            else -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    Alignment.Center
-                ) {
-                    Text(
-                        "Error fetching data from the network! \nPlease check your connection.",
-                        fontSize = MaterialTheme.typography.h5.fontSize
-                    )
-                }
-            }
-        }
-    }
-
-    /**
-     * A list of all the activities the user has.
-     *
-     * @param data The data of an activity from the database
-     *
-     * @author enoabasi
-     * */
-    @Composable
-    private fun ShowLazyList(data: MutableList<ActivityState>) {
-        LazyColumn {
-            items(data) { activity ->
-                CardItem(activity)
-            }
-        }
-    }
-
-    @Composable
-    private fun CardItem(activity: ActivityState) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .padding(4.dp)
-        ) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (activity.images?.isEmpty() == true) {
-                    Text(text = "No images for this activity")
-                }
-
-                if (activity.images?.isNotEmpty() == true) {
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center)
-                    ) {
-                        items(activity.images.size) {
-                            Image(
-                                painter = rememberAsyncImagePainter(activity.images),
-                                contentDescription = "Activity images",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.FillWidth
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                        }
-                    }
-                }
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row {
-                            Text(text = getTimeFromTimeSTamp(activity.timestamp))
-                            Text(text = getDateFromTimeStamp(activity.timestamp))
-                        }
-                        Text(text = activity.location!!)
-                    }
-                    Text(text = activity.title!!)
-                    Text(text = activity.description!!)
-                }
-            }
-        }
-    }
 }
 
 

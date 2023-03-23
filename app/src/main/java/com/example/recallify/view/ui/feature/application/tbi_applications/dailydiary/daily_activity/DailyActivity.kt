@@ -4,11 +4,10 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -23,10 +22,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
@@ -39,14 +37,14 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 class DailyActivity : AppCompatActivity() {
 
-//    /**
-//     * The view-model of Daily Dairy Activity.
-//     *
-//     * @since 1.0.0
-//     *
-//     * @author enoabasi
-//     * */
-//    private val activityViewModel: ActivityViewModel by viewModels()
+    /**
+     * The view-model of Daily Dairy Activity.
+     *
+     * @since 1.0.0
+     *
+     * @author enoabasi
+     * */
+    private val activityViewModel: ActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +60,8 @@ class DailyActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    fun DailyActivityScreen(activityViewModel: ActivityViewModel = viewModel()) {
+    fun DailyActivityScreen() {
+
         /**
          * @author enoabasi
          * */
@@ -123,14 +122,6 @@ class DailyActivity : AppCompatActivity() {
         }
 
         /**
-         * The dialog receiver for posting an activity to the firebase console.
-         * @author enoabasi
-         * */
-        var postDialog by remember {
-            mutableStateOf(false)
-        }
-
-        /**
          * The local context of the application package. This could have been substituted for
          * ```@this.DailyActivity::class.java``` but the Local context retrieves the context
          * of the whole application at the current stage.
@@ -139,14 +130,6 @@ class DailyActivity : AppCompatActivity() {
          * */
         val context = LocalContext.current
 
-        /*
-            ██╗      █████╗ ██╗   ██╗ ██████╗ ██╗   ██╗████████╗
-            ██║     ██╔══██╗╚██╗ ██╔╝██╔═══██╗██║   ██║╚══██╔══╝
-            ██║     ███████║ ╚████╔╝ ██║   ██║██║   ██║   ██║
-            ██║     ██╔══██║  ╚██╔╝  ██║   ██║██║   ██║   ██║
-            ███████╗██║  ██║   ██║   ╚██████╔╝╚██████╔╝   ██║
-            ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝    ╚═╝
-        */
         Scaffold(
             scaffoldState = rememberScaffoldState(),
             topBar = { DiaryActivityTopAppBar() },
@@ -176,7 +159,7 @@ class DailyActivity : AppCompatActivity() {
                             .fillMaxWidth()
                             .height(screenHeight * 0.35f)
                     ) {
-                        if (state.images?.isEmpty() == true) {
+                        if (state.images.isEmpty()) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
@@ -185,18 +168,22 @@ class DailyActivity : AppCompatActivity() {
                             }
                         }
 
-                        if (state.images?.isNotEmpty() == true) {
+                        if (state.images.isNotEmpty()) {
                             LazyRow(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .align(Alignment.Center)
                             ) {
                                 itemsIndexed(state.images) { index, uri ->
-                                    ImagePreviewItem(uri = uri,
-                                        height = screenHeight * 0.5f,
-                                        width = screenWidth * 0.6f,
-                                        onClick = { activityViewModel.onItemRemove(index) }
-                                    )
+                                    if (uri != null) {
+                                        ImagePreviewItem(uri = uri,
+                                            height = screenHeight * 0.5f,
+                                            width = screenWidth * 0.6f,
+                                            onClick = { activityViewModel.onItemRemove(index) }
+                                        )
+                                    } else {
+                                        Text(text = "no image to display")
+                                    }
                                     Spacer(modifier = Modifier.width(3.dp))
                                 }
                             }
@@ -209,7 +196,6 @@ class DailyActivity : AppCompatActivity() {
                     ) {
                         Button(onClick = {
                             if (permissionState.status.isGranted) {
-                                Toast.makeText(context,"The button is working", Toast.LENGTH_SHORT).show()
                                 galleryLauncher.launch("image/*")
                             } else
                                 permissionState.launchPermissionRequest()
@@ -245,7 +231,10 @@ class DailyActivity : AppCompatActivity() {
                             value = state.title ?: "",
                             onValueChange = { activityViewModel.onTitleChange(it) },
                             modifier = Modifier.fillMaxWidth(),
-                            textStyle = MaterialTheme.typography.subtitle2,
+                            textStyle = MaterialTheme.typography.subtitle2.copy(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal
+                            ),
                             placeholder = { Text(text = "Title") },
                             trailingIcon = {
                                 IconButton(onClick = {
@@ -259,6 +248,7 @@ class DailyActivity : AppCompatActivity() {
                                     )
                                 }
                             },
+                            singleLine = false,
                             maxLines = 3,
                             shape = RoundedCornerShape(6.dp),
                             colors = TextFieldDefaults.textFieldColors(
@@ -280,7 +270,10 @@ class DailyActivity : AppCompatActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(250.dp),
-                            textStyle = MaterialTheme.typography.body2,
+                            textStyle = MaterialTheme.typography.body2.copy(
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal
+                            ),
                             placeholder = { Text(text = "Description") },
                             shape = RoundedCornerShape(4.dp),
                             colors = TextFieldDefaults.textFieldColors(
@@ -335,38 +328,6 @@ class DailyActivity : AppCompatActivity() {
                         )
                     }
 
-                    if (postDialog) {
-                        Dialog(
-                            onDismissRequest = { postDialog = false },
-                            DialogProperties(
-                                dismissOnBackPress = false,
-                                dismissOnClickOutside = false
-                            )
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .background(White, shape = RoundedCornerShape(8.dp))
-                            ) {
-                                Column {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.padding(
-                                            6.dp,
-                                            0.dp,
-                                            0.dp,
-                                            0.dp
-                                        )
-                                    )
-                                    Text(
-                                        text = "Posting activity to feed...",
-                                        Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -389,14 +350,11 @@ class DailyActivity : AppCompatActivity() {
                                     activityViewModel.addImageToStorageResponse) {
                                     is Response.Loading -> {}
                                     is Response.Success -> {
-
                                         val imageList = listOf(addImageToStorageResponse.data)
-                                        activityViewModel.addImageToFirebaseDatabase(downloadUrl = imageList)
-                                            .apply {
-                                                activityViewModel.createActivity(scaffoldState = scaffoldState)
-                                            }
-                                        postDialog = false
-
+                                        activityViewModel.createActivity(
+                                            scaffoldState = scaffoldState,
+                                            imageUri = imageList
+                                        )
                                     }
                                     is Response.Failure -> {
                                         Response.Failure(addImageToStorageResponse.message)

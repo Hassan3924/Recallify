@@ -1,6 +1,7 @@
 package com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.MutableState
@@ -20,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import java.io.File
 
 /**
  * The Activity ViewModel ...
@@ -69,7 +71,7 @@ class ActivityViewModel : ViewModel() {
      *
      * @author enoabasi
      * */
-    var addImageToStorageResponse by mutableStateOf<Response<Uri>?>(Response.Success(null))
+    var addImageToStorageResponse by mutableStateOf<Response<Uri?>>(Response.Success(null))
         private set
 
     /**
@@ -109,29 +111,16 @@ class ActivityViewModel : ViewModel() {
     private val userID = FirebaseAuth.getInstance().currentUser?.uid!!
 
     /**
-     * An incrementing ID key for daily dairy activities. The keys are generated every time a new
-     * post is being made. This allows for the side quest to be able to track the activities
-     * every time they are being made.
-     *
-     * The keys restart after a new day has been entered.
-     *
-     * @returns A unique increment key
-     * @author enoabasi ridinbal
-     * */
-    private var activityKeyIncrementer = 1
-
-    /**
      * Init launch that happens before the view-model is called into the application. Handles
      * preparation for retrieving data from the database. The functions called are;
      *
      * 1. fetchDataFromFirebase()
-     * 2. fetchConfigurationState()
      *
      * @author enoabasi
      * */
-    init {
-        fetchDataFromFirebase()
-    }
+//    init {
+//        fetchDataFromFirebase()
+//    }
 
     /**
      * Consumes the state change from the UI and updates the changes in the state
@@ -168,7 +157,7 @@ class ActivityViewModel : ViewModel() {
      *
      * @author enoabasi
      * */
-    private fun onImageChange(images: List<Uri>?) {
+    private fun onImageChange(images: List<Uri?>) {
         state = state.copy(images = images)
     }
 
@@ -184,7 +173,6 @@ class ActivityViewModel : ViewModel() {
     private fun onLocationChange(location: String) {
         state = state.copy(location = location)
     }
-
 
     /**
      * Fetches an activity from the real-time database to be consumed by the
@@ -222,107 +210,6 @@ class ActivityViewModel : ViewModel() {
             })
     }
 
-
-    /**
-     * Adds the image from the user's phone to the firebase storage.
-     *
-     * @param imageUri The containing list of image URIs from the user's phone directory
-     *
-     * @author
-     * */
-    private fun addImageToFirebaseStorage(imageUri: List<Uri?>) {
-        try {
-            Response.Loading
-
-            /**
-             * The storage bucket location reference.
-             *
-             * @author enoabasi
-             * */
-            val imageFolder = storage
-
-            for (uri in imageUri.indices) {
-
-                /**
-                 * This is the value count of a single image gotten from the user.
-                 *
-                 * @author enoabasi
-                 * */
-                val singleImage = imageUri[uri]
-
-                /**
-                 * The name of the image reference on the firebase storage bucket.
-                 *
-                 * @author enoabasi
-                 * */
-                val imageName = imageFolder
-                    .child("Image${singleImage?.lastPathSegment}")
-
-                imageName.putFile(singleImage!!).addOnSuccessListener {
-                    imageName.downloadUrl.addOnSuccessListener {
-                        Response.Success(it)
-                    }
-                }
-            }
-        } catch (message: Exception) {
-            Response.Failure(message)
-        }
-    }
-
-    /**
-     * Downloads the image from teh firebase Storage and saves it into the firebase Real-time
-     * database
-     *
-     * @param downloadUrl The downloaded image url from the Firebase storage
-     *
-     * @author enoabasi
-     * */
-    fun addImageToFirebaseDatabase(downloadUrl: List<Uri?>) {
-        try {
-            Response.Loading
-
-            for (url in downloadUrl) {
-                database
-                    .setValue(
-                        hashMapOf<String, Any>(
-                            "/$userID/${getCurrentDate()}/${activityKeyIncrementer}" to url!!
-                        )
-                    )
-            }
-            addImageLinkToFirebase(downloadUrl = downloadUrl[0])
-        } catch (message: Exception) {
-            Response.Failure(message)
-        }
-    }
-
-
-    /**
-     *
-     * Adds a single reference image to the a unique path in the database. This wil be used for the
-     * side quest feature. The image is gotten from a list of images and the return value is a
-     * single of the first image in the list.
-     *
-     * The image list os provided by another higher-function [addImageToFirebaseDatabase].
-     *
-     * @author  enoabasi, ridinbal
-     *
-     * @see FirebaseStorage
-     * @see FirebaseDatabase
-     * */
-    private fun addImageLinkToFirebase(downloadUrl: Uri?) {
-        try {
-            Response.Loading
-            database
-                .updateChildren(
-                    hashMapOf<String, Any>(
-                        "/$userID/dailyDairyDummy/${getCurrentDate()}/${activityKeyIncrementer}/imageLink" to downloadUrl!!
-                    )
-                )
-        } catch (message: Exception) {
-            Response.Failure(message)
-        }
-    }
-
     /**
      * Gets images from the device directory and stores it in a collection that can be downloaded
      * into the Firebase storage and referenced in the real-time database. The function updates
@@ -339,12 +226,31 @@ class ActivityViewModel : ViewModel() {
      * @author enoabasi
      * */
     fun updateSelectedImageList(listOfImages: List<Uri>) {
-        val updatedImageList = state.images?.toMutableList()
+        val updatedImageList = emptyList<Uri>().toMutableList()
         viewModelScope.launch {
-            updatedImageList!! += listOfImages
-            onImageChange(updatedImageList.distinct())
-            addImageToFirebaseStorage(updatedImageList)
+            updatedImageList += listOfImages
+            val imagesUploads = addToFirebaseStorage(updatedImageList)
+            onImageChange(images = imagesUploads)
         }
+    }
+
+    private fun addToFirebaseStorage(list : MutableList<Uri>) : MutableList<Uri> {
+            val imageFolder = storage
+            val downloads = emptyList<Uri>().toMutableList()
+            for (uri in list) {
+                val imageName = imageFolder.child(userID).child(getCurrentDate()).putFile(uri).continueWithTask {
+                    task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    imageFolder.downloadUrl
+                }.addOnSuccessListener {task ->
+                    downloads.add(task)
+                }
+            }
+            return downloads
     }
 
     /**
@@ -355,10 +261,10 @@ class ActivityViewModel : ViewModel() {
      * @author enoabasi
      * */
     fun onItemRemove(index: Int) {
-        val updatedImageList = state.images?.toMutableList()
+        val updatedImageList = state.images.toMutableList()
         viewModelScope.launch {
-            updatedImageList?.removeAt(index)
-            onImageChange(images = updatedImageList?.distinct())
+            updatedImageList.removeAt(index)
+
         }
     }
 
@@ -375,7 +281,8 @@ class ActivityViewModel : ViewModel() {
      * @author enoabasi
      * */
     fun createActivity(
-        scaffoldState: ScaffoldState
+        scaffoldState: ScaffoldState,
+        imageUri : List<Uri?>
     ) = viewModelScope.launch {
         try {
             if (!validateActivityPost()) {
@@ -385,28 +292,93 @@ class ActivityViewModel : ViewModel() {
                 )
             }
 
-//            response.value = ActivityDataState.Loading
+            val dataRef = FirebaseDatabase.getInstance().reference
 
-            val activityState = ActivityState(
-                userId = userID,
-                activityId = activityKeyIncrementer.toString(),
-                title = state.title,
-                description = state.description,
-                location = state.location,
-            )
+            val activityDatabase = database
+                .child(userID)
+                .child("dailyDairyDummy")
+                .child(getCurrentDate())
 
-            val activityStateValues = activityState.mapActivity()
+            activityDatabase.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var activityID = snapshot.childrenCount.toInt()
+                    activityID += 1
 
+                    // UserID
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("userId")
+                        .setValue(userID)
+                    // Activity ID
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("activityId")
+                        .setValue(activityID.toString())
+                    // ImageLink
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("imageLink")
+                        .setValue("Xsxbi3qj2XbYUdNDUo7yg7JAuOd2, description=zbzgsusbsbsvshsus, location=, title=dgsjsgsvsvsjsu}, 4={activityId=4, imageLink=https://firebasestorage.googleapis.com/v0/b/csci-recallify.appspot.com/o/imageFolder%2FXsxbi3qj2XbYUdNDUo7yg7JAuOd2%2F2023-03-23%2Fimage%3A41538?alt=media&token=774f3718-7b70-4d5e-ba91-2dcd1589d74a,")
+                    // Title
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("title")
+                        .setValue(state.title)
+                    // Description
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("description")
+                        .setValue(state.description)
+                    // Location
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("location")
+                        .setValue(state.location)
+                    // Date
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("date-created")
+                        .setValue(getCurrentDate())
+                    // Timestamp
+                    dataRef.child("users")
+                        .child(userID)
+                        .child("dailyDairyDummy")
+                        .child(getCurrentDate())
+                        .child(activityID.toString())
+                        .child("timestamp")
+                        .setValue(state.timestamp)
+                }
 
-            val activityStateUpdates = hashMapOf<String, Any>(
-                "/$userID/dailyDairyDummy/${getCurrentDate()}/$activityKeyIncrementer" to activityStateValues,
-            )
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Errors(RealTimeDatabase)","error on ${error.message}")
+                }
 
-            database.updateChildren(activityStateUpdates)
+            }).let {
 
-            activityKeyIncrementer++
+            }
         } catch (e: Exception) {
-            response.value = e.message?.let { ActivityDataState.Failed(it) }!!
+            Log.e("Error: ", "Failed to send message at: ${e.message}")
         }
     }
 
@@ -420,6 +392,5 @@ class ActivityViewModel : ViewModel() {
      * @author enoabasi
      * */
     private fun validateActivityPost() = state.title!!.isNotBlank()
-
 
 }
