@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.feature.application.sidequest.AnalyzeProgressActivity">
-
+    tools:context=".view.ui.feature.application.tbi_applications.thinkfast.AnalyzeProgress">
     <LinearLayout
         android:id="@+id/linearLayoutInfo"
         android:layout_width="match_parent"
@@ -13,43 +12,62 @@
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
-        android:background="@color/light_Primary"
         android:orientation="horizontal"
+        android:background="@color/light_Primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <TextView
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:text="Date: "
             android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
-            tools:ignore="HardcodedText" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/dateTextViewValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="0000-00-00"
+            android:text="0"
             android:textColor="@color/light_onPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+            android:textSize="16sp"
+            />
+
+        <TextView
+            android:id="@+id/totalPlayTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Your Plays: "
+            android:textColor="@color/light_onPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/totalPLayTextViewValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textColor="@color/light_onPrimary"
+            android:textSize="16sp"
+            />
 
         <TextView
             android:id="@+id/totalScoreTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Score Percentage: "
+            android:text="Your Score: "
             android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
-            tools:ignore="HardcodedText" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/totalScoreTextViewValue"
@@ -58,9 +76,9 @@
             android:layout_weight="1"
             android:text="0"
             android:textColor="@color/light_onPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+            android:textSize="16sp"
+            />
+
 
     </LinearLayout>
 
@@ -69,7 +87,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="140dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/targetScoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:text="Daily Target Score:"
+            android:textColor="@color/black"
+
+            android:textStyle="bold"
+            android:autoSizeTextType="uniform"
+            android:lines="1"/>
+
+        <TextView
+            android:id="@+id/targetScoreTextViewValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:text="10"
+            android:autoSizeTextType="uniform"
+            android:lines="1"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayoutTargetScore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="115dp"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
 
@@ -78,36 +134,35 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/targetScoreTextView"
+            android:id="@+id/targetPlayTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_gravity="center"
-            android:autoSizeTextType="uniform"
-            android:lines="1"
-            android:text="Daily Target Score Percent:"
+
+            android:text="Daily Target Plays:"
             android:textColor="@color/black"
-            tools:ignore="HardcodedText,UnusedAttribute" />
+
+            android:textStyle="bold"
+            android:autoSizeTextType="uniform"
+            android:lines="1"/>
 
         <TextView
-            android:id="@+id/targetScoreTextViewValue"
+            android:id="@+id/targetPlayTextViewValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:autoSizeTextType="uniform"
-            android:lines="1"
-            android:text="100"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText,UnusedAttribute" />
+            android:text="2"
 
+            android:autoSizeTextType="uniform"
+            android:lines="1"/>
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="170dp"
         android:background="@color/dark_Secondary"
         android:orientation="vertical"
 
@@ -118,22 +173,22 @@
             android:id="@+id/progressTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="Analyzed Progress"
+            android:text="Analyze your think fast game progress"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="20dp"
             android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+            android:layout_marginTop="1dp"
+            android:layout_marginStart="1dp"
+            />
 
         <LinearLayout
             android:id="@+id/linearLayoutTodayScore"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="8dp"
             android:orientation="horizontal"
 
             app:layout_constraintEnd_toEndOf="parent"
@@ -144,19 +199,22 @@
                 android:id="@+id/todayScoreTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
+
+                android:textSize="20sp"
+
+
                 android:text="Today's Score: "
                 android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/linearLayoutProgressBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="1dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="3dp"
                 android:orientation="vertical"
 
                 app:layout_constraintEnd_toEndOf="parent"
@@ -166,9 +224,9 @@
                 <ProgressBar
                     android:id="@+id/progressBar"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="230dp"
+                    android:layout_width="200dp"
                     android:layout_height="20dp"
-                    android:layout_marginStart="2dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:labelFor="@+id/txt"
                     android:scaleY="6"
@@ -179,14 +237,11 @@
                     android:id="@+id/percent_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="120dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="10sp"
                     android:autoSizeTextType="uniform"
                     android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:ignore="HardcodedText,UnusedAttribute">
+                    android:textColor="@color/black">
 
                 </TextView>
             </LinearLayout>
@@ -197,9 +252,9 @@
             android:id="@+id/linearLayoutFeedbackTodayScore"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="30dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:orientation="horizontal"
 
             app:layout_constraintEnd_toEndOf="parent"
@@ -211,19 +266,113 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Feedback: "
+
                 android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/todayScoreFeedbackViewValue"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_height="40dp"
                 android:textColor="@color/black"
-                android:textSize="17sp"
-                tools:ignore="InefficientWeight" />
+
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutTodayPlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/todayPlayTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+
+                android:text="Total No of Plays: "
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/linearLayoutProgressBarTotalPlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="3dp"
+                android:orientation="vertical"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ProgressBar
+                    android:id="@+id/progressBarTotalPlay"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="200dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:labelFor="@+id/txt"
+                    android:scaleY="6"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/percent_showTotalPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="10sp"
+                    android:autoSizeTextType="uniform"
+                    android:text="0"
+                    android:textColor="@color/black">
+
+                </TextView>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearLayoutFeedbackTodayPlay"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/todayPlayFeedbackTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+
+                android:text="Feedback: "
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/todayPlayFeedbackViewValue"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textSize="13sp"
+
+                android:textColor="@color/black" />
+
 
         </LinearLayout>
 
@@ -232,14 +381,23 @@
             android:layout_width="200dp"
             android:layout_height="48dp"
             android:layout_marginStart="100dp"
-            android:layout_marginTop="90dp"
+            android:layout_marginTop="20dp"
             android:background="@color/dark_SecondaryVariant"
-            android:text="Done"
-
             android:textStyle="bold"
             android:textColor="@color/light_onPrimary"
-            tools:ignore="HardcodedText" />
+            android:text="Done" />
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="135dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="50dp"
+        android:layout_weight="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.003"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/think_fast_analyze_progress" />
 </androidx.constraintlayout.widget.ConstraintLayout>

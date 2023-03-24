@@ -81,7 +81,8 @@ class ThinkFastActivity : AppCompatActivity() {
                         context.startActivity(Intent(context, ThinkfastProgressActivity::class.java))
                     },
                     viewAnalysis = {
-                        context.startActivity(Intent(context, ThinkfastAnalysisActivity::class.java))
+                       // context.startActivity(Intent(context, ThinkfastAnalysisActivity::class.java))
+                        context.startActivity(Intent(context, SelectDateAnalyzeProgressThinkFast::class.java))
                     }
                 )
             }
