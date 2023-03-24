@@ -111,7 +111,7 @@ class LoginActivity : AppCompatActivity() {
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "Login In, right here.",
+                        text = "Login, right here.",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp)

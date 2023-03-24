@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -181,6 +180,8 @@ open class DashboardActivity : AppCompatActivity() {
     @Composable
     fun DashBoardScreen() {
 
+        val scrollState = rememberScrollState()
+
         val isLoading = remember { mutableStateOf(true) }
 
         var showDescription by remember {
@@ -195,9 +196,16 @@ open class DashboardActivity : AppCompatActivity() {
 
         val chartData = remember { mutableStateOf(emptyList<BarCharInput>()) }
 
+        val chartDataSQ = remember { mutableStateOf(emptyList<BarCharInputSQ>()) }
+
         LaunchedEffect(Unit) {
             FirebaseChartData { fetchedData ->
                 chartData.value = fetchedData
+                isLoading.value = false
+            }
+
+            FirebaseChartDataSQ { fetchedData ->
+                chartDataSQ.value = fetchedData
                 isLoading.value = false
             }
         }
@@ -218,13 +226,13 @@ open class DashboardActivity : AppCompatActivity() {
                         .padding(top = 8.dp)
                         .padding(horizontal = 16.dp)
                         .padding(4.dp)
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(30.dp),
-                        contentAlignment = TopCenter
+                            .padding(30.dp)
                     ) {
                         Column(
                             modifier = Modifier,
@@ -265,23 +273,42 @@ open class DashboardActivity : AppCompatActivity() {
                                     )
 
                                 }
-                                //LogoutButton(activity = this@DashboardActivity)
+                            }
+
+                            Column(
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.spacedBy(20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    "Side Quest Progress",
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black,
+                                    fontSize = 30.sp,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    if (isLoading.value) {
+                                        CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                                    } else {
+
+                                        BarChartSQ(
+                                            // First value as date, second value as score of that date
+                                            chartDataSQ.value,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            selectedBar = selectedBar,
+                                        )
+
+                                    }
+                                }
+
                             }
                         }
-//
-//                        Column(
-//                            modifier = Modifier,
-//                            verticalArrangement = Arrangement.spacedBy(20.dp),
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//                            Text(
-//                                "Side Quest Progress",
-//                                fontWeight = FontWeight.Bold,
-//                                color = Color.Black,
-//                                fontSize = 30.sp,
-//                                textAlign = TextAlign.Center
-//                            )
-//                        }
                     }
 
                 }
@@ -290,21 +317,9 @@ open class DashboardActivity : AppCompatActivity() {
         }
     }
 
-//    @Composable
-//    fun LogoutButton(activity: DashboardActivity) {
-//        Button(modifier = Modifier.padding(top = 20.dp), onClick = {
-//          //  fusedLocationClient.removeLocationUpdates(locationCallback) //to stop the location tracking
-//            FirebaseAuth.getInstance().signOut()
-//            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
-//            startActivity(intent)
-//            finish()
-//        }) {
-//            Text(text = "Log Out")
-//        }
-//    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
+
         Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
 
         val auth: FirebaseAuth = Firebase.auth
@@ -363,6 +378,70 @@ open class DashboardActivity : AppCompatActivity() {
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun FirebaseChartDataSQ(onDataFetched: (List<BarCharInputSQ>) -> Unit) {
+
+        Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
+
+        val auth: FirebaseAuth = Firebase.auth
+
+        val database =
+            Firebase.database.reference.child("users").child(auth.currentUser?.uid!!).child("viewScoresTableSideQuest")
+        val colors = listOf(
+            Color.White,
+            Color.Gray,
+            Color.Yellow,
+            Color.Cyan,
+            Color.Magenta,
+            Color.Blue
+        )
+
+        val sevenDays = (0..5).map { LocalDate.now().minusDays(it.toLong()) }
+
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                Log.d("FirebaseChartData", "onDataChange called")
+
+                val rawData = snapshot.children.toList()
+                Log.d("FirebaseChartData", "User data: ${snapshot.getValue()}")
+
+
+                val barCharInputData = sevenDays.map { date ->
+                    val dataSnapshot = snapshot.child(date.toString())
+                    val games = dataSnapshot.children.toList()
+
+                    val score = games.firstOrNull()?.child("correct")?.getValue(Int::class.java) ?: 0
+
+                    Log.d(
+                        "FirebaseChartDataSQ",
+                        "Fetched Date: $date, totalCorrect: $score"
+                    )
+
+                    Log.d(
+                        "FirebaseChartDataSQ Snapshot",
+                        "Fetched Date: $dataSnapshot"
+                    )
+
+                    BarCharInputSQ(
+                        value = score,
+                        label = date.toString(),
+                        color = colors[sevenDays.indexOf(date) % colors.size],
+                        date = date.toString() // Pass the date as a property to BarCharInput
+                    )
+                }.filterNotNull()
+
+                Log.d("FirebaseChartData", "Fetched data: $barCharInputData")
+
+                onDataFetched(barCharInputData)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseChartDataonCancelled", "onCalled called ${error.message}")
+            }
+
+        })
+    }
+
 
     @Composable
     fun BarChart(
@@ -401,6 +480,106 @@ open class DashboardActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    @Composable
+    fun BarChartSQ(
+        inputList: List<BarCharInputSQ>,
+        modifier: Modifier = Modifier,
+        selectedBar: Int,
+    ) {
+
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            val maxValue = inputList.maxOfOrNull { it.value } ?: 0
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+
+                inputList.forEachIndexed { index, input ->
+
+                    BarSQ(
+                        modifier = Modifier,
+                        primaryColor = input.color,
+                        value = input.value,
+                        maxValue = maxValue,
+                        label = input.label,
+                        date = input.date,
+                        showDescription = selectedBar == index
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun BarSQ(
+        modifier: Modifier = Modifier,
+        primaryColor: Color,
+        value: Int,
+        maxValue: Int,
+        label: String,
+        date: String,
+        showDescription: Boolean
+    ) {
+        val barWidth = 40.dp
+        val minHeight = 16.dp
+        val barHeight = maxOf(
+            minHeight,
+            if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp
+        )
+        
+        Column(modifier = modifier
+            .height(300.dp)
+            .width(barWidth)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom){
+            Box(
+                modifier = modifier
+                    .height(barHeight)
+                    .width(barWidth)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Gray, primaryColor),
+                            startY = 0f,
+                            endY = Float.POSITIVE_INFINITY
+                        )
+                    ),
+                contentAlignment = Center
+            ) {
+                Text(text = "$value",
+                style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center
+                )
+
+            }
+            Text(
+                text = date,
+                style = MaterialTheme.typography.caption,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(barWidth)
+                    .padding(top = 5.dp)
+            )
+
+            if (showDescription) {
+                Text(text = label,
+                style = MaterialTheme.typography.caption,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(barWidth)
+                    .padding(top = 5.dp))
+            }
+        }
+
     }
 
     @Composable
@@ -451,14 +630,6 @@ open class DashboardActivity : AppCompatActivity() {
                     textAlign = TextAlign.Center
                 )
             }
-//            if (showDescription) {
-//                Text(
-//                    text = date,
-//                    style = MaterialTheme.typography.caption,
-//                    textAlign = TextAlign.Center,
-//                    modifier = Modifier.width(barWidth)
-//                )
-//            }
             Text(
                 text = date,
                 style = MaterialTheme.typography.caption,
@@ -474,6 +645,13 @@ open class DashboardActivity : AppCompatActivity() {
     data class BarCharInput(
         val value: Int,
         val description: String,
+        val color: Color,
+        val date: String
+    )
+
+    data class BarCharInputSQ (
+        val value: Int,
+        val label: String,
         val color: Color,
         val date: String
     )
