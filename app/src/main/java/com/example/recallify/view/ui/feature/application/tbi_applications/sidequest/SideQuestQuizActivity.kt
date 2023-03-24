@@ -3,11 +3,13 @@ package com.example.recallify.view.ui.feature.application.tbi_applications.sideq
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.recallify.databinding.ActivitySideQuestQuizBinding
@@ -18,6 +20,8 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class SideQuestQuizActivity : AppCompatActivity() {
@@ -33,7 +37,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
     private val scoreRef: DatabaseReference = database.reference
     private val user: FirebaseUser? = auth.currentUser
 
-    private var currentDate = "2023-02-25"
+   // private var currentDate = "2023-02-25"
     private var imageLink = ""
     private var questionNumber = 1
     private var questionCount = 0
@@ -46,10 +50,25 @@ class SideQuestQuizActivity : AppCompatActivity() {
     private var leftTime = totalTime
     private var checker = 0
 
+    var dailyDairySideQuestRef = database.reference
+    @RequiresApi(Build.VERSION_CODES.O)
+    val current = LocalDateTime.now()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatted = current.format(formatter)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    var currentDate:String = formatted.toString()
+
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sideQuestQuizBinding = ActivitySideQuestQuizBinding.inflate(layoutInflater)
+        DairyQuestionCreator()
         val view = sideQuestQuizBinding.root
         setContentView(view)
         gameLogic()
@@ -110,10 +129,11 @@ class SideQuestQuizActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun gameLogic() {
         val uid = Firebase.auth.currentUser?.uid
         if (uid != null) {
-            val database = Firebase.database.reference.child("users").child(uid).child("dailyDairyDummy").child(currentDate)
+            val database = Firebase.database.reference.child("users").child(uid).child("dailyDairySideQuest").child(currentDate)
             database.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -213,6 +233,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
         updateCountDownText()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun sendScore(questionNumber1: Int) {
         user?.let {
             val userUID = it.uid
@@ -224,6 +245,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun sendSideQuestScore(sideQuestQuestionCount: Int) {
         user?.let {
             val userUID = it.uid
@@ -236,5 +258,38 @@ class SideQuestQuizActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun DairyQuestionCreator(){
+        val uid = Firebase.auth.currentUser?.uid
+        // val currentDate = "2023-03-24" // example date
+        var counterGen=0
+        if (uid != null) {
+            val dailyDairyDummyRef =
+                Firebase.database.reference.child("users").child(uid).child("dailyDairyDummy")
+                    .child(currentDate)
+
+            dailyDairyDummyRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (childSnapshot in snapshot.children) {
+                            counterGen++
+                            val nrgwKey = childSnapshot.key // e.g. "NRGw7"
+                            val imageLink = childSnapshot.child("imageLink").value // retrieve imageLink value
+                            val location = childSnapshot.child("location-name").value // retrieve location value
+                            // do something with the retrieved values, e.g. display them in UI
+                            Log.d(ContentValues.TAG, "nrgwKey: $nrgwKey, imageLink: $imageLink, location: $location")
+                            dailyDairySideQuestRef.child("users").child(uid).child("dailyDairySideQuest").child(currentDate).child(counterGen.toString()).child("imageLink").setValue(imageLink)
+                            dailyDairySideQuestRef.child("users").child(uid).child("dailyDairySideQuest").child(currentDate).child(counterGen.toString()).child("locationName").setValue(location)
+
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d(ContentValues.TAG, "onCancelled: $error")
+                }
+            })
+        }
     }
 }
