@@ -36,19 +36,22 @@ fun ImagePreviewItem(
             contentScale = ContentScale.Crop
         )
 
-        IconButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(alignment = Alignment.CenterEnd),
-            onClick = { onClick() }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(24.dp),
-                tint = Color.Red
-            )
+            IconButton(
+                onClick = { onClick() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(24.dp),
+                    tint = Color.Red
+                )
+            }
         }
     }
 }

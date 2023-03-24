@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
+import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLatitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLocation
+import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLongitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.theme.RecallifyTheme
@@ -80,10 +82,6 @@ class DailyActivity : AppCompatActivity() {
         }
 
         val location = remember {
-            mutableStateOf("")
-        }
-
-        val description = remember {
             mutableStateOf("")
         }
 
@@ -260,8 +258,8 @@ class DailyActivity : AppCompatActivity() {
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Normal
                             ),
-                            label = { Text(text = "Location")},
-                            placeholder = { Text(text = "Location") },
+                            label = { Text(text = "Location") },
+                            placeholder = { Text(text = "Tell us where this is...") },
                             trailingIcon = {
                                 IconButton(onClick = {
                                     location.value = ""
@@ -282,32 +280,6 @@ class DailyActivity : AppCompatActivity() {
                             )
                         )
                         Spacer(modifier = Modifier.size(8.dp))
-                        /**
-                         * Text-field of the description:
-                         * A description will be able to have maximum 500 characters and
-                         * will be the description of an event. The description can be
-                         * empty as it is not an important part of the post information.
-                         *
-                         * @author essien
-                         * */
-                        TextField(
-                            value = description.value,
-                            onValueChange = { description.value = it },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(250.dp),
-                            textStyle = MaterialTheme.typography.body2.copy(
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Normal
-                            ),
-                            label = { Text(text = "Description")},
-                            placeholder = { Text(text = "Tell us about what happened here...") },
-                            shape = RoundedCornerShape(4.dp),
-                            colors = TextFieldDefaults.textFieldColors(
-                                textColor = Color.Black,
-                            ),
-                            maxLines = 30
-                        )
                     }
                     /**
                      * Post actions: Cancel and Post
@@ -453,9 +425,6 @@ class DailyActivity : AppCompatActivity() {
                                                             .child("location-name")
                                                             .setValue(location.value)
                                                         activityRef.child(key)
-                                                            .child("description")
-                                                            .setValue(description.value)
-                                                        activityRef.child(key)
                                                             .child("time")
                                                             .setValue(currentTime)
                                                         activityRef.child(key)
@@ -464,6 +433,12 @@ class DailyActivity : AppCompatActivity() {
                                                         activityRef.child(key)
                                                             .child("location-address")
                                                             .setValue(copiedLocation.value)
+                                                        activityRef.child(key)
+                                                            .child("location-latitude")
+                                                            .setValue(copiedLatitude.value)
+                                                        activityRef.child(key)
+                                                            .child("location-longitude")
+                                                            .setValue(copiedLongitude.value)
 //                                                        Log.d("CopiedLocation_Resolve", "The location value is ==> $copiedLocation")
                                                         activityId++
                                                     }.addOnCompleteListener {

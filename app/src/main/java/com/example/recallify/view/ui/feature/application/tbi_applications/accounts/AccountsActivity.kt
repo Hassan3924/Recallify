@@ -52,7 +52,8 @@ import java.util.*
 
 
 val copiedLocation = mutableStateOf("")
-
+val copiedLongitude = mutableStateOf("")
+val copiedLatitude =  mutableStateOf("")
 class AccountsActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -88,6 +89,8 @@ class AccountsActivity : AppCompatActivity() {
                 locationText= "Current location: $lat, $lng"
                 val address = getAddressName(location.latitude,location.longitude)
                 copiedLocation.value = address
+                copiedLatitude.value = lat.toString()
+                copiedLongitude.value = lng.toString()
                 Log.d("CopiedLocation: ", "${copiedLocation.value} ==> $address")
                 Log.d("Currentlocation : ",locationText)
                 addLiveLocation(lat,lng,address)
