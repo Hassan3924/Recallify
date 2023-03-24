@@ -86,11 +86,11 @@ class AccountsActivity : AppCompatActivity() {
                 val lat = location.latitude
                 val lng = location.longitude
                 locationText= "Current location: $lat, $lng"
-                var address = getAddressName(location.latitude,location.longitude)
+                val address = getAddressName(location.latitude,location.longitude)
                 copiedLocation.value = address
+                Log.d("CopiedLocation: ", "${copiedLocation.value} ==> $address")
                 Log.d("Currentlocation : ",locationText)
                 addLiveLocation(lat,lng,address)
-
             }
         }
     }

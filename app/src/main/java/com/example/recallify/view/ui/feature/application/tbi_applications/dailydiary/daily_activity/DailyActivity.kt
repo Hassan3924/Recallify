@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -389,11 +390,6 @@ class DailyActivity : AppCompatActivity() {
 
                                     var activityId = 1
 
-                                    val activityImage = storage
-                                        .child("imageFolder")
-                                        .child(userID)
-                                        .child(getCurrentDate())
-
                                     val activityRef = database
                                         .child("users")
                                         .child(userID)
@@ -402,13 +398,19 @@ class DailyActivity : AppCompatActivity() {
 
                                     val key = activityRef.push().key!!
 
+                                    val activityImage = storage
+                                        .child("imageFolder")
+                                        .child(userID)
+                                        .child(getCurrentDate())
+                                        .child(key)
+
 //                                    val fetchKey = activityRef.key!!
 //
 //                                    val fetchDB = activityRef.child(fetchKey)
 
 
                                     imageLink.let { link ->
-                                        activityImage.child(key).putFile(link.value!!)
+                                        activityImage.putFile(link.value!!)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
                                                     activityImage.downloadUrl.addOnSuccessListener { uri ->
@@ -460,6 +462,7 @@ class DailyActivity : AppCompatActivity() {
                                                         activityRef.child(key)
                                                             .child("location")
                                                             .setValue(copiedLocation.value)
+                                                        Log.d("CopiedLocation_Resolve", "The location value is ==> $copiedLocation")
                                                         activityId++
                                                     }.addOnCompleteListener {
                                                         isLoading = false
