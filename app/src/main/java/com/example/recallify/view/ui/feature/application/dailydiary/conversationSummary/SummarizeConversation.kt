@@ -187,17 +187,7 @@ class SummarizeConversation : AppCompatActivity() {
                 conversationText = myText.plus(" .").plus(data[0])
              //   mainBinding.textViewResult.text =conversationtText
 //                conversationText="""
-            //Dear UOWD Student, Hope this e-mail finds you well.
-            //Please note of the following information regarding Autumn 2022 Results Releasing Date and Supplementary Exams.Results
-            //As published in the academic calendar, the results for Autumn 2022 will be released on Thursday, 12th of January 2023.
-            //Kindly refer to the Finalisation of Student Results Policy for grade reference, should you need clarification regarding your published grade(s). If in the unlikely event that your marks/grades will not be available on the 12th of January, you will receive notification from the FRED and Registry Services team with information on the expected new release date of your results.
-            //To clarify, please see below what constitutes the passing or failing of a subject:
-            //If you receive a mark of 50 or above, you will be classed as having passed the subject.
-            //If you receive a mark of below 50, you will be classed as having failed the subject as you have not provided sufficient evidence of attainment of the relevant subject learning outcomes.
-            //For students who fail the subject, it should be noted that students are not automatically given a supplementary assessment. For further information and clarification on this, please refer to section 11.1 of the Examination Procedure document in MyUOWD.
-            //Supplementary Examinations
-            //All approved supplementary exams for Autumn 2022 subjects will be held on campus between 27 Mar and 2 Apr '23.
-            //""".trimIndent()
+
 
 
                 //after the result, the microphone will not close, it will start again
@@ -278,7 +268,7 @@ class SummarizeConversation : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun SendSummary(response:String, person_name:String){
         val uid = Firebase.auth.currentUser?.uid
-        var dataRef = database.reference
+        val dataRef = database.reference
         if (uid != null) {
             val database = Firebase.database.reference.child("users").child(uid).child("conversation-summary").child(currentDate)
             database.addListenerForSingleValueEvent(object : ValueEventListener {

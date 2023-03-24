@@ -36,7 +36,12 @@ fun ImagePreviewItem(
             contentScale = ContentScale.Crop
         )
 
-        IconButton(onClick = { onClick() }) {
+        IconButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(alignment = Alignment.CenterEnd),
+            onClick = { onClick() }
+        ) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "",

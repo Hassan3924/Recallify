@@ -2,15 +2,15 @@ package com.example.recallify.view.ui.feature.application.tbi_applications.daily
 
 import android.Manifest
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -29,23 +29,34 @@ import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.resource.modules.Response
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.copiedLocation
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class DailyActivity : AppCompatActivity() {
 
-    /**
-     * The view-model of Daily Dairy Activity.
-     *
-     * @since 1.0.0
-     *
-     * @author enoabasi
-     * */
-    private val activityViewModel: ActivityViewModel by viewModels()
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val current = LocalDateTime.now()
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val timeFormatted = current.format(timeFormatter)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val currentTime = timeFormatted.toString()
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_daily)
@@ -58,14 +69,26 @@ class DailyActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     fun DailyActivityScreen() {
 
-        /**
-         * @author enoabasi
-         * */
-        val state = activityViewModel.state
+        val imageLink: MutableState<Uri?> = remember {
+            mutableStateOf(null)
+        }
+
+        val title = remember {
+            mutableStateOf("")
+        }
+
+        val description = remember {
+            mutableStateOf("")
+        }
+
+        var isLoading by remember {
+            mutableStateOf(false)
+        }
 
         /**
          * @author enoabasi
@@ -87,10 +110,10 @@ class DailyActivity : AppCompatActivity() {
          * */
         val galleryLauncher =
             rememberLauncherForActivityResult(
-                ActivityResultContracts.GetMultipleContents()
+                ActivityResultContracts.GetContent()
             ) { imageUri ->
                 imageUri.let {
-                    activityViewModel.updateSelectedImageList(listOfImages = it)
+                    imageLink.value = it
                 }
             }
 
@@ -113,6 +136,8 @@ class DailyActivity : AppCompatActivity() {
          * */
         val scaffoldState = rememberScaffoldState()
 
+        val scope = rememberCoroutineScope()
+
         /**
          * The dialog receiver for posting a log to the firebase console
          * @author enoabasi
@@ -131,8 +156,20 @@ class DailyActivity : AppCompatActivity() {
         val context = LocalContext.current
 
         Scaffold(
-            scaffoldState = rememberScaffoldState(),
-            topBar = { DiaryActivityTopAppBar() },
+            scaffoldState = scaffoldState,
+            topBar = {
+                DiaryActivityTopAppBar(context) {
+                    IconButton(onClick = {
+                        context.startActivity(Intent(context, DailyDiaryActivity::class.java))
+                        finish()
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.round_arrow_back_24),
+                            contentDescription = "back to home"
+                        )
+                    }
+                }
+            },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValues ->
             Column(
@@ -148,18 +185,22 @@ class DailyActivity : AppCompatActivity() {
                         .padding(top = 4.dp)
                         .padding(bottom = 8.dp)
                 ) {
-                    /**
-                     * Image selection and loading of the data from the user's mobile
-                     * The list can carry only 10 images to save space on the database.
-                     *
-                     * The number of images in the list is 10.
-                     * */
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(screenHeight * 0.35f)
+                            .width(screenWidth * 0.3f)
+                            .padding(2.dp)
                     ) {
-                        if (state.images.isEmpty()) {
+                        if (imageLink.value != null) {
+                            ImagePreviewItem(
+                                uri = imageLink.value!!,
+                                height = screenHeight * 0.5f,
+                                width = screenWidth * 0.6f
+                            ) {
+                                imageLink.value = null
+                            }
+                        } else {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
@@ -167,39 +208,22 @@ class DailyActivity : AppCompatActivity() {
                                 Text(text = "No images added!")
                             }
                         }
-
-                        if (state.images.isNotEmpty()) {
-                            LazyRow(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.Center)
-                            ) {
-                                itemsIndexed(state.images) { index, uri ->
-                                    if (uri != null) {
-                                        ImagePreviewItem(uri = uri,
-                                            height = screenHeight * 0.5f,
-                                            width = screenWidth * 0.6f,
-                                            onClick = { activityViewModel.onItemRemove(index) }
-                                        )
-                                    } else {
-                                        Text(text = "no image to display")
-                                    }
-                                    Spacer(modifier = Modifier.width(3.dp))
-                                }
-                            }
-                        }
                     }
+
                     Column(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.End
                     ) {
                         Button(onClick = {
                             if (permissionState.status.isGranted) {
                                 galleryLauncher.launch("image/*")
                             } else
                                 permissionState.launchPermissionRequest()
-                        }) {
+                        }
+                        ) {
                             Text(text = "Add images")
                         }
                     }
@@ -228,8 +252,8 @@ class DailyActivity : AppCompatActivity() {
                          * @author essien
                          * */
                         TextField(
-                            value = state.title ?: "",
-                            onValueChange = { activityViewModel.onTitleChange(it) },
+                            value = title.value,
+                            onValueChange = { title.value = it },
                             modifier = Modifier.fillMaxWidth(),
                             textStyle = MaterialTheme.typography.subtitle2.copy(
                                 fontSize = 15.sp,
@@ -238,7 +262,7 @@ class DailyActivity : AppCompatActivity() {
                             placeholder = { Text(text = "Title") },
                             trailingIcon = {
                                 IconButton(onClick = {
-                                    state.title ?: ""
+                                    title.value = ""
                                 }) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.backspace_48),
@@ -265,8 +289,8 @@ class DailyActivity : AppCompatActivity() {
                          * @author essien
                          * */
                         TextField(
-                            value = state.description ?: "",
-                            onValueChange = { activityViewModel.onDescriptionChange(it) },
+                            value = description.value,
+                            onValueChange = { description.value = it },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(250.dp),
@@ -278,7 +302,8 @@ class DailyActivity : AppCompatActivity() {
                             shape = RoundedCornerShape(4.dp),
                             colors = TextFieldDefaults.textFieldColors(
                                 textColor = Color.Black,
-                            )
+                            ),
+                            maxLines = 30
                         )
                     }
                     /**
@@ -318,9 +343,8 @@ class DailyActivity : AppCompatActivity() {
                             title = { Text(text = "Cancel editing") },
                             text = {
                                 Text(
-                                    text = "You are about to leave daily activity without " +
-                                            "making an activity.\nAre you sure you want to " +
-                                            "continue."
+                                    text = "Leaving without making an activity.\n" +
+                                            "Are you sure you want to continue?"
                                 )
                             },
                             shape = RoundedCornerShape(5.dp),
@@ -328,11 +352,21 @@ class DailyActivity : AppCompatActivity() {
                         )
                     }
 
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        if (isLoading) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                LinearProgressIndicator()
+                                Text(text = "finishing up activity...")
+                            }
+                        }
                         Button(
                             onClick = { cancelDialog = true },
                             modifier = Modifier.padding(4.dp),
@@ -346,24 +380,106 @@ class DailyActivity : AppCompatActivity() {
                         }
                         Button(
                             onClick = {
-                                when (val addImageToStorageResponse =
-                                    activityViewModel.addImageToStorageResponse) {
-                                    is Response.Loading -> {}
-                                    is Response.Success -> {
-                                        val imageList = listOf(addImageToStorageResponse.data)
-                                        activityViewModel.createActivity(
-                                            scaffoldState = scaffoldState,
-                                            imageUri = imageList
-                                        )
-                                    }
-                                    is Response.Failure -> {
-                                        Response.Failure(addImageToStorageResponse.message)
-                                    }
-                                    else -> {
-                                        Log.w(
-                                            "MYTAG",
-                                            "Error on retrieving the data from the database"
-                                        )
+                                isLoading = true
+                                scope.launch {
+                                    val database = FirebaseDatabase.getInstance().reference
+                                    val storage = FirebaseStorage.getInstance().reference
+
+                                    val userID = FirebaseAuth.getInstance().currentUser?.uid!!
+
+                                    var activityId = 1
+
+                                    val activityImage = storage
+                                        .child("imageFolder")
+                                        .child(userID)
+                                        .child(getCurrentDate())
+                                        .child(activityId.toString())
+
+                                    val activityRef = database
+                                        .child("users")
+                                        .child(userID)
+                                        .child("dailyDairyDummy")
+                                        .child(getCurrentDate())
+
+                                    val key = activityRef.push().key!!
+
+                                    imageLink.let { link ->
+                                        activityImage.putFile(link.value!!)
+                                            .addOnCompleteListener { task ->
+                                                if (task.isSuccessful) {
+                                                    activityImage.downloadUrl.addOnSuccessListener { uri ->
+//                                                        activityRef.child(key)
+//                                                            .child("userId")
+//                                                            .setValue(userID)
+//                                                        activityRef.child(activityId.toString())
+//                                                            .child("activityId")
+//                                                            .setValue(activityId)
+//                                                        activityRef.child(activityId.toString())
+//                                                            .child("imageLink")
+//                                                            .setValue(uri.toString())
+//                                                        activityRef.child(activityId.toString())
+//                                                            .child("title")
+//                                                            .setValue(title.value)
+//                                                        activityRef.child(activityId.toString())
+//                                                            .child("description")
+//                                                            .setValue(description.value)
+//                                                        activityRef.child(activityId.toString())
+//                                                            .child("time")
+//                                                            .setValue(currentTime)
+//                                                        activityRef.child(activityId.toString())
+//                                                            .child("date")
+//                                                            .setValue(getCurrentDate())
+//                                                        activityRef.child(activityId.toString())
+//                                                            .child("location")
+//                                                            .setValue(copiedLocation.value)
+                                                        activityRef.child(key)
+                                                            .child("userId")
+                                                            .setValue(userID)
+                                                        activityRef.child(key)
+                                                            .child("activityId")
+                                                            .setValue(key)
+                                                        activityRef.child(key)
+                                                            .child("imageLink")
+                                                            .setValue(uri.toString())
+                                                        activityRef.child(key)
+                                                            .child("title")
+                                                            .setValue(title.value)
+                                                        activityRef.child(key)
+                                                            .child("description")
+                                                            .setValue(description.value)
+                                                        activityRef.child(key)
+                                                            .child("time")
+                                                            .setValue(currentTime)
+                                                        activityRef.child(key)
+                                                            .child("date")
+                                                            .setValue(getCurrentDate())
+                                                        activityRef.child(key)
+                                                            .child("location")
+                                                            .setValue(copiedLocation.value)
+                                                        activityId++
+                                                    }.addOnCompleteListener {
+                                                        isLoading = false
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Activity Posted! 👍",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                        context.startActivity(
+                                                            Intent(
+                                                                context,
+                                                                DailyDiaryActivity::class.java
+                                                            )
+                                                        )
+                                                        finish()
+                                                    }
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        task.exception?.message,
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
                                     }
                                 }
                             },

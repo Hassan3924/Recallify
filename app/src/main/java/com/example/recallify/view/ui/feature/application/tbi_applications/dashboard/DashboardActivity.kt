@@ -87,7 +87,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class DashboardActivity : AppCompatActivity() {
+val copiedLocation = mutableStateOf("")
+
+open class DashboardActivity : AppCompatActivity() {
     lateinit var mainbinding:ActivityDashboardBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -107,6 +109,8 @@ class DashboardActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     val currentDate:String = formatted.toString()
 
+
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
 
@@ -120,12 +124,11 @@ class DashboardActivity : AppCompatActivity() {
                 val lat = location.latitude
                 val lng = location.longitude
                 locationText= "Current location: $lat, $lng"
-                var address = getAddressName(location.latitude,location.longitude)
+                val address = getAddressName(location.latitude,location.longitude)
                 Log.d("Currentlocation : ",locationText)
+                copiedLocation.value = address
                 addLiveLocation(lat,lng,address)
-
             }
-
         }
     }
 
@@ -1015,8 +1018,8 @@ class DashboardActivity : AppCompatActivity() {
     }
     private fun getAddressName(lat:Double, lon:Double): String{
         var addressName = ""
-        var geoCoder = Geocoder(this, Locale.getDefault())
-        var address = geoCoder.getFromLocation(lat,lon,1)
+        val geoCoder = Geocoder(this, Locale.getDefault())
+        val address = geoCoder.getFromLocation(lat,lon,1)
 
         if (address != null) {
             addressName = address[0].getAddressLine(0)

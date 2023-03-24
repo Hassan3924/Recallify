@@ -7,16 +7,13 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -25,23 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.example.recallify.R
-import com.example.recallify.model.functions.getDateFromTimeStamp
-import com.example.recallify.model.functions.getTimeFromTimeSTamp
 import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityDatabaseViewModel
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
@@ -49,7 +39,6 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.sidequ
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
-import com.example.recallify.view.ui.resource.modules.DatabaseActivityState
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
@@ -65,9 +54,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DailyDiaryActivity : AppCompatActivity() {
-
-
-    private val adViewModel: ActivityDatabaseViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -440,6 +426,8 @@ class DailyDiaryActivity : AppCompatActivity() {
                             text = "Moment snap",
                             onStart = {
                                 // todo: implement the moment snap functionalities
+
+
                             }
                         )
                     },
@@ -470,128 +458,9 @@ class DailyDiaryActivity : AppCompatActivity() {
                                         }
                                     }
                                     else -> {
-                                        when (val result = adViewModel.response.value) {
-                                            is DatabaseActivityState.Loading -> {
-                                                Box(
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentAlignment = Center
-                                                ) {
-                                                    CircularProgressIndicator()
-                                                }
-                                            }
-                                            is DatabaseActivityState.Success -> {
-                                                LazyColumn {
-                                                    items(result.data) { datum ->
-                                                        Box(modifier = Modifier.fillMaxWidth()) {
-                                                            if (datum.images.isEmpty()) {
-                                                                Text(
-                                                                    text = "No images for this activity",
-                                                                    style = MaterialTheme.typography.caption.copy(
-                                                                        fontWeight = FontWeight.Bold
-                                                                    ),
-                                                                    modifier = Modifier
-                                                                        .fillMaxWidth()
-                                                                        .padding(
-                                                                            horizontal = 8.dp,
-                                                                            vertical = 4.dp
-                                                                        )
-                                                                )
-                                                            }
+                                        // Fetch from firebase
 
-                                                            if (datum.images.isNotEmpty()) {
-                                                                LazyRow(
-                                                                    modifier = Modifier
-                                                                        .fillMaxWidth()
-                                                                        .align(Center)
-                                                                ) {
-                                                                    items(datum.images) { image ->
-                                                                        Image(
-                                                                            painter = rememberAsyncImagePainter(
-                                                                                image
-                                                                            ),
-                                                                            contentDescription = "Activity images",
-                                                                            modifier = Modifier.fillMaxSize(),
-                                                                            contentScale = ContentScale.FillWidth
-                                                                        )
-                                                                        Spacer(
-                                                                            modifier = Modifier.width(
-                                                                                2.dp
-                                                                            )
-                                                                        )
-                                                                    }
-                                                                }
-                                                            }
 
-                                                            Column(
-                                                                modifier = Modifier
-                                                                    .fillMaxWidth()
-                                                                    .padding(horizontal = 8.dp)
-                                                            ) {
-                                                                Row(
-                                                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                                                    verticalAlignment = Alignment.CenterVertically
-                                                                ) {
-                                                                    Row {
-                                                                        Text(
-                                                                            text = getTimeFromTimeSTamp(
-                                                                                datum.timestamp.toString()
-                                                                            ),
-                                                                            style = MaterialTheme.typography.caption,
-                                                                            modifier = Modifier.fillMaxWidth()
-                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
-                                                                        )
-                                                                        Text(
-                                                                            text = getDateFromTimeStamp(
-                                                                                datum.timestamp.toString()
-                                                                            ),
-                                                                            style = MaterialTheme.typography.caption,
-                                                                            modifier = Modifier.fillMaxWidth()
-                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
-                                                                        )
-                                                                    }
-                                                                    if (datum.location!!.isBlank()) {
-                                                                        Text(
-                                                                            text = "~location~",
-                                                                            style = MaterialTheme.typography.caption,
-                                                                            modifier = Modifier.fillMaxWidth()
-                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
-                                                                        )
-                                                                    } else {
-                                                                        Text(
-                                                                            text = datum.location!!,
-                                                                            style = MaterialTheme.typography.caption,
-                                                                            modifier = Modifier.fillMaxWidth()
-                                                                                .padding(horizontal = 2.dp, vertical = 4.dp)
-                                                                        )
-                                                                    }
-
-                                                                }
-                                                                Text(
-                                                                    text = datum.title!!,
-                                                                    style = MaterialTheme.typography.subtitle1,
-                                                                    modifier = Modifier.fillMaxWidth()
-                                                                        .padding(horizontal = 2.dp, vertical = 4.dp)
-                                                                )
-                                                                Text(
-                                                                    text = datum.description!!,
-                                                                    style = MaterialTheme.typography.body2,
-                                                                    overflow = TextOverflow.Ellipsis,
-                                                                    maxLines = 10,
-                                                                    modifier = Modifier.fillMaxWidth()
-                                                                        .padding(horizontal = 2.dp, vertical = 4.dp)
-                                                                )
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            is DatabaseActivityState.Failure -> {
-                                                Text(text = "Failed to load activities")
-                                            }
-                                            else -> {
-                                                Text(text = "Error fetching activities from network!")
-                                            }
-                                        }
                                     }
                                 }
                                 BackHandler(

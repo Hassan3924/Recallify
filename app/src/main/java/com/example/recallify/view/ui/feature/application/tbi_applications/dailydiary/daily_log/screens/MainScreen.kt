@@ -146,7 +146,6 @@ fun MainScreen(
     }
 }
 
-
 /**
  * This gets the current date of when a log or activity is being made.
  *
