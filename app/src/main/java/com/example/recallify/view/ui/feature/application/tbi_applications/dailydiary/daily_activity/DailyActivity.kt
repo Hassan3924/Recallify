@@ -79,7 +79,7 @@ class DailyActivity : AppCompatActivity() {
             mutableStateOf(null)
         }
 
-        val title = remember {
+        val location = remember {
             mutableStateOf("")
         }
 
@@ -196,8 +196,8 @@ class DailyActivity : AppCompatActivity() {
                         if (imageLink.value != null) {
                             ImagePreviewItem(
                                 uri = imageLink.value!!,
-                                height = screenHeight * 0.5f,
-                                width = screenWidth * 0.6f
+                                height = screenHeight * 0.6f,
+                                width = screenWidth * 0.7f
                             ) {
                                 imageLink.value = null
                             }
@@ -253,17 +253,18 @@ class DailyActivity : AppCompatActivity() {
                          * @author essien
                          * */
                         TextField(
-                            value = title.value,
-                            onValueChange = { title.value = it },
+                            value = location.value,
+                            onValueChange = { location.value = it },
                             modifier = Modifier.fillMaxWidth(),
                             textStyle = MaterialTheme.typography.subtitle2.copy(
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Normal
                             ),
-                            placeholder = { Text(text = "Title") },
+                            label = { Text(text = "Location")},
+                            placeholder = { Text(text = "Location") },
                             trailingIcon = {
                                 IconButton(onClick = {
-                                    title.value = ""
+                                    location.value = ""
                                 }) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.backspace_48),
@@ -299,7 +300,8 @@ class DailyActivity : AppCompatActivity() {
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Normal
                             ),
-                            placeholder = { Text(text = "Description") },
+                            label = { Text(text = "Description")},
+                            placeholder = { Text(text = "Tell us about what happened here...") },
                             shape = RoundedCornerShape(4.dp),
                             colors = TextFieldDefaults.textFieldColors(
                                 textColor = Color.Black,
@@ -448,8 +450,8 @@ class DailyActivity : AppCompatActivity() {
                                                             .child("imageLink")
                                                             .setValue(uri.toString())
                                                         activityRef.child(key)
-                                                            .child("title")
-                                                            .setValue(title.value)
+                                                            .child("location-name")
+                                                            .setValue(location.value)
                                                         activityRef.child(key)
                                                             .child("description")
                                                             .setValue(description.value)
@@ -460,9 +462,9 @@ class DailyActivity : AppCompatActivity() {
                                                             .child("date")
                                                             .setValue(getCurrentDate())
                                                         activityRef.child(key)
-                                                            .child("location")
+                                                            .child("location-address")
                                                             .setValue(copiedLocation.value)
-                                                        Log.d("CopiedLocation_Resolve", "The location value is ==> $copiedLocation")
+//                                                        Log.d("CopiedLocation_Resolve", "The location value is ==> $copiedLocation")
                                                         activityId++
                                                     }.addOnCompleteListener {
                                                         isLoading = false
