@@ -1,5 +1,6 @@
 package com.example.recallify.view.ui.feature.application.tbi_applications.dashboard
 
+
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,10 +13,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
@@ -25,8 +31,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.MutableLiveData
 import com.example.recallify.R
+import com.example.recallify.databinding.ActivityDashboardBinding
 import com.example.recallify.view.ui.feature.application.dashboard.NotificationService
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
@@ -37,130 +44,95 @@ import com.example.recallify.view.ui.theme.CommonColor
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.example.recallify.view.ui.theme.light_Primary
 import com.example.recallify.view.ui.theme.light_Secondary
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.TopCenter
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
-import com.example.recallify.view.common.components.TabPage
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.PropertyName
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import okio.ProtocolException
-import java.time.LocalDate
-
-
-import android.Manifest
-
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
-import android.net.Uri
-
-import android.os.Looper
-
-
-import androidx.core.app.ActivityCompat
-import androidx.lifecycle.MutableLiveData
-import com.example.recallify.databinding.ActivityDashboardBinding
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.location.FusedLocationProviderClient
-
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-val copiedLocation = mutableStateOf("")
 
 open class DashboardActivity : AppCompatActivity() {
-    lateinit var mainbinding:ActivityDashboardBinding
+    lateinit var mainbinding: ActivityDashboardBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var currentLocation: MutableLiveData<LatLng>
-    var locationText=""
+    var locationText = ""
     private val label = "User Location"
     val database = FirebaseDatabase.getInstance()
     val locationAdd = database.reference
     val auth = FirebaseAuth.getInstance()
     val user = auth.currentUser
+
     @RequiresApi(Build.VERSION_CODES.O)
     val current = LocalDateTime.now()
+
     @RequiresApi(Build.VERSION_CODES.O)
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
     @RequiresApi(Build.VERSION_CODES.O)
     val formatted = current.format(formatter)
+
     @RequiresApi(Build.VERSION_CODES.O)
-    val currentDate:String = formatted.toString()
+    val currentDate: String = formatted.toString()
 
+//    private val locationCallback = object : LocationCallback() {
+//        override fun onLocationResult(locationResult: LocationResult) {
+//
+//            super.onLocationResult(locationResult)
+//            val location = locationResult.lastLocation
+//            if (location != null) {
+//                currentLocation.value = LatLng(location.latitude, location.longitude)
+//            }
+//            locationResult ?: return
+//            for (location in locationResult.locations) {
+//                val lat = location.latitude
+//                val lng = location.longitude
+//                locationText= "Current location: $lat, $lng"
+//                var address = getAddressName(location.latitude,location.longitude)
+//                Log.d("Currentlocation : ",locationText)
+//                addLiveLocation(lat,lng,address)
+//
+//            }
+//        }
+//    }
 
+//    fun addLiveLocation(lat:Double,lng:Double,address:String){
+//        user?.let {
+//            val userUID = it.uid
+//            locationAdd.child("users").child(userUID).child("liveLocation").child("lat").setValue(lat)
+//            locationAdd.child("users").child(userUID).child("liveLocation").child("long").setValue(lng)
+//            locationAdd.child("users").child(userUID).child("liveLocation").child("address").setValue(address)
+//        }
+//    }
 
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-
-            super.onLocationResult(locationResult)
-            val location = locationResult.lastLocation
-            if (location != null) {
-                currentLocation.value = LatLng(location.latitude, location.longitude)
-            }
-            locationResult ?: return
-            for (location in locationResult.locations) {
-                val lat = location.latitude
-                val lng = location.longitude
-                locationText= "Current location: $lat, $lng"
-                val address = getAddressName(location.latitude,location.longitude)
-                Log.d("Currentlocation : ",locationText)
-                copiedLocation.value = address
-                addLiveLocation(lat,lng,address)
-            }
-        }
-    }
-
-    fun addLiveLocation(lat:Double,lng:Double,address:String){
-        user?.let {
-            val userUID = it.uid
-            locationAdd.child("users").child(userUID).child("liveLocation").child("lat").setValue(lat)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("long").setValue(lng)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("address").setValue(address)
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        // Request location permissions
-        requestLocationPermissions()
+//        // Request location permissions
+//        requestLocationPermissions()
+//
+//        // Initialize location services
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+//        createLocationRequest()
+//
+//        // Initialize currentLocation variable
+//        currentLocation = MutableLiveData()
+//        getCurrentLocation()
+//
+//        // Start receiving location updates
+//        startLocationUpdates()
 
-        // Initialize location services
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        createLocationRequest()
-
-        // Initialize currentLocation variable
-        currentLocation = MutableLiveData()
-        getCurrentLocation()
-
-        // Start receiving location updates
-        startLocationUpdates()
-
-        startService(Intent(this, NotificationService::class.java))
+        startService(Intent(this, NotificationService::class.java)) //this is for notification
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.selectedItemId = R.id.bottom_home
 
@@ -231,7 +203,7 @@ open class DashboardActivity : AppCompatActivity() {
         }
 
 
-        Scaffold (
+        Scaffold(
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValue ->
@@ -267,11 +239,13 @@ open class DashboardActivity : AppCompatActivity() {
                                 textAlign = TextAlign.Center
                             )
 
-                            Text(text = "Score",
+                            Text(
+                                text = "Score",
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.Black,
                                 fontSize = 20.sp,
-                                textAlign = TextAlign.Center)
+                                textAlign = TextAlign.Center
+                            )
 
 
                             Column(
@@ -279,19 +253,19 @@ open class DashboardActivity : AppCompatActivity() {
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                if(isLoading.value) {
+                                if (isLoading.value) {
                                     CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-                                }
-                                else {
+                                } else {
 
-                                        BarChart(
-                                            // First value as date, second value as score of that date
-                                            chartData.value,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            selectedBar = selectedBar,
-                                        )
+                                    BarChart(
+                                        // First value as date, second value as score of that date
+                                        chartData.value,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        selectedBar = selectedBar,
+                                    )
 
                                 }
+                                //LogoutButton(activity = this@DashboardActivity)
                             }
                         }
 //
@@ -309,10 +283,25 @@ open class DashboardActivity : AppCompatActivity() {
 //                            )
 //                        }
                     }
+
                 }
+
             }
         }
     }
+
+//    @Composable
+//    fun LogoutButton(activity: DashboardActivity) {
+//        Button(modifier = Modifier.padding(top = 20.dp), onClick = {
+//          //  fusedLocationClient.removeLocationUpdates(locationCallback) //to stop the location tracking
+//            FirebaseAuth.getInstance().signOut()
+//            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }) {
+//            Text(text = "Log Out")
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
@@ -322,7 +311,7 @@ open class DashboardActivity : AppCompatActivity() {
 
         val database =
             Firebase.database.reference.child("analyzeProgressTable").child(auth.currentUser?.uid!!)
-        val colors = listOf<Color>(
+        val colors = listOf(
             Color.White,
             Color.Gray,
             Color.Yellow,
@@ -331,7 +320,7 @@ open class DashboardActivity : AppCompatActivity() {
             Color.Blue
         )
 
-        val sevenDays = (0..5).map { LocalDate.now().minusDays(it.toLong())}
+        val sevenDays = (0..5).map { LocalDate.now().minusDays(it.toLong()) }
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -400,15 +389,15 @@ open class DashboardActivity : AppCompatActivity() {
 
                 inputList.forEachIndexed { index, input ->
 
-                        Bar(
-                            modifier = Modifier,
-                            primaryColor = input.color,
-                            value = input.value,
-                            maxValue = maxValue,
-                            description = input.description,
-                            date = input.date,
-                            showDescription = selectedBar == index
-                        )
+                    Bar(
+                        modifier = Modifier,
+                        primaryColor = input.color,
+                        value = input.value,
+                        maxValue = maxValue,
+                        description = input.description,
+                        date = input.date,
+                        showDescription = selectedBar == index
+                    )
                 }
             }
         }
@@ -419,7 +408,7 @@ open class DashboardActivity : AppCompatActivity() {
         modifier: Modifier = Modifier,
         primaryColor: Color,
         value: Int,
-        maxValue : Int,
+        maxValue: Int,
         description: String,
         date: String,
         showDescription: Boolean
@@ -427,7 +416,10 @@ open class DashboardActivity : AppCompatActivity() {
 
         val barWidth = 40.dp
         val minHeight = 16.dp
-        val barHeight = maxOf(minHeight, if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp)
+        val barHeight = maxOf(
+            minHeight,
+            if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp
+        )
 
 
         Log.d("BarHeight", "Value: $value, MaxValue: $maxValue, BarHeight: $barHeight")
@@ -467,21 +459,21 @@ open class DashboardActivity : AppCompatActivity() {
 //                    modifier = Modifier.width(barWidth)
 //                )
 //            }
-            Text(text = date,
-            style = MaterialTheme.typography.caption,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .width(barWidth)
-                .padding(top = 5.dp)
+            Text(
+                text = date,
+                style = MaterialTheme.typography.caption,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(barWidth)
+                    .padding(top = 5.dp)
             )
         }
     }
 
 
-
     data class BarCharInput(
-        val value : Int,
-        val description : String,
+        val value: Int,
+        val description: String,
         val color: Color,
         val date: String
     )
@@ -494,7 +486,7 @@ open class DashboardActivity : AppCompatActivity() {
         @JvmField
         @PropertyName("score")
         val score: Int = 0,
-        )
+    )
 
     @Composable
     fun DescriptionUI() {
@@ -829,11 +821,11 @@ open class DashboardActivity : AppCompatActivity() {
         val strokeWidth = 4.dp
         val stroke = Stroke(width = strokeWidth.value, cap = StrokeCap.Round)
 
-        Canvas (
+        Canvas(
             modifier = modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                ) {
+        ) {
             val width = size.width
             val height = size.height
             val maxValue = dataPoints.maxOrNull() ?: 0f
@@ -861,7 +853,10 @@ open class DashboardActivity : AppCompatActivity() {
 
     }
 
-    private fun listenForDataUpdates(database: DatabaseReference, onDataUpdate: (List<Float>) -> Unit) {
+    private fun listenForDataUpdates(
+        database: DatabaseReference,
+        onDataUpdate: (List<Float>) -> Unit
+    ) {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
@@ -880,7 +875,7 @@ open class DashboardActivity : AppCompatActivity() {
 
         dataSnapshot.children.forEach { childSnapshot ->
             val dataPoint = childSnapshot.getValue(Float::class.java)
-            dataPoint?.let {dataPoints.add(it)}
+            dataPoint?.let { dataPoints.add(it) }
         }
 
         return dataPoints
@@ -930,101 +925,103 @@ open class DashboardActivity : AppCompatActivity() {
 //        }
 //    }
 
-    //Live location Tracking functions #Ridinbal
-    private fun requestLocationPermissions() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
 
-    private fun createLocationRequest() {
-        locationRequest = LocationRequest.create().apply {
-            interval = LOCATION_UPDATE_INTERVAL
-            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
+//    //Live location Tracking functions #Ridinbal
+//    private fun requestLocationPermissions() {
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED &&
+//            ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION
+//                ),
+//                LOCATION_PERMISSION_REQUEST_CODE
+//            )
+//        }
+//    }
+//
+//    private fun createLocationRequest() {
+//        locationRequest = LocationRequest.create().apply {
+//            interval = LOCATION_UPDATE_INTERVAL
+//            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
+//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//        }
+//    }
+//
+//    private fun startLocationUpdates() {
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return
+//        }
+//        fusedLocationClient.requestLocationUpdates(
+//            locationRequest,
+//            locationCallback,
+//            Looper.getMainLooper()
+//        )
+//    }
+//
+//    private fun getCurrentLocation() {
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return
+//        }
+//        fusedLocationClient.lastLocation
+//            .addOnSuccessListener { location: Location? ->
+//                location?.let {
+//                    currentLocation.value = LatLng(location.latitude, location.longitude)
+//                }
+//            }
+//    }
+//
+//    companion object {
+//        private const val LOCATION_PERMISSION_REQUEST_CODE = 100
+//        private const val LOCATION_UPDATE_INTERVAL: Long = 5000
+//        private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
+//    }
+//    private fun getAddressName(lat:Double, lon:Double): String{
+//
+//        var addressName = ""
+//        var geoCoder = Geocoder(this, Locale.getDefault())
+//        var address = geoCoder.getFromLocation(lat,lon,1)
+//
+//        if (address != null) {
+//            addressName = address[0].getAddressLine(0)
+//
+//        }
+//        return addressName
 
-    private fun startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-    }
-
-    private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    currentLocation.value = LatLng(location.latitude, location.longitude)
-                }
-            }
-    }
-
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 100
-        private const val LOCATION_UPDATE_INTERVAL: Long = 5000
-        private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
-    }
-    private fun getAddressName(lat:Double, lon:Double): String{
-        var addressName = ""
-        val geoCoder = Geocoder(this, Locale.getDefault())
-        val address = geoCoder.getFromLocation(lat,lon,1)
-
-        if (address != null) {
-            addressName = address[0].getAddressLine(0)
-
-        }
-        return addressName
-    }
 }
