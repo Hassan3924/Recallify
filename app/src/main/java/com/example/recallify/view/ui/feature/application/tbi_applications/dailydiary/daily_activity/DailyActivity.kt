@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
+import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLocation
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
-import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.copiedLocation
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted

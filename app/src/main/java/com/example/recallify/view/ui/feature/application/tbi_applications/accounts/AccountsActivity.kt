@@ -1,7 +1,15 @@
 package com.example.recallify.view.ui.feature.application.tbi_applications.accounts
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.os.Build
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -19,48 +27,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.MutableLiveData
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
-import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-
-import android.Manifest
-
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
-import android.os.Build
-
-import android.os.Looper
-import android.util.Log
-import androidx.annotation.RequiresApi
-
-
-import androidx.core.app.ActivityCompat
-import androidx.lifecycle.MutableLiveData
-import com.example.recallify.databinding.ActivityDashboardBinding
-import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.firebase.database.FirebaseDatabase
-
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+
+
+val copiedLocation = mutableStateOf("")
 
 class AccountsActivity : AppCompatActivity() {
 
@@ -96,6 +87,7 @@ class AccountsActivity : AppCompatActivity() {
                 val lng = location.longitude
                 locationText= "Current location: $lat, $lng"
                 var address = getAddressName(location.latitude,location.longitude)
+                copiedLocation.value = address
                 Log.d("Currentlocation : ",locationText)
                 addLiveLocation(lat,lng,address)
 
