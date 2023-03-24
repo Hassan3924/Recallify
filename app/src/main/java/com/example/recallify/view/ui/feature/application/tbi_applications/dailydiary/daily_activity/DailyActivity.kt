@@ -393,7 +393,6 @@ class DailyActivity : AppCompatActivity() {
                                         .child("imageFolder")
                                         .child(userID)
                                         .child(getCurrentDate())
-                                        .child(activityId.toString())
 
                                     val activityRef = database
                                         .child("users")
@@ -407,8 +406,9 @@ class DailyActivity : AppCompatActivity() {
 //
 //                                    val fetchDB = activityRef.child(fetchKey)
 
+
                                     imageLink.let { link ->
-                                        activityImage.putFile(link.value!!)
+                                        activityImage.child(key).putFile(link.value!!)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
                                                     activityImage.downloadUrl.addOnSuccessListener { uri ->
