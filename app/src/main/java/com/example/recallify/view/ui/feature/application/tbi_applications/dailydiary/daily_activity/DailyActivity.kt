@@ -403,6 +403,10 @@ class DailyActivity : AppCompatActivity() {
 
                                     val key = activityRef.push().key!!
 
+//                                    val fetchKey = activityRef.key!!
+//
+//                                    val fetchDB = activityRef.child(fetchKey)
+
                                     imageLink.let { link ->
                                         activityImage.putFile(link.value!!)
                                             .addOnCompleteListener { task ->
