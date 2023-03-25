@@ -25,6 +25,10 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.RetryPolicy
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestQuizActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -33,8 +37,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import org.json.JSONObject
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
 //
 class SummarizeConversation : AppCompatActivity() {
 
@@ -106,22 +112,48 @@ class SummarizeConversation : AppCompatActivity() {
             speechRecognizer.cancel()
             speechRecognizer.destroy()
             mainBinding.textView.text = "Please tap on the button to speak"
-          //  mainBinding.SummarizedConversation.text = conversationtText
-            callFlaskService()
+            //  mainBinding.SummarizedConversation.text = conversationtText
+          //  callFlaskService()
 
         }
         mainBinding.buttonDone.setOnClickListener {
-         var  person_name= mainBinding.EnterName.text.toString().trim()
+            var  person_name= mainBinding.EnterName.text.toString().trim()
 
             if(person_name == ""){
                 Toast.makeText(this,"Please enter the name of the person who you talked to",Toast.LENGTH_SHORT).show()
             }
             else {
-                SendSummary(responseSaved, person_name)
-                Toast.makeText(this, "Saved Successfully!", Toast.LENGTH_SHORT).show()
-                Log.d("ResponseSummary", responseSaved)
-                mainBinding.textViewResult.text = ""
-                mainBinding.EnterName.text.clear()
+
+//                callFlaskService()
+//                Toast.makeText(this@SummarizeConversation, "Please wait for the conversation to be summarized!", Toast.LENGTH_SHORT).show()
+//                val handler = Handler(Looper.getMainLooper())
+//                //after 2 seconds, the microphone is ready to speak again
+//                handler.postDelayed(object : Runnable{
+//                    override fun run() {
+//                        SendSummary(responseSaved, person_name)
+//                        Toast.makeText(this@SummarizeConversation, "Saved Successfully!", Toast.LENGTH_SHORT).show()
+//                        Log.d("ResponseSummary", responseSaved)
+//                        mainBinding.textViewResult.text = ""
+//                        mainBinding.EnterName.text.clear()
+//                        val intent = Intent(this@SummarizeConversation, DailyDiaryActivity::class.java)
+//                        startActivity(intent)
+//                        finish()
+//                    }
+//                },40000)
+
+                val intent = Intent(this@SummarizeConversation, ConfirmScreenSummarizeConversation::class.java)
+                intent.putExtra("person_name", person_name)
+                intent.putExtra("conversationText", conversationText)
+                Log.d("trackConversation1",conversationText)
+                startActivity(intent)
+               // SendSummary(responseSaved, person_name)
+//                Toast.makeText(this, "Saved Successfully!", Toast.LENGTH_SHORT).show()
+//                Log.d("ResponseSummary", responseSaved)
+//                mainBinding.textViewResult.text = ""
+//                mainBinding.EnterName.text.clear()
+//                val intent = Intent(this, DailyDiaryActivity::class.java)
+//                startActivity(intent)
+//                finish()
             }
         }
 
@@ -182,31 +214,31 @@ class SummarizeConversation : AppCompatActivity() {
                 val data: ArrayList<String> = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
 
                 val myText = mainBinding.textViewResult.text.toString()
-  //              val myText = "" //issue with this is it resets
+                //              val myText = "" //issue with this is it resets
                 mainBinding.textViewResult.text = myText.plus(" .").plus(data[0])
                 conversationText = myText.plus(" .").plus(data[0])
-             //   mainBinding.textViewResult.text =conversationtText
-                conversationText="""
-Dear UOWD Student,
-
-Hope this e-mail finds you well. 
-
-Please note of the following information regarding Autumn 2022 Results Releasing Date and Supplementary Exams.
-
-Results
-As published in the academic calendar, the results for Autumn 2022 will be released on Thursday, 12th of January 2023.
-
-Kindly refer to the Finalisation of Student Results Policy for grade reference, should you need clarification regarding your published grade(s). If in the unlikely event that your marks/grades will not be available on the 12th of January, you will receive notification from the FRED and Registry Services team with information on the expected new release date of your results.
-
-To clarify, please see below what constitutes the passing or failing of a subject:
-If you receive a mark of 50 or above, you will be classed as having passed the subject.
-If you receive a mark of below 50, you will be classed as having failed the subject as you have not provided sufficient evidence of attainment of the relevant subject learning outcomes. 
-For students who fail the subject, it should be noted that students are not automatically given a supplementary assessment. For further information and clarification on this, please refer to section 11.1 of the Examination Procedure document in MyUOWD. 
-
-Supplementary Examinations
-All approved supplementary exams for Autumn 2022 subjects will be held on campus between 27 Mar and 2 Apr '23.
-"""
-
+                //   mainBinding.textViewResult.text =conversationtText
+//                conversationText="""
+//Dear UOWD Student,
+//
+//Hope this e-mail finds you well.
+//
+//Please note of the following information regarding Autumn 2022 Results Releasing Date and Supplementary Exams.
+//
+//Results
+//As published in the academic calendar, the results for Autumn 2022 will be released on Thursday, 12th of January 2023.
+//
+//Kindly refer to the Finalisation of Student Results Policy for grade reference, should you need clarification regarding your published grade(s). If in the unlikely event that your marks/grades will not be available on the 12th of January, you will receive notification from the FRED and Registry Services team with information on the expected new release date of your results.
+//
+//To clarify, please see below what constitutes the passing or failing of a subject:
+//If you receive a mark of 50 or above, you will be classed as having passed the subject.
+//If you receive a mark of below 50, you will be classed as having failed the subject as you have not provided sufficient evidence of attainment of the relevant subject learning outcomes.
+//For students who fail the subject, it should be noted that students are not automatically given a supplementary assessment. For further information and clarification on this, please refer to section 11.1 of the Examination Procedure document in MyUOWD.
+//
+//Supplementary Examinations
+//All approved supplementary exams for Autumn 2022 subjects will be held on campus between 27 Mar and 2 Apr '23.
+//"""
+Log.d("trackConversation0",conversationText)
                 //after the result, the microphone will not close, it will start again
                 convertSpeech()
             }
@@ -239,79 +271,161 @@ All approved supplementary exams for Autumn 2022 subjects will be held on campus
             convertSpeech()
         }
     }
-    private fun callFlaskService() {
-        // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(this)
-//        val url = "http://yourflaskserver.com/summarize"
-      //  val url = "https://ridzbmd.pythonanywhere.com/summarize"
-        val url = "https://RidinBMD.pythonanywhere.com/summarize"
+//    private fun callFlaskService() {
+//        // Instantiate the RequestQueue.
+//        val queue = Volley.newRequestQueue(this)
+////        val url = "http://yourflaskserver.com/summarize"
+//        //  val url = "https://ridzbmd.pythonanywhere.com/summarize"
+//        val url = "https://RidinBMD.pythonanywhere.com/summarize"
+//
+//        // Request a response from the provided URL.
+//        val stringRequest = object : StringRequest(
+//            Request.Method.POST, url,
+//            Response.Listener<String> { response ->
+//                // Display the response string in a TextView or handle it as required
+////                summaryTextView.text = response
+//                //   mainBinding.SummarizedConversation.text  = response //here response is the summarized convo and we are displaying it
+//
+////               mainBinding.summaryTextView.text = response
+////                Log.d("ResponseSummary2",response)
+//
+//                responseSaved=response
+//                //mainBinding.buttonDone.setOnClickListener {
+//                //SendSummary(response)
+//                //Toast.makeText(this,"Saved To Database",Toast.LENGTH_SHORT).show()
+//                //
+//                //                }
+//            },
+//            Response.ErrorListener { error ->
+//                // Handle error response
+//                Log.e("Volley Error", error.toString())
+//                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+//            }
+//        ) {
+////            // Add parameters to the POST request
+////            override fun getParams(): Map<String, String> {
+////                val params = HashMap<String, String>()
+//////                params["text"] = inputTextView.text.toString() // Replace with your input text
+////                params["text"] = conversationText // Replace with your input text
+////                return params
+////            }
+//// Set the request headers and body
+//override fun getHeaders(): MutableMap<String, String> {
+//    val headers = HashMap<String, String>()
+//    headers["Content-Type"] = "application/json"
+//    return headers
+//}
+//
+//            override fun getBody(): ByteArray {
+//                val jsonBody = JSONObject()
+//                jsonBody.put("text", "This is the input text that needs to be summarized.")
+//                return jsonBody.toString().toByteArray(Charsets.UTF_8)
+//            }
+//        }
+//
+//        // Add the request to the RequestQueue.
+//        queue.add(stringRequest)
+//    }
 
-        // Request a response from the provided URL.
-        val stringRequest = object : StringRequest(
-            Request.Method.POST, url,
-            Response.Listener<String> { response ->
-                // Display the response string in a TextView or handle it as required
-//                summaryTextView.text = response
-             //   mainBinding.SummarizedConversation.text  = response //here response is the summarized convo and we are displaying it
+    //latest one
+//    private fun callFlaskService() {
+//
+//        // Instantiate the RequestQueue.
+//        val queue = Volley.newRequestQueue(this)
+////        val url = "http://yourflaskserver.com/summarize"
+//        //  val url = "https://ridzbmd.pythonanywhere.com/summarize"
+//        val url = "https://RidinBMD.pythonanywhere.com/summarize"
+//
+//        // Request a response from the provided URL.
+//        val stringRequest = object : StringRequest(
+//            Request.Method.POST, url,
+//            Response.Listener<String> { response ->
+//                // Display the response string in a TextView or handle it as required
+////                summaryTextView.text = response
+//                //   mainBinding.SummarizedConversation.text  = response //here response is the summarized convo and we are displaying it
+//
+////               mainBinding.summaryTextView.text = response
+////                Log.d("ResponseSummary2",response)
+//
+//                responseSaved = response
+//                Log.d("Volley ErrorResponse", responseSaved)
+//
+//                //close the connection here
+//                queue.stop()
+//
+//                //mainBinding.buttonDone.setOnClickListener {
+//                //SendSummary(response)
+//                //Toast.makeText(this,"Saved To Database",Toast.LENGTH_SHORT).show()
+//                //
+//                //                }
+//            },
+//            Response.ErrorListener { error ->
+//                // Handle error response
+//                Log.e("Volley Error", error.toString())
+//                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+//
+//                //close the connection here
+//                queue.stop()
+//            }
+//        ) {
+//            // Add parameters to the POST request
+//            override fun getParams(): Map<String, String> {
+//                val params = HashMap<String, String>()
+////                params["text"] = inputTextView.text.toString() // Replace with your input text
+//                params["text"] = conversationText // Replace with your input text
+//                return params
+//            }
+//
+////            // Set timeout value for the request
+////            override fun getRetryPolicy(): RetryPolicy {
+////                return DefaultRetryPolicy(
+////                    15000, //15000 before
+////                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+////                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+////                )
+////            }
+//
+//
+//        }
+//        // Set the retry policy to handle timeout error
+//        stringRequest.retryPolicy = DefaultRetryPolicy(
+//            15000,
+//            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+//            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+//        )
+//        // Add the request to the RequestQueue.
+//        queue.add(stringRequest)
+//    }
 
-//               mainBinding.summaryTextView.text = response
-//                Log.d("ResponseSummary2",response)
-
-                responseSaved=response
-                //mainBinding.buttonDone.setOnClickListener {
-                //SendSummary(response)
-                //Toast.makeText(this,"Saved To Database",Toast.LENGTH_SHORT).show()
-                //
-                //                }
-            },
-            Response.ErrorListener { error ->
-                // Handle error response
-                Log.e("Volley Error", error.toString())
-                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-        ) {
-            // Add parameters to the POST request
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-//                params["text"] = inputTextView.text.toString() // Replace with your input text
-                params["text"] = conversationText // Replace with your input text
-                return params
-            }
-        }
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun SendSummary(response:String, person_name:String){
-        val uid = Firebase.auth.currentUser?.uid
-        val dataRef = database.reference
-        if (uid != null) {
-            val database = Firebase.database.reference.child("users").child(uid).child("conversation-summary").child(currentDate)
-            database.addListenerForSingleValueEvent(object : ValueEventListener {
-                @RequiresApi(Build.VERSION_CODES.O)
-                override fun onDataChange(snapshot: DataSnapshot) {
-                   var childCount = snapshot.childrenCount.toInt()
-//                    if(childCount==0){
-//                        childCount=childCount+1
-//                    }
-                    childCount += 1
-
-                 //   var name_summary = "Today on $currentDate at $currentTime  I talked to " +mainBinding.EnterName.text.toString() + " and here is the summarized conversation" + response
-                    var name_summary =
-                        "Today on $currentDate at $currentTime  I talked to $person_name and here is the summarized conversation$response"
-                    dataRef.child("users").child(uid).child("conversation-summary").child(currentDate).child(childCount.toString()).setValue(name_summary)
-                    //mainBinding.textViewResult.text = ""
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
-            })
-
-        }
-    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    fun SendSummary(response:String, person_name:String){
+//        val uid = Firebase.auth.currentUser?.uid
+//        val dataRef = database.reference
+//        if (uid != null) {
+//            val database = Firebase.database.reference.child("users").child(uid).child("conversation-summary").child(currentDate)
+//            database.addListenerForSingleValueEvent(object : ValueEventListener {
+//                @RequiresApi(Build.VERSION_CODES.O)
+//                override fun onDataChange(snapshot: DataSnapshot) {
+//                    var childCount = snapshot.childrenCount.toInt()
+////                    if(childCount==0){
+////                        childCount=childCount+1
+////                    }
+//                    childCount += 1
+//
+//                    //   var name_summary = "Today on $currentDate at $currentTime  I talked to " +mainBinding.EnterName.text.toString() + " and here is the summarized conversation" + response
+//                    var name_summary =
+//                        "Today on $currentDate at $currentTime  I talked to $person_name and here is the summarized conversation$response"
+//                    dataRef.child("users").child(uid).child("conversation-summary").child(currentDate).child(childCount.toString()).setValue(name_summary)
+//                    //mainBinding.textViewResult.text = ""
+//
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//
+//                }
+//
+//            })
+//
+//        }
+//    }
 }
