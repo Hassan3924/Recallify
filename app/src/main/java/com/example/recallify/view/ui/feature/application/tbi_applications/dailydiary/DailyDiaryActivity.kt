@@ -37,7 +37,6 @@ import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
@@ -159,6 +158,7 @@ class DailyDiaryActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun DailyDiaryScreen() {
+
         /**
          * The state of the Modal bottom sheet
          *
@@ -174,11 +174,6 @@ class DailyDiaryActivity : AppCompatActivity() {
          * @author enoabasi
          * */
         val scope = rememberCoroutineScope()
-
-        /**
-         * @author enoabasi
-         * */
-//        val fetchScope = rememberCoroutineScope()
 
         /**
          * The context of the application package. Most likely used in a toast or intent
@@ -219,8 +214,6 @@ class DailyDiaryActivity : AppCompatActivity() {
          * */
         val currentUser = auth.currentUser?.uid!!
 
-//        val ref = database.getReference("users").child(currentUser).child("conversation-summary").child(getCurrentDate())
-
         /**
          * **"children_of_logs"**, a data-snapshot reference gotten from firebase that is used to remember
          * the state of the database. In this context of the application is it used to remember
@@ -232,16 +225,6 @@ class DailyDiaryActivity : AppCompatActivity() {
          * */
         val childrenOfLogs = remember { mutableStateListOf<DataSnapshot>() }
 
-        /**
-         * **"children_of_activities"**, a data-snapshot reference gotten from firebase that is
-         * used to remember the state of the database. In this context of the application is it
-         * used to remember the children in the real-time database.
-         *
-         * It holds a [mutableStateListOf] DataSnapshots.
-         *
-         * @author hassan
-         * */
-        val childrenOfActivities = remember { mutableStateListOf<DataSnapshot>() }
 
         /**
          * This is used to remember the state of a coroutine. For if it is loading on not loading.
@@ -253,17 +236,6 @@ class DailyDiaryActivity : AppCompatActivity() {
          * @author hassan
          * */
         var isLogsLoading by remember { mutableStateOf(true) }
-
-        /**
-         * This is used to remember the state of a coroutine. For if it is loading on not loading.
-         * The logic is being implemented later in the code base. This loading has been set to
-         * monitor the **Activities** loading phase.
-         *
-         * It will return the truth value of the code block in which it is being called.
-         *
-         * @author enoabasi
-         * */
-        var isActivitiesLoading by remember { mutableStateOf(true) }
 
         /**
          * This is used to remember the state of the selected date from a filter or calendar. The
@@ -294,25 +266,6 @@ class DailyDiaryActivity : AppCompatActivity() {
                 .child("conversation-summary")
                 .child(selectedDate.toString())
 
-            /**
-             * The reference call the for the **"Daily Dairy Activities"** in the real-time database.
-             * The path structure is as follows;
-             * ```markdown
-             *  database-root-url
-             *      |- users
-             *          |- UID
-             *              |- conversation-summary
-             *                      |- selectedDate
-             *                              |- database-children
-             * ```
-             * @author enoabasi
-             * @see Firebase.database
-             * */
-            val activityRef = database.getReference("users")
-                .child(currentUser)
-                .child("dailyDairyDummy")
-                .child(selectedDate.toString())
-
             logsRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("Snapshot", snapshot.toString()) // add this line
@@ -325,21 +278,6 @@ class DailyDiaryActivity : AppCompatActivity() {
 
                 override fun onCancelled(error: DatabaseError) {
                     isLogsLoading = false
-                }
-            })
-
-            activityRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("ActivitySnapshot", snapshot.toString())
-                    childrenOfActivities.clear()
-                    snapshot.children.forEach { child ->
-                        childrenOfActivities.add(child)
-                    }
-                    isActivitiesLoading = false
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    isActivitiesLoading = false
                 }
             })
         }
@@ -394,7 +332,7 @@ class DailyDiaryActivity : AppCompatActivity() {
                         }
                         Spacer(modifier = Modifier.padding(vertical = 6.dp))
                         ActionSheetItem(
-                            icon = R.drawable.daily_activity,
+                            icon = R.drawable.daily_log,
                             text = "Summarised Text",
                             onStart = {
                                 val intent =
@@ -414,19 +352,6 @@ class DailyDiaryActivity : AppCompatActivity() {
                                     Intent(
                                         this@DailyDiaryActivity,
                                         DailyActivity::class.java
-                                    )
-                                startActivity(intent)
-                            }
-                        )
-                        Spacer(modifier = Modifier.padding(vertical = 5.dp))
-                        ActionSheetItem(
-                            icon = R.drawable.daily_log,
-                            text = "Daily log",
-                            onStart = {
-                                val intent =
-                                    Intent(
-                                        this@DailyDiaryActivity,
-                                        DailyLogActivity::class.java
                                     )
                                 startActivity(intent)
                             }
@@ -473,7 +398,7 @@ class DailyDiaryActivity : AppCompatActivity() {
                                                     Box(modifier = Modifier.fillMaxSize()) {
                                                         Image(
                                                             painter = rememberAsyncImagePainter(
-                                                                activity.imageLinkInformation
+                                                                activity.imageLink
                                                             ),
                                                             contentDescription = "Activity-Image",
                                                             contentScale = ContentScale.FillWidth,
@@ -482,14 +407,15 @@ class DailyDiaryActivity : AppCompatActivity() {
                                                     }
                                                     Column {
                                                         Row {
-                                                            Text(text = activity.dateInformation.toString())
-                                                            Text(text = activity.timeInformation.toString())
+                                                            Text(text = activity.date.toString())
+                                                            Text(text = activity.time.toString())
                                                         }
-                                                        Text(text = activity.locationNameInformation.toString())
+                                                        Text(text = activity.locationName.toString())
                                                         Row {
-                                                            Text(text = activity.latInformation.toString())
-                                                            Text(text = activity.latInformation.toString())
+                                                            Text(text = activity.locationLongitude.toString())
+                                                            Text(text = activity.locationLatitude.toString())
                                                         }
+                                                        Text(text = activity.locationAddress.toString())
                                                     }
                                                 }
                                             }
@@ -646,17 +572,20 @@ class DailyDiaryActivity : AppCompatActivity() {
     }
 }
 
-data class ActivityInformation(
-    var imageLinkInformation: String? = null,
-    var locationNameInformation: String? = null,
-    var timeInformation: String? = null,
-    var dateInformation: String? = null,
-    var lngInformation: String? = null,
-    var latInformation: String? = null,
+data class Information(
+    var activityId: String? = null,
+    var date: String? = null,
+    var imageLink: String? = null,
+    var locationAddress: String? = null,
+    var locationLatitude: String? = null,
+    var locationLongitude: String? = null,
+    var locationName: String? = null,
+    var time: String? = null,
+    var userId: String? = null,
 )
 
 sealed class DataState {
-    class Success(val data: MutableList<ActivityInformation>) : DataState()
+    class Success(val data: MutableList<Information>) : DataState()
     class Failed(val message: String) : DataState()
     object Loading : DataState()
     object Empty : DataState()

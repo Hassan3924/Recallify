@@ -20,7 +20,8 @@ class ActivityViewModel : ViewModel() {
     }
 
     private fun fetchActivity() {
-        val tempList = mutableListOf<ActivityInformation>()
+        val tempList = mutableListOf<Information>()
+
         response.value = DataState.Loading
 
         val database = FirebaseDatabase.getInstance().reference
@@ -34,43 +35,21 @@ class ActivityViewModel : ViewModel() {
 
         activityRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                for (DataSnap in snapshot.children) {
+                    val activity = DataSnap.getValue(Information::class.java)
+                    Log.d("item_path_activity", "The item data is: { $activity }")
 
-                val pushKey = snapshot.key
+                    if (activity != null) {
+                        tempList.add(activity)
+                    }
 
-                Log.d("itemPath", "The push key is $pushKey") // push key
-
-                activityRef.child(pushKey.toString())
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-
-                            val childValues = snapshot.children
-                            Log.d("itemPath", "The activity path is $activityRef") // activity
-
-                            for (dataSnap in childValues) {
-                                val item = dataSnap.getValue(ActivityInformation::class.java)
-                                if (item != null) {
-                                    tempList.add(item)
-                                }
-                            }
-                            response.value = DataState.Success(tempList)
-                            Log.d(
-                                "itemPath_check",
-                                "The data gotten is ${response.value}"
-                            ) // data check
-
-
-                            Log.d("itemPath_exists", "The snapshot: -> $snapshot")
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            response.value = DataState.Failed(error.message)
-                        }
-                    })
-
+                    response.value = DataState.Success(tempList)
+                    Log.d("item_path_response_value", "The response value: { ${response.value} }")
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-
+                response.value = DataState.Failed(error.message)
             }
         })
     }

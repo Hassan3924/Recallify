@@ -183,6 +183,7 @@ class DailyActivity : AppCompatActivity() {
                         .padding(top = 3.dp)
                         .padding(bottom = 8.dp)
                 ) {
+                    Spacer(modifier = Modifier.size(4.dp))
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -248,33 +249,24 @@ class DailyActivity : AppCompatActivity() {
                          *
                          * @author essien
                          * */
-                        TextField(
+                        OutlinedTextField(
                             value = location.value,
                             onValueChange = { location.value = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            textStyle = MaterialTheme.typography.h6.copy(
-                                fontSize = 18.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            textStyle = MaterialTheme.typography.h3.copy(
+                                fontSize = 22.sp,
                                 fontWeight = FontWeight.SemiBold
                             ),
                             label = { Text(text = "Location") },
                             placeholder = { Text(text = "Tell us where this is...") },
-                            trailingIcon = {
-                                IconButton(onClick = {
-                                    location.value = ""
-                                }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.backspace_48),
-                                        contentDescription = "clear content",
-                                        modifier = Modifier.size(24.dp),
-                                        tint = Color.Black
-                                    )
-                                }
-                            },
                             singleLine = false,
                             maxLines = 3,
                             shape = RoundedCornerShape(6.dp),
                             colors = TextFieldDefaults.textFieldColors(
                                 textColor = Color.Black,
+                                backgroundColor = MaterialTheme.colors.surface
                             )
                         )
                         Spacer(modifier = Modifier.size(8.dp))
@@ -316,7 +308,7 @@ class DailyActivity : AppCompatActivity() {
                             title = { Text(text = "Leaving without creating an Activity!") },
                             text = {
                                 Text(
-                                    text =  "Are you sure you want to discard activity?"
+                                    text = "Are you sure you want to discard activity?"
                                 )
                             },
                             shape = RoundedCornerShape(5.dp),
@@ -375,40 +367,11 @@ class DailyActivity : AppCompatActivity() {
                                         .child(getCurrentDate())
                                         .child(key)
 
-//                                    val fetchKey = activityRef.key!!
-//
-//                                    val fetchDB = activityRef.child(fetchKey)
-
-
                                     imageLink.let { link ->
                                         activityImage.putFile(link.value!!)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {
                                                     activityImage.downloadUrl.addOnSuccessListener { uri ->
-//                                                        activityRef.child(key)
-//                                                            .child("userId")
-//                                                            .setValue(userID)
-//                                                        activityRef.child(activityId.toString())
-//                                                            .child("activityId")
-//                                                            .setValue(activityId)
-//                                                        activityRef.child(activityId.toString())
-//                                                            .child("imageLink")
-//                                                            .setValue(uri.toString())
-//                                                        activityRef.child(activityId.toString())
-//                                                            .child("title")
-//                                                            .setValue(title.value)
-//                                                        activityRef.child(activityId.toString())
-//                                                            .child("description")
-//                                                            .setValue(description.value)
-//                                                        activityRef.child(activityId.toString())
-//                                                            .child("time")
-//                                                            .setValue(currentTime)
-//                                                        activityRef.child(activityId.toString())
-//                                                            .child("date")
-//                                                            .setValue(getCurrentDate())
-//                                                        activityRef.child(activityId.toString())
-//                                                            .child("location")
-//                                                            .setValue(copiedLocation.value)
                                                         activityRef.child(key)
                                                             .child("userId")
                                                             .setValue(userID)
@@ -419,7 +382,7 @@ class DailyActivity : AppCompatActivity() {
                                                             .child("imageLink")
                                                             .setValue(uri.toString())
                                                         activityRef.child(key)
-                                                            .child("location-name")
+                                                            .child("locationName")
                                                             .setValue(location.value)
                                                         activityRef.child(key)
                                                             .child("time")
@@ -428,13 +391,13 @@ class DailyActivity : AppCompatActivity() {
                                                             .child("date")
                                                             .setValue(getCurrentDate())
                                                         activityRef.child(key)
-                                                            .child("location-address")
+                                                            .child("locationAddress")
                                                             .setValue(copiedLocation.value)
                                                         activityRef.child(key)
-                                                            .child("location-latitude")
+                                                            .child("locationLatitude")
                                                             .setValue(copiedLatitude.value)
                                                         activityRef.child(key)
-                                                            .child("location-longitude")
+                                                            .child("locationLongitude")
                                                             .setValue(copiedLongitude.value)
 //                                                        Log.d("CopiedLocation_Resolve", "The location value is ==> $copiedLocation")
                                                         activityId++

@@ -36,7 +36,8 @@ fun ImagePreviewItem(
             contentDescription = "",
             modifier = Modifier
                 .width(width)
-                .height(height),
+                .height(height)
+                .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop
         )
         Row(
