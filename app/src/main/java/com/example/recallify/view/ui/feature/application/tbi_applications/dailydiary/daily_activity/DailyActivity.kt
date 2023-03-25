@@ -351,8 +351,6 @@ class DailyActivity : AppCompatActivity() {
 
                                     val userID = FirebaseAuth.getInstance().currentUser?.uid!!
 
-                                    var activityId = 1
-
                                     val activityRef = database
                                         .child("users")
                                         .child(userID)
@@ -399,8 +397,6 @@ class DailyActivity : AppCompatActivity() {
                                                         activityRef.child(key)
                                                             .child("locationLongitude")
                                                             .setValue(copiedLongitude.value)
-//                                                        Log.d("CopiedLocation_Resolve", "The location value is ==> $copiedLocation")
-                                                        activityId++
                                                     }.addOnCompleteListener {
                                                         isLoading = false
                                                         Toast.makeText(
