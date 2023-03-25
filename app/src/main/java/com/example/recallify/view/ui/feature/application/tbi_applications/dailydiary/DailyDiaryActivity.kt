@@ -453,7 +453,12 @@ class DailyDiaryActivity : AppCompatActivity() {
                             0 -> {
                                 when (val result = viewModel.response.value) {
                                     is DataState.Loading -> {
-                                        LinearProgressIndicator()
+                                        Box(
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentAlignment = Center
+                                        ) {
+                                            CircularProgressIndicator()
+                                        }
                                     }
                                     is DataState.Success -> {
                                         LazyColumn {
