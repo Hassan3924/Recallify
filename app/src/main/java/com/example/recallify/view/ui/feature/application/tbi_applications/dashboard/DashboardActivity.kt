@@ -199,6 +199,7 @@ open class DashboardActivity : AppCompatActivity() {
         val chartDataSQ = remember { mutableStateOf(emptyList<BarCharInputSQ>()) }
 
         LaunchedEffect(Unit) {
+
             FirebaseChartData { fetchedData ->
                 chartData.value = fetchedData
                 isLoading.value = false
@@ -303,16 +304,12 @@ open class DashboardActivity : AppCompatActivity() {
                                             modifier = Modifier.fillMaxWidth(),
                                             selectedBar = selectedBar,
                                         )
-
                                     }
                                 }
-
                             }
                         }
                     }
-
                 }
-
             }
         }
     }

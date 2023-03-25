@@ -146,8 +146,6 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
 
         LaunchedEffect(selectedDate, tbiEmail, tbiGULinkID) {
 
-
-
             // Getting the TBI Email from Guardian account
             var tbiEmailRef  = database.getReference("users").child(currentUser).child("profile").child("TBI Email")
 
