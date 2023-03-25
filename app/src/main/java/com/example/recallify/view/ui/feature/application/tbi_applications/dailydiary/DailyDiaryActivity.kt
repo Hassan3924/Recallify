@@ -7,9 +7,11 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,11 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.TabDiary
@@ -54,6 +58,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DailyDiaryActivity : AppCompatActivity() {
+
+    private val viewModel: ActivityViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -168,6 +174,11 @@ class DailyDiaryActivity : AppCompatActivity() {
          * @author enoabasi
          * */
         val scope = rememberCoroutineScope()
+
+        /**
+         * @author enoabasi
+         * */
+//        val fetchScope = rememberCoroutineScope()
 
         /**
          * The context of the application package. Most likely used in a toast or intent
@@ -440,27 +451,56 @@ class DailyDiaryActivity : AppCompatActivity() {
                         TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
                         when (tabPage.ordinal) {
                             0 -> {
-                                when {
-                                    childrenOfActivities.isEmpty() -> {
-                                        Box(
-                                            Modifier.fillMaxSize(),
-                                            contentAlignment = Center
-                                        ) {
-                                            Text(
-                                                text = "No data available for\n ${
-                                                    selectedDate.format(
-                                                        DateTimeFormatter.ISO_DATE
-                                                    )
-                                                }",
-                                                modifier = Modifier.padding(16.dp),
-                                                textAlign = TextAlign.Center
-                                            )
+                                when (val result = viewModel.response.value) {
+                                    is DataState.Loading -> {
+                                        LinearProgressIndicator()
+                                    }
+                                    is DataState.Success -> {
+                                        LazyColumn {
+                                            items(result.data) { activity ->
+                                                Card(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .height(150.dp)
+                                                        .padding(16.dp),
+                                                    backgroundColor = MaterialTheme.colors.background
+                                                ) {
+                                                    Box(modifier = Modifier.fillMaxSize()) {
+                                                        Image(
+                                                            painter = rememberAsyncImagePainter(
+                                                                activity.imageLinkInformation
+                                                            ),
+                                                            contentDescription = "Activity-Image",
+                                                            contentScale = ContentScale.FillWidth,
+                                                            modifier = Modifier.fillMaxSize()
+                                                        )
+                                                    }
+                                                    Column {
+                                                        Row {
+                                                            Text(text = activity.dateInformation.toString())
+                                                            Text(text = activity.timeInformation.toString())
+                                                        }
+                                                        Text(text = activity.locationNameInformation.toString())
+                                                        Row {
+                                                            Text(text = activity.latInformation.toString())
+                                                            Text(text = activity.latInformation.toString())
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
+                                    is DataState.Failed -> {
+                                        Text(
+                                            text = result.message,
+                                            fontSize = MaterialTheme.typography.h5.fontSize
+                                        )
+                                    }
                                     else -> {
-                                        // Fetch from firebase
-
-
+                                        Text(
+                                            text = "Error fetching from network!",
+                                            fontSize = MaterialTheme.typography.h5.fontSize
+                                        )
                                     }
                                 }
                                 BackHandler(
@@ -599,7 +639,20 @@ class DailyDiaryActivity : AppCompatActivity() {
             )
         }
     }
-
 }
 
+data class ActivityInformation(
+    var imageLinkInformation: String? = null,
+    var locationNameInformation: String? = null,
+    var timeInformation: String? = null,
+    var dateInformation: String? = null,
+    var lngInformation: String? = null,
+    var latInformation: String? = null,
+)
 
+sealed class DataState {
+    class Success(val data: MutableList<ActivityInformation>) : DataState()
+    class Failed(val message: String) : DataState()
+    object Loading : DataState()
+    object Empty : DataState()
+}

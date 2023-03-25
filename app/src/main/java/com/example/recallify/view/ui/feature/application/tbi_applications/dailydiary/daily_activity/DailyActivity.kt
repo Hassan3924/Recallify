@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -175,27 +174,27 @@ class DailyActivity : AppCompatActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValues),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Top
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .padding(top = 4.dp)
+                        .padding(top = 3.dp)
                         .padding(bottom = 8.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(screenHeight * 0.35f)
-                            .width(screenWidth * 0.3f)
+                            .height(screenHeight * 0.5f)
+                            .width(screenWidth * 0.8f)
                             .padding(2.dp)
                     ) {
                         if (imageLink.value != null) {
                             ImagePreviewItem(
                                 uri = imageLink.value!!,
                                 height = screenHeight * 0.6f,
-                                width = screenWidth * 0.7f
+                                width = screenWidth * 0.9f
                             ) {
                                 imageLink.value = null
                             }
@@ -211,8 +210,7 @@ class DailyActivity : AppCompatActivity() {
 
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.End
                     ) {
@@ -254,9 +252,9 @@ class DailyActivity : AppCompatActivity() {
                             value = location.value,
                             onValueChange = { location.value = it },
                             modifier = Modifier.fillMaxWidth(),
-                            textStyle = MaterialTheme.typography.subtitle2.copy(
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Normal
+                            textStyle = MaterialTheme.typography.h6.copy(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold
                             ),
                             label = { Text(text = "Location") },
                             placeholder = { Text(text = "Tell us where this is...") },
@@ -315,11 +313,10 @@ class DailyActivity : AppCompatActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(32.dp),
-                            title = { Text(text = "Cancel editing") },
+                            title = { Text(text = "Leaving without creating an Activity!") },
                             text = {
                                 Text(
-                                    text = "Leaving without making an activity.\n" +
-                                            "Are you sure you want to continue?"
+                                    text =  "Are you sure you want to discard activity?"
                                 )
                             },
                             shape = RoundedCornerShape(5.dp),
