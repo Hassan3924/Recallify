@@ -198,17 +198,16 @@ class LoginActivity : AppCompatActivity() {
                                     )
                                 },
                                 trailingIcon = {
-                                    if (showPassword.value) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.visibility_48),
-                                            contentDescription = "password",
-                                            modifier = Modifier.size(24.dp),
-                                            tint = Color.Gray
-                                        )
+                                    val painter = if (showPassword.value) {
+                                        painterResource(id = R.drawable.visibility_48)
                                     } else {
+                                        painterResource(id = R.drawable.visibility_off_48)
+                                    }
+
+                                    IconButton(onClick = { showPassword.value = !showPassword.value }) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.visibility_off_48),
-                                            contentDescription = "password",
+                                            painter = painter,
+                                            contentDescription = "Toggle password visibility",
                                             modifier = Modifier.size(24.dp),
                                             tint = Color.Gray
                                         )
