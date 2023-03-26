@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.feature.application.sidequest.SideQuestProgressActivity">
+    tools:context=".view.ui.feature.application.tbi_applications.sidequest.SideQuestProgressActivity">
 
     <LinearLayout
         android:id="@+id/linearLayoutInfo"
@@ -25,7 +25,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Side Quest Progress Filter"
+            android:text="Side Quest Results Filter"
             android:textColor="@color/light_onPrimary"
             android:textSize="20sp"
             android:textStyle="bold"

@@ -146,8 +146,8 @@ class SideQuestQuizActivity : AppCompatActivity() {
                             sideQuestQuizBinding.textViewQuestion.text = question
 
                             startTimer()
-                         //   Picasso.get().load(imageLink).into(sideQuestQuizBinding.imageDisplay)
-                            Picasso.get().load(imageLink).fit().centerCrop().into(sideQuestQuizBinding.imageDisplay)
+                            Picasso.get().load(imageLink).into(sideQuestQuizBinding.imageDisplay)
+                         //   Picasso.get().load(imageLink).fit().centerCrop().into(sideQuestQuizBinding.imageDisplay)
 
                         } else {
                             Toast.makeText(
