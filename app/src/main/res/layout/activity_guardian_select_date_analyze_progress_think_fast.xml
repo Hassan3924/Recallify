@@ -12,23 +12,13 @@
 
 
 
-        android:background="#5DB075"
+        android:background="@color/light_Primary"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
 
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/think_fast_logo" />
 
         <TextView
             android:id="@+id/textView8"
@@ -38,7 +28,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Analyze Think Fast Progress"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -101,9 +91,9 @@
             android:id="@+id/buttonAnalyzeP"
             android:layout_width="200dp"
             android:layout_height="50dp"
-
-            android:background="@drawable/round_btn"
-            android:text="Click" />
+            android:textColor="@color/light_onPrimary"
+            android:background="@drawable/btn_done_filter"
+            android:text="Filter" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

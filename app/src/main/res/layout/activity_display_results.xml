@@ -255,7 +255,7 @@
             android:background="@drawable/btn_finish"
             android:text="Finish"
 
-            android:textStyle="bold"
+
             android:textSize="18sp"
             android:textColor="@color/black" />
 
@@ -269,7 +269,7 @@
             android:background="@drawable/btn_next"
 
             android:text="NEXT"
-            android:textStyle="bold"
+
             android:textSize="18sp"
             android:textColor="@color/black" />
     </LinearLayout>

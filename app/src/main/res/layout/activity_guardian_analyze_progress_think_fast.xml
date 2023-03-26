@@ -13,7 +13,7 @@
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
         android:orientation="horizontal"
-        android:background="#5DB075"
+        android:background="@color/light_Primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Date: "
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0"
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             />
 
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Your Play: "
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0"
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             />
 
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Your Score: "
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0"
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             />
 
@@ -265,7 +265,7 @@
                 android:id="@+id/todayScoreFeedbackTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="16sp"
 
                 android:text="Feedback: "
                 android:textColor="@color/black"
@@ -275,8 +275,8 @@
                 android:id="@+id/todayScoreFeedbackViewValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:layout_weight="1"
+                android:textSize="13sp"
+
                 android:textColor="@color/black" />
 
         </LinearLayout>
@@ -358,7 +358,7 @@
                 android:id="@+id/todayPlayFeedbackTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="16sp"
 
                 android:text="Feedback: "
                 android:textColor="@color/black"
@@ -368,8 +368,8 @@
                 android:id="@+id/todayPlayFeedbackViewValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:layout_weight="1"
+                android:textSize="13sp"
+
                 android:textColor="@color/black" />
 
 
@@ -380,8 +380,10 @@
             android:layout_width="200dp"
             android:layout_height="48dp"
             android:layout_marginStart="100dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/round_btn"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/btn_done_filter"
+            android:textStyle="bold"
+            android:textColor="@color/light_onPrimary"
             android:text="Done" />
 
     </LinearLayout>
@@ -396,5 +398,5 @@
         app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/target_image3" />
+        app:srcCompat="@drawable/think_fast_analyze_progress_new" />
 </androidx.constraintlayout.widget.ConstraintLayout>

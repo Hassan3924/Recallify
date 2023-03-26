@@ -157,7 +157,7 @@ class GuardianAnalyzeProgressThinkFast : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     var questionCount = snapshot.childrenCount.toInt()
                     if(questionCount==1) {
-                        tbi_uid = snapshot.child("TBIID").value.toString()
+                        tbi_uid = snapshot.child("TBI_ID").value.toString()
 
                     analyzeProgress(currentDate)
 

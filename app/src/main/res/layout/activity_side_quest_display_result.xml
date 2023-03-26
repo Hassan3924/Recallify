@@ -260,7 +260,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_finish"
             android:text="Finish"
-            android:textStyle="bold"
+
             android:textSize="18sp"
             android:textColor="@color/black"
             tools:ignore="HardcodedText,VisualLintButtonSize" />
@@ -271,7 +271,7 @@
             android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:textStyle="bold"
+
             android:background="@drawable/btn_next"
             android:text="NEXT"
             android:textColor="@color/black"
