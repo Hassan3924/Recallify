@@ -46,6 +46,8 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.tbimai
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -55,6 +57,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -150,6 +155,9 @@ class DailyDiaryActivity : AppCompatActivity() {
         }
     }
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading
+
     /**
      * Daily Diary Screen. The Daily Diary ...
      *
@@ -233,6 +241,10 @@ class DailyDiaryActivity : AppCompatActivity() {
         val childrenOfActivities = remember {
             mutableStateListOf<Information>()
         }
+        val loadingState = isLoading.collectAsState()
+
+        val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = loadingState.value)
+
         /**
          * This is used to remember the state of a coroutine. For if it is loading on not loading.
          * The logic is being implemented later in the code base. This loading has been set to
@@ -245,6 +257,7 @@ class DailyDiaryActivity : AppCompatActivity() {
         var isLogsLoading by remember { mutableStateOf(true) }
 
         var isActivitiesLoading by remember { mutableStateOf(true) }
+
 
         /**
          * This is used to remember the state of the selected date from a filter or calendar. The
@@ -290,7 +303,7 @@ class DailyDiaryActivity : AppCompatActivity() {
                 }
             })
 
-            isActivitiesLoading = true
+            _isLoading.value = true
 
             val activityDatabase = FirebaseDatabase.getInstance().reference
             val userID = FirebaseAuth.getInstance().currentUser?.uid!!
@@ -305,20 +318,21 @@ class DailyDiaryActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("Snapshot_activity", snapshot.toString())
                     childrenOfActivities.clear()
-                    for(DataSnap in snapshot.children) {
+                    for (DataSnap in snapshot.children) {
                         val selectedActivities = DataSnap.getValue(Information::class.java)
 
                         if (selectedActivities != null) {
                             childrenOfActivities.add(0, selectedActivities)
                         }
                     }
-                    isActivitiesLoading = false
+                    _isLoading.value = false
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     isActivitiesLoading = false
                 }
             })
+            delay(2000L)
         }
 
         Scaffold(
@@ -433,15 +447,20 @@ class DailyDiaryActivity : AppCompatActivity() {
                                         }
                                     }
                                     childrenOfActivities.isNotEmpty() -> {
-                                        LazyColumn(
-                                            state = lazyColumnState,
-                                            contentPadding = PaddingValues(
-                                                vertical = 16.dp
-                                            ),
-                                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                                        SwipeRefresh(
+                                            state = swipeRefreshState,
+                                            onRefresh = { childrenOfActivities.size }
                                         ) {
-                                            items(childrenOfActivities) { activity ->
-                                                ActivityItem(activity = activity)
+                                            LazyColumn(
+                                                state = lazyColumnState,
+                                                contentPadding = PaddingValues(
+                                                    vertical = 16.dp
+                                                ),
+                                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                                            ) {
+                                                items(childrenOfActivities) { activity ->
+                                                    ActivityItem(activity = activity)
+                                                }
                                             }
                                         }
                                     }

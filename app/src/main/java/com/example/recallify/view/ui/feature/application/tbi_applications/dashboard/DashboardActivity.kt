@@ -9,11 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -246,8 +248,8 @@ open class DashboardActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (childSnapshot in snapshot.children) {
-                            val key = childSnapshot.key!!
-                            Log.d("key_checker", "nrgwKey: $key")
+//                            val key = childSnapshot.key!!
+//                            Log.d("key_checker", "nrgwKey: $key")
                             date.value = childSnapshot.child("date").value.toString()
                             time.value = childSnapshot.child("time").value.toString()
                             locationName.value =
@@ -280,6 +282,7 @@ open class DashboardActivity : AppCompatActivity() {
                 }
             })
         }
+
         Scaffold(
             bottomBar = { BottomBarFiller() },
             topBar = { DashBoardTopAppBar() },
@@ -394,7 +397,9 @@ open class DashboardActivity : AppCompatActivity() {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 12.dp),
+                                    .padding(bottom = 12.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(MaterialTheme.colors.background),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 if (isLoading.value) {
@@ -423,7 +428,9 @@ open class DashboardActivity : AppCompatActivity() {
                                 )
                                 Column(
                                     modifier = Modifier
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     if (isLoading.value) {
@@ -443,11 +450,6 @@ open class DashboardActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private @Composable
-    fun SingleActivity(activity: Information) {
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -667,7 +669,7 @@ open class DashboardActivity : AppCompatActivity() {
 
         Column(
             modifier = modifier
-                .height(300.dp)
+                .height(220.dp)
                 .width(barWidth)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -736,7 +738,7 @@ open class DashboardActivity : AppCompatActivity() {
 
         Column(
             modifier = modifier
-                .height(300.dp)
+                .height(220.dp)
                 .width(barWidth)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
