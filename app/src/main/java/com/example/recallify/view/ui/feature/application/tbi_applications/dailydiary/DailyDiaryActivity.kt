@@ -386,7 +386,7 @@ class DailyDiaryActivity : AppCompatActivity() {
                         Spacer(modifier = Modifier.padding(vertical = 6.dp))
                         ActionSheetItem(
                             icon = R.drawable.daily_log,
-                            text = "Summarised Text",
+                            text = "Summarize Conversations",
                             onStart = {
                                 val intent =
                                     Intent(

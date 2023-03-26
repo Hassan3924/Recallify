@@ -265,12 +265,12 @@
                 android:id="@+id/todayScoreFeedbackTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="16sp"
 
                 android:text="Feedback: "
                 android:textColor="@color/black"
                 android:textStyle="bold" />
-
+            <!-- 20sp above-->
             <TextView
                 android:id="@+id/todayScoreFeedbackViewValue"
                 android:layout_width="wrap_content"
@@ -399,5 +399,5 @@
         app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/think_fast_analyze_progress" />
+        app:srcCompat="@drawable/think_fast_analyze_progress_new" />
 </androidx.constraintlayout.widget.ConstraintLayout>
