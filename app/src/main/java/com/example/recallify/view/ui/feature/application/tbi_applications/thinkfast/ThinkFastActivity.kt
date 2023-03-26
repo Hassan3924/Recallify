@@ -78,7 +78,8 @@ class ThinkFastActivity : AppCompatActivity() {
                         context.startActivity(Intent(context, ThinkfastRulesActivity::class.java))
                     },
                     viewScore = {
-                        context.startActivity(Intent(context, ThinkfastProgressActivity::class.java))
+                      //  context.startActivity(Intent(context, ThinkfastProgressActivity::class.java))
+                        context.startActivity(Intent(context, SelectDateScoreThinkFast::class.java))
                     },
                     viewAnalysis = {
                        // context.startActivity(Intent(context, ThinkfastAnalysisActivity::class.java))
@@ -197,7 +198,7 @@ class ThinkFastActivity : AppCompatActivity() {
                                 modifier = Modifier.clickable(onClick = viewScore)
                             ) {
                                 Text(
-                                    "View\nScore",
+                                    "View\nResults",
                                     style = MaterialTheme.typography.button.copy(
                                         fontSize = 16.sp
                                     ),

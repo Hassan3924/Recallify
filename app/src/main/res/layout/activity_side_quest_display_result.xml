@@ -258,11 +258,11 @@
             android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/light_Primary"
+            android:background="@drawable/btn_finish"
             android:text="Finish"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="#212121"
+            android:textColor="@color/white"
             tools:ignore="HardcodedText,VisualLintButtonSize" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -272,9 +272,9 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:textStyle="bold"
-            android:background="@color/light_Secondary"
+            android:background="@drawable/btn_next"
             android:text="NEXT"
-            android:textColor="@color/light_onSecondary"
+            android:textColor="@color/white"
             android:textSize="18sp"
             tools:ignore="HardcodedText,VisualLintButtonSize" />
     </LinearLayout>

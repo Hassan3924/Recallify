@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.feature.application.tbi_applications.sidequest.SelectDateAnalyzeSideQuestprogress">
+    tools:context=".view.ui.feature.application.tbi_applications.thinkfast.SelectDateScoreThinkFast">
     <LinearLayout
         android:id="@+id/linearLayoutInfo"
         android:layout_width="match_parent"
@@ -18,17 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/imageView0"-->
-<!--            android:layout_width="80dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:layout_gravity="center"-->
 
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintHorizontal_bias="0.495"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:srcCompat="@drawable/side_quest_logo" />-->
 
         <TextView
             android:id="@+id/textView8"
@@ -37,8 +27,8 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Analyze Side Quest Progress"
-            android:textColor="@color/white"
+            android:text="Check Think Fast Results"
+            android:textColor="@color/light_onPrimary"
             android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>

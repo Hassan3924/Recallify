@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.feature.application.thinkfast.DisplayResultsActivity">
+    tools:context=".view.ui.feature.application.tbi_applications.thinkfast.DisplayResultsActivity">
 
 
     <LinearLayout
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:background="#5DB075"
+        android:background="@color/light_Primary"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Correct: "
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
+
             android:textSize="16sp" />
 
         <TextView
@@ -34,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0"
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
+            android:textStyle="bold"
             android:textSize="16sp" />
 
         <TextView
@@ -43,7 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Incorrect: "
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
+
             android:textSize="16sp" />
 
         <TextView
@@ -52,7 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0"
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
+            android:textStyle="bold"
             android:textSize="16sp" />
 
         <TextView
@@ -61,7 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Percentage: "
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
+
             android:textSize="16sp" />
 
         <TextView
@@ -70,7 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0"
-            android:textColor="@color/black"
+            android:textColor="@color/light_onPrimary"
+            android:textStyle="bold"
             android:textSize="16sp" />
 
 
@@ -110,17 +116,17 @@
             android:text="Question: "
 
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/questionTextViewValue"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="50dp"
+
             android:textColor="@color/black"
 
-            android:textSize="17sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -142,18 +148,18 @@
             android:layout_height="wrap_content"
 
 
-            android:layout_weight="1"
+
             android:lines="1"
             android:text="Correct Answer: "
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/correctTextViewValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+
             android:textColor="@color/black"
 
             android:textSize="17sp" />
@@ -176,20 +182,20 @@
             android:id="@+id/wrongTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+
 
             android:lines="1"
             android:text="Your Answer: "
 
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/wrongTextViewValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+
             android:textColor="@color/black"
 
             android:textSize="17sp" />
@@ -212,10 +218,10 @@
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+
             android:text="Game Played on: "
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
 
             android:textStyle="bold" />
 
@@ -223,7 +229,7 @@
             android:id="@+id/dateTextViewValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+
             android:text="0"
             android:textColor="@color/black"
             android:textSize="17sp" />
@@ -246,11 +252,12 @@
             android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/quiz_next_button"
+            android:background="@drawable/btn_finish"
             android:text="Finish"
 
-            android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonNext"
@@ -259,11 +266,12 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
 
-            android:background="@drawable/quiz_next_button"
+            android:background="@drawable/btn_next"
 
             android:text="NEXT"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

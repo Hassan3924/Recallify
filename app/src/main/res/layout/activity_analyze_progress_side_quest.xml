@@ -381,7 +381,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="100dp"
             android:layout_marginTop="180dp"
-            android:background="@color/dark_SecondaryVariant"
+            android:background="@drawable/btn_done_filter"
             android:textStyle="bold"
             android:textColor="@color/light_onPrimary"
 
