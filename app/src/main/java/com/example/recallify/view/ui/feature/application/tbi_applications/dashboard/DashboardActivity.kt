@@ -1,6 +1,5 @@
 package com.example.recallify.view.ui.feature.application.tbi_applications.dashboard
 
-
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,22 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,16 +25,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import com.example.recallify.R
 import com.example.recallify.databinding.ActivityDashboardBinding
+import com.example.recallify.view.common.components.DashBoardTopAppBar
 import com.example.recallify.view.ui.feature.application.dashboard.NotificationService
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.Information
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.CommonColor
 import com.example.recallify.view.ui.theme.RecallifyTheme
-import com.example.recallify.view.ui.theme.light_Primary
-import com.example.recallify.view.ui.theme.light_Secondary
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -56,82 +49,96 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
 open class DashboardActivity : AppCompatActivity() {
-    lateinit var mainbinding: ActivityDashboardBinding
+    /*
+    * Unused Variables
+    * */
+    private lateinit var mainbinding: ActivityDashboardBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var currentLocation: MutableLiveData<LatLng>
-    var locationText = ""
+    private var locationText = ""
     private val label = "User Location"
+
+    /*
+    * Firebase related variables
+    * */
     val database = FirebaseDatabase.getInstance()
     val locationAdd = database.reference
     val auth = FirebaseAuth.getInstance()
     val user = auth.currentUser
+    private val userID = auth.currentUser?.uid!!
+
+    /*
+    * Date and time formatting variables
+    * */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val current = LocalDateTime.now()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val current = LocalDateTime.now()
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    val formatted = current.format(formatter)
+    private val formatted = current.format(formatter)
 
     @RequiresApi(Build.VERSION_CODES.O)
     val currentDate: String = formatted.toString()
 
-//    private val locationCallback = object : LocationCallback() {
-//        override fun onLocationResult(locationResult: LocationResult) {
-//
-//            super.onLocationResult(locationResult)
-//            val location = locationResult.lastLocation
-//            if (location != null) {
-//                currentLocation.value = LatLng(location.latitude, location.longitude)
-//            }
-//            locationResult ?: return
-//            for (location in locationResult.locations) {
-//                val lat = location.latitude
-//                val lng = location.longitude
-//                locationText= "Current location: $lat, $lng"
-//                var address = getAddressName(location.latitude,location.longitude)
-//                Log.d("Currentlocation : ",locationText)
-//                addLiveLocation(lat,lng,address)
-//
-//            }
-//        }
-//    }
+    /*    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
 
-//    fun addLiveLocation(lat:Double,lng:Double,address:String){
-//        user?.let {
-//            val userUID = it.uid
-//            locationAdd.child("users").child(userUID).child("liveLocation").child("lat").setValue(lat)
-//            locationAdd.child("users").child(userUID).child("liveLocation").child("long").setValue(lng)
-//            locationAdd.child("users").child(userUID).child("liveLocation").child("address").setValue(address)
-//        }
-//    }
+            super.onLocationResult(locationResult)
+            val location = locationResult.lastLocation
+            if (location != null) {
+                currentLocation.value = LatLng(location.latitude, location.longitude)
+            }
+            locationResult ?: return
+            for (location in locationResult.locations) {
+                val lat = location.latitude
+                val lng = location.longitude
+                locationText= "Current location: $lat, $lng"
+                var address = getAddressName(location.latitude,location.longitude)
+                Log.d("CurrentLocation : ",locationText)
+                addLiveLocation(lat,lng,address)
 
+            }
+        }
+    }
+
+    fun addLiveLocation(lat:Double,lng:Double,address:String){
+        user?.let {
+            val userUID = it.uid
+            locationAdd.child("users").child(userUID).child("liveLocation").child("lat").setValue(lat)
+            locationAdd.child("users").child(userUID).child("liveLocation").child("long").setValue(lng)
+            locationAdd.child("users").child(userUID).child("liveLocation").child("address").setValue(address)
+        }
+    }*/
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-//        // Request location permissions
-//        requestLocationPermissions()
-//
-//        // Initialize location services
-//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-//        createLocationRequest()
-//
-//        // Initialize currentLocation variable
-//        currentLocation = MutableLiveData()
-//        getCurrentLocation()
-//
-//        // Start receiving location updates
-//        startLocationUpdates()
+        /*        // Request location permissions
+        requestLocationPermissions()
+
+        // Initialize location services
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        createLocationRequest()
+
+        // Initialize currentLocation variable
+        currentLocation = MutableLiveData()
+        getCurrentLocation()
+
+        // Start receiving location updates
+        startLocationUpdates()*/
 
         startService(Intent(this, NotificationService::class.java)) //this is for notification
+
+        /**
+         * The bottom bar navigation controller
+         * @author enoabasi
+         * */
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.selectedItemId = R.id.bottom_home
 
@@ -180,6 +187,8 @@ open class DashboardActivity : AppCompatActivity() {
     @Composable
     fun DashBoardScreen() {
 
+        val auth: FirebaseAuth = Firebase.auth
+
         val scrollState = rememberScrollState()
 
         val isLoading = remember { mutableStateOf(true) }
@@ -188,15 +197,28 @@ open class DashboardActivity : AppCompatActivity() {
             mutableStateOf(false)
         }
 
-        var selectedBar by remember {
+        val selectedBar by remember {
             mutableStateOf(-1)
         }
-
-        val auth: FirebaseAuth = Firebase.auth
 
         val chartData = remember { mutableStateOf(emptyList<BarCharInput>()) }
 
         val chartDataSQ = remember { mutableStateOf(emptyList<BarCharInputSQ>()) }
+
+        var isActivityLoading by remember { mutableStateOf(true) }
+
+        val date = remember {
+            mutableStateOf("")
+        }
+        val time = remember {
+            mutableStateOf("")
+        }
+        val locationName = remember {
+            mutableStateOf("")
+        }
+        val locationAddress = remember {
+            mutableStateOf("")
+        }
 
         LaunchedEffect(Unit) {
 
@@ -211,84 +233,194 @@ open class DashboardActivity : AppCompatActivity() {
             }
         }
 
+        LaunchedEffect(getCurrentDate()) {
+            val latestDB = FirebaseDatabase.getInstance().reference
+            val latestActivityPath = latestDB.child("users")
+                .child(userID)
+                .child("dailyDairyDummy")
+                .child(getCurrentDate())
 
+            isActivityLoading = true
+
+            latestActivityPath.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (childSnapshot in snapshot.children) {
+                            val key = childSnapshot.key!!
+                            Log.d("key_checker", "nrgwKey: $key")
+                            date.value = childSnapshot.child("date").value.toString()
+                            time.value = childSnapshot.child("time").value.toString()
+                            locationName.value =
+                                childSnapshot.child("locationName").value.toString()
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    isActivityLoading = false
+                }
+            })
+        }
+
+        LaunchedEffect(Unit) {
+            val latestDB = FirebaseDatabase.getInstance().reference
+            val liveTrackLocation = latestDB.child("users")
+                .child(userID)
+                .child("liveLocation")
+
+            liveTrackLocation.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        locationAddress.value = snapshot.child("address").value.toString()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    isActivityLoading = false
+                }
+            })
+        }
         Scaffold(
             bottomBar = { BottomBarFiller() },
+            topBar = { DashBoardTopAppBar() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValue ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValue)
-//                    .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(top = 8.dp)
-                        .padding(horizontal = 16.dp)
-                        .padding(4.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(30.dp)
-                    ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
                         Column(
-                            modifier = Modifier,
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            Modifier
+                                .fillMaxSize()
+                                .padding(top = 8.dp)
+                                .padding(bottom = 20.dp)
                         ) {
                             Text(
-                                "Think Fast Progress",
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                fontSize = 30.sp,
-                                textAlign = TextAlign.Center
+                                text = "Latest activity",
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                modifier = Modifier.padding(bottom = 4.dp)
                             )
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                horizontal = 16.dp,
+                                                vertical = 4.dp
+                                            )
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Start
+                                        ) {
+                                            Text(
+                                                text = date.value,
+                                                style = MaterialTheme.typography.caption.copy(
+                                                    color = Color.LightGray,
+                                                    fontSize = 14.sp
+                                                )
+                                            )
+                                            Spacer(
+                                                modifier = Modifier.padding(
+                                                    horizontal = 6.dp
+                                                )
+                                            )
+                                            Text(
+                                                text = time.value,
+                                                style = MaterialTheme.typography.caption.copy(
+                                                    color = Color.LightGray,
+                                                    fontSize = 14.sp
+                                                )
+                                            )
+                                        }
+                                        Text(
+                                            text = locationName.value,
+                                            style = MaterialTheme.typography.h6.copy(
 
+                                            )
+                                        )
+                                        Spacer(modifier = Modifier.padding(4.dp))
+                                        Text(
+                                            text = locationAddress.value,
+                                            style = MaterialTheme.typography.caption.copy(
+                                                color = Color.Gray,
+                                                fontSize = 12.sp
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.padding(vertical = 8.dp),
+//                            verticalArrangement = Arrangement.spacedBy(20.dp),
+//                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Text(
-                                text = "Score",
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.Black,
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.Center
+                                text = "Think fast progress",
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                modifier = Modifier.padding(bottom = 4.dp)
                             )
-
+//                            Text(
+//                                text = "Score",
+//                                fontWeight = FontWeight.SemiBold,
+//                                color = Color.Black,
+//                                fontSize = 20.sp,
+//                                textAlign = TextAlign.Center
+//                            )
 
                             Column(
                                 modifier = Modifier
-                                    .fillMaxWidth(),
+                                    .fillMaxWidth()
+                                    .padding(bottom = 12.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 if (isLoading.value) {
                                     CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                                 } else {
-
                                     BarChart(
                                         // First value as date, second value as score of that date
                                         chartData.value,
                                         modifier = Modifier.fillMaxWidth(),
                                         selectedBar = selectedBar,
                                     )
-
                                 }
                             }
 
                             Column(
-                                modifier = Modifier,
-                                verticalArrangement = Arrangement.spacedBy(20.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                modifier = Modifier.padding(vertical = 8.dp),
+//                                verticalArrangement = Arrangement.spacedBy(20.dp),
+//                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    "Side Quest Progress",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    fontSize = 30.sp,
-                                    textAlign = TextAlign.Center
+                                    text = "Side quest progress",
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    modifier = Modifier.padding(bottom = 4.dp)
                                 )
-
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth(),
@@ -297,7 +429,6 @@ open class DashboardActivity : AppCompatActivity() {
                                     if (isLoading.value) {
                                         CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                                     } else {
-
                                         BarChartSQ(
                                             // First value as date, second value as score of that date
                                             chartDataSQ.value,
@@ -314,8 +445,13 @@ open class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    private @Composable
+    fun SingleActivity(activity: Information) {
+
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
+    private fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
 
         Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
 
@@ -369,7 +505,7 @@ open class DashboardActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("FirebaseChartDataonCancelled", "onCalled called ${error.message}")
+                Log.e("FirebaseChartData-onCancelled", "onCalled called ${error.message}")
             }
 
         })
@@ -383,7 +519,8 @@ open class DashboardActivity : AppCompatActivity() {
         val auth: FirebaseAuth = Firebase.auth
 
         val database =
-            Firebase.database.reference.child("users").child(auth.currentUser?.uid!!).child("viewScoresTableSideQuest")
+            Firebase.database.reference.child("users").child(auth.currentUser?.uid!!)
+                .child("viewScoresTableSideQuest")
         val colors = listOf(
             Color.White,
             Color.Gray,
@@ -407,7 +544,8 @@ open class DashboardActivity : AppCompatActivity() {
                     val dataSnapshot = snapshot.child(date.toString())
                     val games = dataSnapshot.children.toList()
 
-                    val score = games.firstOrNull()?.child("correct")?.getValue(Int::class.java) ?: 0
+                    val score =
+                        games.firstOrNull()?.child("correct")?.getValue(Int::class.java) ?: 0
 
                     Log.d(
                         "FirebaseChartDataSQ",
@@ -433,7 +571,7 @@ open class DashboardActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("FirebaseChartDataonCancelled", "onCalled called ${error.message}")
+                Log.e("FirebaseChartData-onCancelled", "onCalled called ${error.message}")
             }
 
         })
@@ -446,33 +584,27 @@ open class DashboardActivity : AppCompatActivity() {
         modifier: Modifier = Modifier,
         selectedBar: Int,
     ) {
-
         Column(
             modifier = modifier,
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             val maxValue by remember {
                 mutableStateOf(inputList.maxOfOrNull { it.value } ?: 0)
             }
-
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-
-
                 inputList.forEachIndexed { index, input ->
-
                     Bar(
                         modifier = Modifier,
                         primaryColor = input.color,
                         value = input.value,
                         maxValue = maxValue,
-                        description = input.description,
+//                        description = input.description,
                         date = input.date,
-                        showDescription = selectedBar == index
+//                        showDescription = selectedBar == index
                     )
                 }
             }
@@ -532,13 +664,15 @@ open class DashboardActivity : AppCompatActivity() {
             minHeight,
             if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp
         )
-        
-        Column(modifier = modifier
-            .height(300.dp)
-            .width(barWidth)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom){
+
+        Column(
+            modifier = modifier
+                .height(300.dp)
+                .width(barWidth)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
             Box(
                 modifier = modifier
                     .height(barHeight)
@@ -552,9 +686,10 @@ open class DashboardActivity : AppCompatActivity() {
                     ),
                 contentAlignment = Center
             ) {
-                Text(text = "$value",
-                style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
+                Text(
+                    text = "$value",
+                    style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.Center
                 )
 
             }
@@ -568,12 +703,14 @@ open class DashboardActivity : AppCompatActivity() {
             )
 
             if (showDescription) {
-                Text(text = label,
-                style = MaterialTheme.typography.caption,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .width(barWidth)
-                    .padding(top = 5.dp))
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.caption,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .width(barWidth)
+                        .padding(top = 5.dp)
+                )
             }
         }
 
@@ -585,9 +722,7 @@ open class DashboardActivity : AppCompatActivity() {
         primaryColor: Color,
         value: Int,
         maxValue: Int,
-        description: String,
         date: String,
-        showDescription: Boolean
     ) {
 
         val barWidth = 40.dp
@@ -596,7 +731,6 @@ open class DashboardActivity : AppCompatActivity() {
             minHeight,
             if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp
         )
-
 
         Log.d("BarHeight", "Value: $value, MaxValue: $maxValue, BarHeight: $barHeight")
 
@@ -646,7 +780,7 @@ open class DashboardActivity : AppCompatActivity() {
         val date: String
     )
 
-    data class BarCharInputSQ (
+    data class BarCharInputSQ(
         val value: Int,
         val label: String,
         val color: Color,
@@ -686,309 +820,6 @@ open class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    @Composable
-    fun StatisticUI() {
-        Column(
-            modifier = Modifier.padding(30.dp)
-        ) {
-            Text(
-                text = "Jetpack Compose UI Design",
-                fontSize = 16.sp,
-                color = MaterialTheme.colors.primary,
-                fontWeight = FontWeight.Bold
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = CenterVertically
-            ) {
-                Row {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_access_time_24),
-                        contentDescription = "",
-                        tint = Color(0xFF818181),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "09.00 AM - 11.00 AM",
-                        fontSize = 12.sp,
-                        color = Color(0xFF818181),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFE1E3FA))
-                        .border(
-                            width = 0.dp,
-                            color = Color.Transparent,
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 10.dp, vertical = 2.dp),
-                ) {
-                    Text(
-                        text = "On Going",
-                        fontSize = 10.sp,
-
-                        color = Color(0xFF7885B9)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            Text(
-                text = "Statistic",
-                fontSize = 16.sp,
-                color = CommonColor,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                StatisticProgressUI()
-                Spacer(modifier = Modifier.width(12.dp))
-                // StatisticIndicatorUI()
-            }
-        }
-    }
-
-    @Composable
-    fun TaskCardUI() {
-        val annotatedString1 = AnnotatedString.Builder("4/6 Task")
-            .apply {
-                addStyle(
-                    SpanStyle(
-                        color = MaterialTheme.colors.primaryVariant,
-                    ), 0, 3
-                )
-            }
-
-        Card(
-            backgroundColor = Color.White,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 22.dp)
-                .padding(top = 40.dp),
-            elevation = 0.dp,
-            shape = MaterialTheme.shapes.large
-        ) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = "Daily Task",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.primaryVariant,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Row {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_access_time_24),
-                            contentDescription = "",
-                            tint = MaterialTheme.colors.primary,
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = annotatedString1.toAnnotatedString(),
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colors.primary,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    }
-
-
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "Almost finished,\nkeep it up",
-                        fontSize = 13.sp,
-                        color = Color(0xFF292D32),
-                        fontWeight = FontWeight.Normal
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = { },
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.large)
-                            .border(
-                                width = 0.dp,
-                                color = Color.Transparent,
-                                shape = MaterialTheme.shapes.large
-                            ),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
-                        contentPadding = PaddingValues(vertical = 0.dp, horizontal = 16.dp)
-                    ) {
-                        Text(
-                            text = "Daily Task",
-                            fontSize = 10.sp,
-                            modifier = Modifier.align(alignment = CenterVertically),
-                        )
-                    }
-
-
-                }
-
-
-                ProgressBarUI(percentage = 67f)
-
-
-            }
-        }
-    }
-
-    @Composable
-    fun ProgressBarUI(percentage: Float) {
-        Box(
-            modifier = Modifier.size(120.dp),
-            contentAlignment = Center
-        ) {
-            Canvas(
-                modifier = Modifier
-                    .size(100.dp)
-                    .padding(6.dp)
-            ) {
-                drawCircle(
-                    SolidColor(Color(0xFFE3E5E7)),
-                    size.width / 2,
-                    style = Stroke(26f)
-                )
-                val convertedValue = (percentage / 100) * 360
-                drawArc(
-                    brush = Brush.linearGradient(
-                        colors = listOf(light_Secondary, light_Primary)
-                    ),
-                    startAngle = -90f,
-                    sweepAngle = convertedValue,
-                    useCenter = false,
-                    style = Stroke(26f, cap = StrokeCap.Round)
-                )
-            }
-
-            val annotatedString2 = AnnotatedString.Builder("${percentage.toInt()}%\nDone")
-                .apply {
-                    addStyle(
-                        SpanStyle(
-                            color = MaterialTheme.colors.secondaryVariant,
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.Normal
-                        ), 4, 8
-                    )
-                }
-
-            Text(
-                text = annotatedString2.toAnnotatedString(),
-                fontSize = 14.sp,
-                color = MaterialTheme.colors.primaryVariant,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-
-        }
-    }
-
-    @Composable
-    fun HeaderUI() {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 30.dp)
-                .padding(top = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "Hello, John Recallify",
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colors.primary,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Let's do your today task",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colors.primary,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-
-            Image(
-                painter = painterResource(id = R.drawable.image_default),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape),
-            )
-
-        }
-    }
-
-    @Composable
-    fun StatisticProgressUI(primaryPercentage: Float = 60f, secondaryPercentage: Float = 15f) {
-        Box(
-            modifier = Modifier
-                .size(120.dp),
-            contentAlignment = Center
-        ) {
-            Canvas(
-                modifier = Modifier
-                    .size(100.dp)
-            ) {
-                drawCircle(
-                    SolidColor(Color(0xFFE3E5E7)),
-                    size.width / 2,
-                    style = Stroke(34f)
-                )
-                val convertedPrimaryValue = (primaryPercentage / 100) * 360
-                val convertedSecondaryValue =
-                    ((secondaryPercentage / 100) * 360) + convertedPrimaryValue
-                drawArc(
-                    brush = SolidColor(light_Secondary),
-                    startAngle = -90f,
-                    sweepAngle = convertedSecondaryValue,
-                    useCenter = false,
-                    style = Stroke(34f, cap = StrokeCap.Round)
-                )
-                drawArc(
-                    brush = SolidColor(light_Primary),
-                    startAngle = -90f,
-                    sweepAngle = convertedPrimaryValue,
-                    useCenter = false,
-                    style = Stroke(34f, cap = StrokeCap.Round)
-                )
-            }
-
-            val annotatedString2 =
-                AnnotatedString.Builder("${(primaryPercentage + secondaryPercentage).toInt()}%\nDone")
-                    .apply {
-                        addStyle(
-                            SpanStyle(
-                                color = CommonColor,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Normal
-                            ), 4, 8
-                        )
-                    }
-
-            Text(
-                text = annotatedString2.toAnnotatedString(),
-
-                fontSize = 20.sp,
-                color = MaterialTheme.colors.primary,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
 
     @Composable
     fun LineChart(dataPoints: List<Float>, modifier: Modifier = Modifier) {
@@ -1055,148 +886,150 @@ open class DashboardActivity : AppCompatActivity() {
 
         return dataPoints
     }
-//
-//    @Composable
-//    fun LineChart(modifier: Modifier = Modifier, lineData: LineData) {
-//        Box(modifier) {
-//            AndroidView(factory = { context ->
-//                LineChart(context).apply {
-//                    data = lineData
-//                }
-//            })
-//        }
-//    }
-
-//    @Composable
-//    fun StatisticIndicatorUI() {
-//        Column(
-//            modifier = Modifier
-//                .height(120.dp) ,
-//            verticalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            IndicatorItemUI(text = "Finish on time")
-//            IndicatorItemUI(color = light_Secondary, text = "Past the deadline")
-//            IndicatorItemUI(color = Color(0xFFE3E5E7), text = "Still ongoing")
-//        }
-//    }
-
-//    @Composable
-//    fun IndicatorItemUI(color: Color = light_Primary,text:String) {
-//        Row {
-//            Icon(
-//                painter = painterResource(id = coil.base.R.drawable.button_shape),
-//                contentDescription = "",
-//                tint = color,
-//                modifier = Modifier.size(20.dp)
-//            )
-//            Spacer(modifier = Modifier.width(12.dp))
-//            Text(
-//                text = text,
-//
-//                fontSize = 12.sp,
-//                color = Color(0xFF818181),
-//                fontWeight = FontWeight.Normal
-//            )
-//        }
-//    }
 
 
-//    //Live location Tracking functions #Ridinbal
-//    private fun requestLocationPermissions() {
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED &&
-//            ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            ActivityCompat.requestPermissions(
-//                this,
-//                arrayOf(
-//                    Manifest.permission.ACCESS_FINE_LOCATION,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION
-//                ),
-//                LOCATION_PERMISSION_REQUEST_CODE
-//            )
-//        }
-//    }
-//
-//    private fun createLocationRequest() {
-//        locationRequest = LocationRequest.create().apply {
-//            interval = LOCATION_UPDATE_INTERVAL
-//            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
-//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//        }
-//    }
-//
-//    private fun startLocationUpdates() {
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return
-//        }
-//        fusedLocationClient.requestLocationUpdates(
-//            locationRequest,
-//            locationCallback,
-//            Looper.getMainLooper()
-//        )
-//    }
-//
-//    private fun getCurrentLocation() {
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return
-//        }
-//        fusedLocationClient.lastLocation
-//            .addOnSuccessListener { location: Location? ->
-//                location?.let {
-//                    currentLocation.value = LatLng(location.latitude, location.longitude)
-//                }
-//            }
-//    }
-//
-//    companion object {
-//        private const val LOCATION_PERMISSION_REQUEST_CODE = 100
-//        private const val LOCATION_UPDATE_INTERVAL: Long = 5000
-//        private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
-//    }
-//    private fun getAddressName(lat:Double, lon:Double): String{
-//
-//        var addressName = ""
-//        var geoCoder = Geocoder(this, Locale.getDefault())
-//        var address = geoCoder.getFromLocation(lat,lon,1)
-//
-//        if (address != null) {
-//            addressName = address[0].getAddressLine(0)
-//
-//        }
-//        return addressName
+/*
+    @Composable
+    fun LineChart(modifier: Modifier = Modifier, lineData: LineData) {
+        Box(modifier) {
+            AndroidView(factory = { context ->
+                LineChart(context).apply {
+                    data = lineData
+                }
+            })
+        }
+    }
+
+    @Composable
+    fun StatisticIndicatorUI() {
+        Column(
+            modifier = Modifier
+                .height(120.dp) ,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            IndicatorItemUI(text = "Finish on time")
+            IndicatorItemUI(color = light_Secondary, text = "Past the deadline")
+            IndicatorItemUI(color = Color(0xFFE3E5E7), text = "Still ongoing")
+        }
+    }
+
+    @Composable
+    fun IndicatorItemUI(color: Color = light_Primary,text:String) {
+        Row {
+            Icon(
+                painter = painterResource(id = coil.base.R.drawable.button_shape),
+                contentDescription = "",
+                tint = color,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = text,
+
+                fontSize = 12.sp,
+                color = Color(0xFF818181),
+                fontWeight = FontWeight.Normal
+            )
+        }
+    }
+
+
+    //Live location Tracking functions #Ridinbal
+    private fun requestLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private fun createLocationRequest() {
+        locationRequest = LocationRequest.create().apply {
+            interval = LOCATION_UPDATE_INTERVAL
+            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+    }
+
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    currentLocation.value = LatLng(location.latitude, location.longitude)
+                }
+            }
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 100
+        private const val LOCATION_UPDATE_INTERVAL: Long = 5000
+        private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
+    }
+    private fun getAddressName(lat:Double, lon:Double): String{
+
+        var addressName = ""
+        var geoCoder = Geocoder(this, Locale.getDefault())
+        var address = geoCoder.getFromLocation(lat,lon,1)
+
+        if (address != null) {
+            addressName = address[0].getAddressLine(0)
+
+        }
+        return addressName*/
 
 }

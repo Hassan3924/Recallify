@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.widget.Space
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +34,7 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.accoun
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLongitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.moment_snap.MomentSnapActivity
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -50,7 +52,7 @@ class DailyActivity : AppCompatActivity() {
     private val current = LocalDateTime.now()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm a")
 
     @RequiresApi(Build.VERSION_CODES.O)
     private val timeFormatted = current.format(timeFormatter)
@@ -209,11 +211,11 @@ class DailyActivity : AppCompatActivity() {
                         }
                     }
 
-                    Column(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.End
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
                     ) {
                         Button(onClick = {
                             if (permissionState.status.isGranted) {
@@ -223,6 +225,13 @@ class DailyActivity : AppCompatActivity() {
                         }
                         ) {
                             Text(text = "Add images")
+                        }
+                        Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+                        Button(onClick = {
+                            context.startActivity(Intent(context, MomentSnapActivity::class.java))
+                        }
+                        ) {
+                            Text(text = "Take photo")
                         }
                     }
                     /**

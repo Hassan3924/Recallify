@@ -315,13 +315,17 @@ class AccountsActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(horizontal = 16.dp)
+//                .padding(horizontal = 16.dp)
                 .padding(top = 4.dp)
-                .clip(shape = RoundedCornerShape(26.dp))
+//                .clip(shape = RoundedCornerShape(26.dp))
                 .background(MaterialTheme.colors.background),
             contentAlignment = Alignment.Center
         ) {
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
                 IconButton(
                     onClick = {
                         val intent = Intent(
@@ -342,18 +346,12 @@ class AccountsActivity : AppCompatActivity() {
                         painter = painterResource(id = R.drawable.round_arrow_back_24),
                         contentDescription = "Go back to Main Settings",
                         modifier = Modifier
-                            .size(42.dp)
-                            .border(
-                                border = BorderStroke(2.dp, SolidColor(Color.Black)),
-                                shape = RoundedCornerShape(20.dp)
-                            )
+                            .size(28.dp)
                     )
                 }
                 Text(
                     text = "Account Settings",
-                    style = MaterialTheme.typography.body1.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
+                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.weight(2f)
                 )
             }

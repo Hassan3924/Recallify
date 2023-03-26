@@ -2,6 +2,7 @@ package com.example.recallify.view.ui.feature.application.tbi_applications.daily
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.Text
 import androidx.compose.ui.platform.ComposeView
 import com.example.recallify.R
 import com.example.recallify.view.ui.theme.RecallifyTheme
@@ -13,7 +14,7 @@ class MomentSnapActivity : AppCompatActivity() {
         val momentSnapCompose: ComposeView = findViewById(R.id.activity_daily_diary_moment_snap_screen)
         momentSnapCompose.setContent {
             RecallifyTheme {
-
+                Text(text = "hello moment snap!")
             }
         }
     }

@@ -37,7 +37,6 @@ import java.util.*
 
 @Composable
 fun DiaryTopAppBar(
-
     clickCreate: () -> Unit,
     clickFilter: () -> Unit,
 ) {

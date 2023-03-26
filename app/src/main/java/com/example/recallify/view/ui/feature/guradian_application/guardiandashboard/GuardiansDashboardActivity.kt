@@ -5,46 +5,52 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
+import com.example.recallify.view.common.components.DashBoardTopAppBar
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
+import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.graphics.Brush
-import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class GuardiansDashboardActivity : AppCompatActivity() {
 
@@ -61,7 +67,12 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.bottom_home -> true
                 R.id.bottom_daily_diary -> {
-                    startActivity(Intent(applicationContext, GuardianDailyDairyActivity::class.java))
+                    startActivity(
+                        Intent(
+                            applicationContext,
+                            GuardianDailyDairyActivity::class.java
+                        )
+                    )
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
@@ -88,7 +99,6 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             }
         }
 
-
         val dashBoardCompose: ComposeView = findViewById(R.id.activity_dash_board_screen)
         dashBoardCompose.setContent {
             RecallifyTheme {
@@ -112,7 +122,12 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 //        }
 //    }
 
-    private fun refreshLocationData(tbiUID: String, latitude: MutableState<Double?>, longitude: MutableState<Double?>, address: MutableState<String?>) {
+    private fun refreshLocationData(
+        tbiUID: String,
+        latitude: MutableState<Double?>,
+        longitude: MutableState<Double?>,
+        address: MutableState<String?>
+    ) {
         val tbiRef = Firebase.database.reference.child("users").child(tbiUID).child("liveLocation")
 
         tbiRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -126,16 +141,17 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                 TODO("Not yet implemented")
             }
 
-        } )
+        })
     }
-    suspend fun getTBIUserID() : String? = suspendCoroutine {
-        cont->
+
+    private suspend fun getTBIUserID(): String? = suspendCoroutine { cont ->
         val auth: FirebaseAuth = Firebase.auth
         val currentUser = auth.currentUser?.uid!!
-        val uidRef =  Firebase.database.reference.child("users").child("GuardiansLinkTable").child(currentUser).child("TBI_ID")
+        val uidRef = Firebase.database.reference.child("users").child("GuardiansLinkTable")
+            .child(currentUser).child("TBI_ID")
         uidRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                var tbiUID = snapshot.getValue(String::class.java).toString()
+                val tbiUID = snapshot.getValue(String::class.java).toString()
                 cont.resume(tbiUID)
             }
 
@@ -146,7 +162,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
         })
     }
 
-    fun getGoogleMaps(latitude: Double, longitude: Double) : Uri {
+    private fun getGoogleMaps(latitude: Double, longitude: Double): Uri {
         val uriString = "geo:$latitude,$longitude?q=$latitude,$longitude"
         return Uri.parse(uriString)
     }
@@ -154,24 +170,36 @@ class GuardiansDashboardActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun GuardianDashBoardScreen() {
-
         val coroutineScope = rememberCoroutineScope()
-        val tbiUID = remember { mutableStateOf <String?>(null)}
+        val tbiUID = remember { mutableStateOf<String?>(null) }
         val firstName = remember { mutableStateOf<String?>(null) }
-        val address = remember { mutableStateOf<String?>(null)}
-        val latitude = remember { mutableStateOf<Double?>(null)}
-        val longitude = remember { mutableStateOf<Double?>(null)}
+        val address = remember { mutableStateOf<String?>(null) }
+        val latitude = remember { mutableStateOf<Double?>(null) }
+        val longitude = remember { mutableStateOf<Double?>(null) }
         val scrollState = rememberScrollState()
         val isLoading = remember { mutableStateOf(true) }
         val chartData = remember { mutableStateOf(emptyList<BarCharInput>()) }
         val chartDataSQ = remember { mutableStateOf(emptyList<BarCharInputSQ>()) }
-        var selectedBar by remember { mutableStateOf(-1) }
+        val selectedBar by remember { mutableStateOf(-1) }
 
+        var isActivityLoading by remember { mutableStateOf(true) }
+        val date = remember {
+            mutableStateOf("")
+        }
+        val time = remember {
+            mutableStateOf("")
+        }
+        val locationName = remember {
+            mutableStateOf("")
+        }
+        val locationAddress = remember {
+            mutableStateOf("")
+        }
 
         Log.d("latitude", "${latitude.value}")
         Log.d("longitude", "${longitude.value}")
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
 
             FirebaseChartData { fetchedData ->
                 chartData.value = fetchedData
@@ -186,7 +214,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             coroutineScope.launch {
                 tbiUID.value = getTBIUserID()
                 if (tbiUID.value != null) {
-                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!).child("profile").child("firstname")
+                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!)
+                        .child("profile").child("firstname")
                     tbiRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             firstName.value = snapshot.getValue(String::class.java)
@@ -203,7 +232,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             coroutineScope.launch {
                 tbiUID.value = getTBIUserID()
                 if (tbiUID.value != null) {
-                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!).child("liveLocation").child("long")
+                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!)
+                        .child("liveLocation").child("long")
                     tbiRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             longitude.value = snapshot.getValue(Double::class.java)
@@ -220,7 +250,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             coroutineScope.launch {
                 tbiUID.value = getTBIUserID()
                 if (tbiUID.value != null) {
-                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!).child("liveLocation").child("lat")
+                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!)
+                        .child("liveLocation").child("lat")
                     tbiRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             latitude.value = snapshot.getValue(Double::class.java)
@@ -237,7 +268,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             coroutineScope.launch {
                 tbiUID.value = getTBIUserID()
                 if (tbiUID.value != null) {
-                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!).child("liveLocation").child("address")
+                    val tbiRef = Firebase.database.reference.child("users").child(tbiUID.value!!)
+                        .child("liveLocation").child("address")
                     tbiRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             address.value = snapshot.getValue(String::class.java)
@@ -252,144 +284,304 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             }
 
             coroutineScope.launch {
-                tbiUID.value?.let {refreshLocationData(it, latitude, longitude, address)}
+                tbiUID.value?.let { refreshLocationData(it, latitude, longitude, address) }
             }
 
         }
 
+        LaunchedEffect(getCurrentDate()) {
+            tbiUID.value = getTBIUserID()
+            if (tbiUID.value != null) {
+                val latestDB = FirebaseDatabase.getInstance().reference
+                val latestActivityPath = latestDB.child("users")
+                    .child(tbiUID.value.toString())
+                    .child("dailyDairyDummy")
+                    .child(getCurrentDate())
+
+                isActivityLoading = true
+
+                latestActivityPath.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            for (childSnapshot in snapshot.children) {
+                                val key = childSnapshot.key!!
+                                Log.d("key_checker", "nrgwKey: $key")
+                                date.value = childSnapshot.child("date").value.toString()
+                                time.value = childSnapshot.child("time").value.toString()
+                                locationName.value =
+                                    childSnapshot.child("locationName").value.toString()
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        isActivityLoading = false
+                    }
+                })
+            }
+
+        }
+
+        LaunchedEffect(Unit) {
+            tbiUID.value = getTBIUserID()
+            if (tbiUID.value != null) {
+                val latestDB = FirebaseDatabase.getInstance().reference
+                val liveTrackLocation = latestDB.child("users")
+                    .child(tbiUID.value.toString())
+                    .child("liveLocation")
+
+                liveTrackLocation.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            locationAddress.value = snapshot.child("address").value.toString()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        isActivityLoading = false
+                    }
+                })
+            }
+        }
+
         Scaffold(
             bottomBar = { BottomBarFiller() },
+            topBar = { DashBoardTopAppBar() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValue ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValue)
-//                    .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(top = 8.dp)
-                        .padding(horizontal = 16.dp)
-                        .padding(4.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(30.dp)
-                    ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
                         Column(
-                            modifier = Modifier,
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp)
+                                .padding(bottom = 20.dp),
                         ) {
-
+                            Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+                            Text(
+                                text = "Live Tracking",
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontWeight = FontWeight.Medium
+                                )
+                            )
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painterResource(id = R.drawable.round_location_on_24),
+                                    contentDescription = null
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 4.dp))
                                 Text(
-                                    text = "Live Tracking!",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    fontSize = 30.sp,
-                                    textAlign = TextAlign.Center)
-                                Text(
-                                    text = "${firstName.value} is currently at: ${address.value}",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    fontSize = 20.sp,
-                                    textAlign = TextAlign.Center)
-                                Log.d("Address", "${address.value}")
-
-                                val context = LocalContext.current
-                                val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-                                        result->
-                                }
-                                Row(modifier = Modifier.padding(horizontal = 10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-
-                                    Button(onClick = {
-
-                                        if (latitude.value != null && longitude.value != null) {
-                                            Log.d("InsideButtonlatitude", "${latitude.value}")
-                                            Log.d("InsideButtonlongitude", "${longitude.value}")
-                                            val uri = getGoogleMaps(latitude = latitude.value!!, longitude = longitude.value!!)
-                                            val intent = Intent(Intent.ACTION_VIEW, uri)
-                                            intent.setPackage("com.google.android.apps.maps")
-
-                                            if(intent.resolveActivity(context.packageManager) != null) {
-                                                launcher.launch(intent)
-                                            } else {
-
-                                            }
+                                    text = "${
+                                        firstName.value?.replaceFirstChar {
+                                            if (it.isLowerCase()) it.titlecase(
+                                                Locale.ROOT
+                                            ) else it.toString()
                                         }
+                                    } is currently at: ${address.value}",
+                                    style = MaterialTheme.typography.h6.copy(
+                                        color = MaterialTheme.colors.primary.copy(
+                                            alpha = 1f
+                                        )
+                                    )
+                                )
+                            }
+                            /*
+                            * The Buttons for the locations
+                            * */
+                            val context = LocalContext.current
+                            val launcher =
+                                rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+                                }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Button(onClick = {
+                                    if (latitude.value != null && longitude.value != null) {
+//                                        Log.d("InsideButtonlatitude", "${latitude.value}")
+//                                        Log.d("InsideButtonlongitude", "${longitude.value}")
+                                        val uri = getGoogleMaps(
+                                            latitude = latitude.value!!,
+                                            longitude = longitude.value!!
+                                        )
+                                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                                        intent.setPackage("com.google.android.apps.maps")
 
-
-                                    }) {
-                                        Text(text = "Open Maps")
-
+                                        if (intent.resolveActivity(context.packageManager) != null) {
+                                            launcher.launch(intent)
+                                        } else {
+                                        }
                                     }
-                                    
-                                    Button(onClick = {
-                                        tbiUID.value?.let { refreshLocationData(it, latitude, longitude, address) }
-                                    }) {
-                                        Text(text = "Refresh Location")
+                                }) {
+                                    Text(
+                                        text = "See location",
+                                        style = MaterialTheme.typography.button
+                                    )
+                                }
+                                Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+                                Button(onClick = {
+                                    tbiUID.value?.let {
+                                        refreshLocationData(
+                                            it,
+                                            latitude,
+                                            longitude,
+                                            address
+                                        )
+                                    }
+                                }) {
+                                    Text(
+                                        text = "Refresh",
+                                        style = MaterialTheme.typography.button
+                                    )
+                                }
+                            }
+
+                            Text(
+                                text = "Latest activity of ${
+                                    firstName.value?.replaceFirstChar {
+                                        if (it.isLowerCase()) it.titlecase(
+                                            Locale.ROOT
+                                        ) else it.toString()
+                                    }
+                                }",
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                modifier = Modifier
+                                    .padding(bottom = 4.dp)
+                                    .padding(top = 16.dp)
+                            )
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                horizontal = 16.dp,
+                                                vertical = 4.dp
+                                            )
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Start
+                                        ) {
+                                            Text(
+                                                text = date.value,
+                                                style = MaterialTheme.typography.caption.copy(
+                                                    color = Color.LightGray,
+                                                    fontSize = 14.sp
+                                                )
+                                            )
+                                            Spacer(
+                                                modifier = Modifier.padding(
+                                                    horizontal = 6.dp
+                                                )
+                                            )
+                                            Text(
+                                                text = time.value,
+                                                style = MaterialTheme.typography.caption.copy(
+                                                    color = Color.LightGray,
+                                                    fontSize = 14.sp
+                                                )
+                                            )
+                                        }
+                                        Text(
+                                            text = locationName.value,
+                                            style = MaterialTheme.typography.h6.copy(
+
+                                            )
+                                        )
+                                        Spacer(modifier = Modifier.padding(4.dp))
+                                        Text(
+                                            text = locationAddress.value,
+                                            style = MaterialTheme.typography.caption.copy(
+                                                color = Color.Gray,
+                                                fontSize = 12.sp
+                                            )
+                                        )
                                     }
                                 }
-
-                                // Side Quest and Think Fast come here
-
+                            }
+                            Column(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                            ) {
                                 Text(
-                                    "Think Fast Progress",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    fontSize = 30.sp,
-                                    textAlign = TextAlign.Center
+                                    text = "Think fast progress",
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    modifier = Modifier.padding(top = 16.dp)
                                 )
-
-                                Text(
-                                    text = "Score",
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.Black,
-                                    fontSize = 20.sp,
-                                    textAlign = TextAlign.Center
-                                )
-
 
                                 Column(
                                     modifier = Modifier
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     if (isLoading.value) {
                                         CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                                     } else {
-
                                         BarChart(
                                             // First value as date, second value as score of that date
                                             chartData.value,
                                             modifier = Modifier.fillMaxWidth(),
                                             selectedBar = selectedBar,
                                         )
-
                                     }
                                 }
+                            }
+                        /*    Text(
+                                text = "Score",
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.Black,
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center
+                            )
+*/
 
                             Column(
-                                modifier = Modifier,
-                                verticalArrangement = Arrangement.spacedBy(20.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                modifier = Modifier.padding(vertical = 8.dp),
                             ) {
                                 Text(
-                                    "Side Quest Progress",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    fontSize = 30.sp,
-                                    textAlign = TextAlign.Center
+                                    text = "Side quest progress",
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    modifier = Modifier.padding(top = 16.dp)
                                 )
 
                                 Column(
                                     modifier = Modifier
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     if (isLoading.value) {
@@ -402,14 +594,12 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                                             modifier = Modifier.fillMaxWidth(),
                                             selectedBar = selectedBar,
                                         )
-
                                     }
                                 }
-
-                            }
                             }
                         }
                     }
+                }
             }
         }
     }
@@ -428,7 +618,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
             val tbiUID = getTBIUserID()
 
-            val database = Firebase.database.reference.child("analyzeProgressTable").child(tbiUID.toString())
+            val database =
+                Firebase.database.reference.child("analyzeProgressTable").child(tbiUID.toString())
 
             val colors = listOf(
                 Color.White,
@@ -452,7 +643,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                         val dataSnapshot = snapshot.child(date.toString())
                         val totalCorrect =
                             dataSnapshot.child("totalCorrect").getValue(Int::class.java) ?: 0
-                        val totalPlay = dataSnapshot.child("totalPlay").getValue(Int::class.java) ?: 0
+                        val totalPlay =
+                            dataSnapshot.child("totalPlay").getValue(Int::class.java) ?: 0
 
                         val score = totalCorrect
 
@@ -586,7 +778,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             val tbiUID = getTBIUserID()
 
             val database =
-                Firebase.database.reference.child("users").child(tbiUID.toString()).child("viewScoresTableSideQuest")
+                Firebase.database.reference.child("users").child(tbiUID.toString())
+                    .child("viewScoresTableSideQuest")
 
             val colors = listOf(
                 Color.White,
@@ -700,12 +893,14 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp
         )
 
-        Column(modifier = modifier
-            .height(300.dp)
-            .width(barWidth)
-            .verticalScroll(rememberScrollState()),
+        Column(
+            modifier = modifier
+                .height(300.dp)
+                .width(barWidth)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom){
+            verticalArrangement = Arrangement.Bottom
+        ) {
             Box(
                 modifier = modifier
                     .height(barHeight)
@@ -719,7 +914,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "$value",
+                Text(
+                    text = "$value",
                     style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
                     textAlign = TextAlign.Center
                 )
@@ -735,12 +931,14 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             )
 
             if (showDescription) {
-                Text(text = label,
+                Text(
+                    text = label,
                     style = MaterialTheme.typography.caption,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .width(barWidth)
-                        .padding(top = 5.dp))
+                        .padding(top = 5.dp)
+                )
             }
         }
 
@@ -754,7 +952,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
         val date: String
     )
 
-    data class BarCharInputSQ (
+    data class BarCharInputSQ(
         val value: Int,
         val label: String,
         val color: Color,

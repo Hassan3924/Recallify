@@ -279,7 +279,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
                             val imageLink = childSnapshot.child("imageLink").value // retrieve imageLink value
                             val location = childSnapshot.child("locationName").value // retrieve location value
                             // do something with the retrieved values, e.g. display them in UI
-                            Log.d(ContentValues.TAG, "nrgwKey: $nrgwKey, imageLink: $imageLink, location: $location")
+                            Log.d("nrgkey_checker", "nrgwKey: $nrgwKey, imageLink: $imageLink, location: $location")
                             dailyDairySideQuestRef.child("users").child(uid).child("dailyDairySideQuest").child(currentDate).child(counterGen.toString()).child("imageLink").setValue(imageLink)
                             dailyDairySideQuestRef.child("users").child(uid).child("dailyDairySideQuest").child(currentDate).child(counterGen.toString()).child("locationName").setValue(location)
 

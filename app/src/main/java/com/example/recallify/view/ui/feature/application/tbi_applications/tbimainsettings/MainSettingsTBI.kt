@@ -6,35 +6,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.AccountsActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
-import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
-import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.HelpAndSupport
-import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.PrivacyAndSecurity
-import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.TermsAndConditions
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -45,6 +33,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class MainSettingsTBI : AppCompatActivity() {
 
@@ -108,13 +97,14 @@ class MainSettingsTBI : AppCompatActivity() {
         val current = auth.currentUser?.uid!!
         val database = Firebase.database.reference.child("users")
         val user = database.child(current).child("profile").child("firstname")
-        val userName = remember { mutableStateOf<String>("") }
+        val userName = remember { mutableStateOf("") }
 
         user.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 userName.value = snapshot.value.toString()
             }
+
             override fun onCancelled(error: DatabaseError) {
 
             }
@@ -124,7 +114,7 @@ class MainSettingsTBI : AppCompatActivity() {
             topBar = { MainSettingsTopBar() },
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
-        ) {paddingValues ->
+        ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -141,16 +131,21 @@ class MainSettingsTBI : AppCompatActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-
                     Card(
                         backgroundColor = Color.Transparent,
                         elevation = 0.dp,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column(verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Text(
-                                text = "Greetings ${userName.value}!",
+                                text = "Greetings ${userName.value.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.ROOT
+                                    ) else it.toString()
+                                }}!",
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp)
                                     .padding(top = 16.dp, bottom = 8.dp),
@@ -159,14 +154,27 @@ class MainSettingsTBI : AppCompatActivity() {
                                 )
                             )
                         }
-
-
-                        Column(modifier = Modifier.padding(top = 100.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)) {
-
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                                elevation = 5.dp) {
+                        Column(
+                            modifier = Modifier.padding(
+                                top = 100.dp,
+                                bottom = 10.dp,
+                                start = 10.dp,
+                                end = 10.dp
+                            )
+                        ) {
+                            /*
+                            * Account settings
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier
+                                    .padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -180,17 +188,49 @@ class MainSettingsTBI : AppCompatActivity() {
                                             )
                                             finish()
                                         })
-                                        .padding(horizontal = 10.dp, vertical = 10.dp)
-                                        .fillMaxWidth() 
-                                ) {
-                                    Text(text = "Account Setting")
+                                        .padding(
+                                            horizontal = 10.dp,
+                                            vertical = 10.dp
+                                        )
+                                        .fillMaxWidth(),
+
+                                    ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.account),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Account Setting",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
 
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                                elevation = 5.dp) {
+                            /*
+                            * Privacy and Security
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier
+                                    .padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -207,15 +247,40 @@ class MainSettingsTBI : AppCompatActivity() {
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    Text(text = "Privacy & Security")
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.round_security_24),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Privacy and Security",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
-
-
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                                elevation = 5.dp) {
+                            /*
+                            * Terms and Condition
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier.padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -232,14 +297,40 @@ class MainSettingsTBI : AppCompatActivity() {
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    Text(text = "Terms & Conditions")
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.round_gavel_24),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Terms and Conditions",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
-
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                                elevation = 5.dp) {
+                            /*
+                            * Help and Support
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier.padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -256,7 +347,26 @@ class MainSettingsTBI : AppCompatActivity() {
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    Text(text = "Help & Support")
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.round_help_outline_24),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Help and Support",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
                         }
@@ -272,17 +382,15 @@ class MainSettingsTBI : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(horizontal = 16.dp)
+//                .padding(horizontal = 16.dp)
                 .padding(top = 4.dp)
-                .clip(shape = RoundedCornerShape(26.dp))
+//                .clip(shape = RoundedCornerShape(26.dp))
                 .background(MaterialTheme.colors.background),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Main Settings",
-                style = MaterialTheme.typography.body1.copy(
-                    fontWeight = FontWeight.Medium
-                )
+                text = "Settings",
+                style = MaterialTheme.typography.h6
             )
         }
     }

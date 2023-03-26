@@ -35,6 +35,7 @@ import com.example.recallify.view.common.components.DiaryTopAppBarGuardian
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.Information
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
@@ -61,9 +62,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class GuardianDailyDairyActivity  : AppCompatActivity() {
+class GuardianDailyDairyActivity : AppCompatActivity() {
 
-    private var tbi_uid : String = ""
+    private var tbi_uid: String = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +77,12 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.bottom_home -> {
-                    startActivity(Intent(applicationContext, GuardiansDashboardActivity::class.java))
+                    startActivity(
+                        Intent(
+                            applicationContext,
+                            GuardiansDashboardActivity::class.java
+                        )
+                    )
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                     finish()
                     true
@@ -128,6 +134,7 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
         val database = Firebase.database
         val auth = Firebase.auth
         val currentUser = auth.currentUser?.uid!!
+
 //        val ref = database.getReference("users").child(currentUser).child("conversation-summary").child(getCurrentDate())
 
         val children = remember { mutableStateListOf<DataSnapshot>() }
@@ -136,30 +143,47 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
 
         var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
-        var tbiEmail : String = ""
+        var tbiEmail: String = ""
 
-        var tbiGULinkID : String = ""
+        val tbiGULinkID: String = ""
 
+        val childrenOfActivities = remember {
+            mutableStateListOf<Information>()
+        }
 
-//        Log.d("DatePicked", "$selectedDate")
-//        Log.d("Children", children.joinToString())
+        var isActivitiesLoading by remember { mutableStateOf(true) }
 
         LaunchedEffect(selectedDate, tbiEmail, tbiGULinkID) {
 
-            // Getting the TBI Email from Guardian account
-            var tbiEmailRef  = database.getReference("users").child(currentUser).child("profile").child("TBI Email")
+            val tbiEmailRef = database.getReference("users")
+                .child(currentUser)
+                .child("profile")
+                .child("TBI Email")
 
-            // Getting the TBI ID from Guardian's Link Table
+            val conversationSum = database.getReference("users")
+                .child(tbi_uid)
+                .child("conversation-summary")
+                .child(selectedDate.toString())
 
-            val conversationSum = database.getReference("users").child(tbi_uid).child("conversation-summary").child(selectedDate.toString())
+            val tbiActivityRef = database.getReference("users")
+                .child(tbi_uid)
+                .child("dailyDairyDummy")
+                .child(selectedDate.toString())
 
-            Log.d("GuardianLinkRef2", "$tbi_uid")
+            val guardianLinkRef = database.getReference("users")
+                .child("GuardiansLinkTable")
+                .child(currentUser)
+                .child("TBI_ID")
 
+//            Log.d("GuardianLinkRef2", tbi_uid)
+
+            /*
+            * TBI Email Reference!
+            * */
             tbiEmailRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     tbiEmail = snapshot.getValue(String::class.java).toString()
-                    Log.d("GuardianLink", "$tbiEmail")
-
+                    Log.d("GuardianLink", tbiEmail)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -168,22 +192,23 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
             })
 
 
-            val guardianLinkRef = database.getReference("users").child("GuardiansLinkTable").child(currentUser).child("TBI_ID")
-
+            /*
+            * Guardian Link Reference
+            * */
             guardianLinkRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     tbi_uid = snapshot.getValue(String::class.java).toString()
-                    Log.d("GuardianLinkRef", "$tbiGULinkID")
-
+                    Log.d("GuardianLinkRef", tbiGULinkID)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     TODO("Not yet implemented")
                 }
-
             })
 
-
+            /*
+            * Conversation Summary!
+            * */
             conversationSum.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("Snapshot", snapshot.toString()) // add this line
@@ -202,6 +227,10 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
                     isLoading = false
                 }
             })
+
+            /*
+            * TBI Daily Activities!
+            * */
         }
 
         Scaffold(
@@ -211,7 +240,8 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
 
                     clickFilter = {
                         pickDate(context = context) {
-                            selectedDate = it.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                            selectedDate =
+                                it.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
                         }
                     }
@@ -225,95 +255,99 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
                     .padding(paddingValues = paddingValues),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                    Column {
-                        TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
-                        when (tabPage.ordinal) {
-                            0 -> {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(top = 8.dp),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
+                Column {
+                    TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
+                    when (tabPage.ordinal) {
+                        0 -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 8.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
 
-                                    Text("Daily Activities", color = MaterialTheme.colors.onSurface)
-                                    // fixme: add composable list here
+                                Text("Daily Activities", color = MaterialTheme.colors.onSurface)
+                                // fixme: add composable list here
 
-
-                                }
-
-                                BackHandler(
-                                    enabled = (state.currentValue == ModalBottomSheetValue.HalfExpanded ||
-                                            state.currentValue == ModalBottomSheetValue.Expanded),
-                                    onBack = {
-                                        scope.launch {
-                                            state.animateTo(
-                                                ModalBottomSheetValue.Hidden,
-                                                tween(400)
-                                            )
-                                        }
-                                    }
-                                )
 
                             }
-                            1 -> {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(top = 8.dp),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    when {
 
-                                        children.isNullOrEmpty() -> {
+                            BackHandler(
+                                enabled = (state.currentValue == ModalBottomSheetValue.HalfExpanded ||
+                                        state.currentValue == ModalBottomSheetValue.Expanded),
+                                onBack = {
+                                    scope.launch {
+                                        state.animateTo(
+                                            ModalBottomSheetValue.Hidden,
+                                            tween(400)
+                                        )
+                                    }
+                                }
+                            )
 
-                                            Text(
-                                                text = "No data available for ${selectedDate.format(DateTimeFormatter.ISO_DATE)}",
-                                                modifier = Modifier.padding(16.dp),
-                                                textAlign = TextAlign.Center
-                                            )
-                                        }
+                        }
+                        1 -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 8.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                when {
 
-                                        else -> {
-                                            LazyColumn {
+                                    children.isNullOrEmpty() -> {
 
-                                                items(children) { child ->
-                                                    Card(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .padding(16.dp),
-                                                        elevation = 8.dp,
-                                                    ) {
-                                                        Text(
-                                                            text = child.value.toString(),
-                                                            modifier = Modifier.padding(16.dp)
-                                                        )
-                                                    }
+                                        Text(
+                                            text = "No data available for ${
+                                                selectedDate.format(
+                                                    DateTimeFormatter.ISO_DATE
+                                                )
+                                            }",
+                                            modifier = Modifier.padding(16.dp),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+
+                                    else -> {
+                                        LazyColumn {
+
+                                            items(children) { child ->
+                                                Card(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(16.dp),
+                                                    elevation = 8.dp,
+                                                ) {
+                                                    Text(
+                                                        text = child.value.toString(),
+                                                        modifier = Modifier.padding(16.dp)
+                                                    )
                                                 }
                                             }
                                         }
                                     }
                                 }
-
-
-
-
-                                BackHandler(
-                                    enabled = (state.currentValue == ModalBottomSheetValue.HalfExpanded ||
-                                            state.currentValue == ModalBottomSheetValue.Expanded),
-                                    onBack = {
-                                        scope.launch {
-                                            state.animateTo(
-                                                ModalBottomSheetValue.Hidden,
-                                                tween(300)
-                                            )
-                                        }
-                                    }
-                                )
                             }
+
+
+
+
+                            BackHandler(
+                                enabled = (state.currentValue == ModalBottomSheetValue.HalfExpanded ||
+                                        state.currentValue == ModalBottomSheetValue.Expanded),
+                                onBack = {
+                                    scope.launch {
+                                        state.animateTo(
+                                            ModalBottomSheetValue.Hidden,
+                                            tween(300)
+                                        )
+                                    }
+                                }
+                            )
                         }
+                    }
 
                 }
             }
@@ -363,8 +397,6 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
     }
 
 
-
-
     @Composable
     fun ItemCount(text: String) {
         Text(
@@ -376,7 +408,6 @@ class GuardianDailyDairyActivity  : AppCompatActivity() {
                 .fillMaxWidth()
         )
     }
-
 
 
     fun getCurrentDate(): String {

@@ -275,17 +275,16 @@ class SideQuestActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(horizontal = 16.dp)
+//                .padding(horizontal = 16.dp)
                 .padding(top = 4.dp)
-                .clip(shape = RoundedCornerShape(26.dp))
+//                .clip(shape = RoundedCornerShape(26.dp))
                 .background(MaterialTheme.colors.background),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Side Quest",
-                style = MaterialTheme.typography.body1.copy(
-                    fontWeight = FontWeight.Medium
-                )
+                style = MaterialTheme.typography.h6
+
             )
         }
     }

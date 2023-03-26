@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
@@ -17,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -24,12 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.recallify.R
 import com.example.recallify.view.common.components.DiaryTopAppBar
@@ -44,9 +47,11 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.thinkf
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -57,8 +62,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DailyDiaryActivity : AppCompatActivity() {
-
-    private val viewModel: ActivityViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,6 +172,8 @@ class DailyDiaryActivity : AppCompatActivity() {
             skipHalfExpanded = true
         )
 
+        val lazyColumnState = rememberLazyListState()
+
         /**
          * The scope of the Scaffold Layout
          * @author enoabasi
@@ -225,7 +230,9 @@ class DailyDiaryActivity : AppCompatActivity() {
          * */
         val childrenOfLogs = remember { mutableStateListOf<DataSnapshot>() }
 
-
+        val childrenOfActivities = remember {
+            mutableStateListOf<Information>()
+        }
         /**
          * This is used to remember the state of a coroutine. For if it is loading on not loading.
          * The logic is being implemented later in the code base. This loading has been set to
@@ -236,6 +243,8 @@ class DailyDiaryActivity : AppCompatActivity() {
          * @author hassan
          * */
         var isLogsLoading by remember { mutableStateOf(true) }
+
+        var isActivitiesLoading by remember { mutableStateOf(true) }
 
         /**
          * This is used to remember the state of the selected date from a filter or calendar. The
@@ -278,6 +287,36 @@ class DailyDiaryActivity : AppCompatActivity() {
 
                 override fun onCancelled(error: DatabaseError) {
                     isLogsLoading = false
+                }
+            })
+
+            isActivitiesLoading = true
+
+            val activityDatabase = FirebaseDatabase.getInstance().reference
+            val userID = FirebaseAuth.getInstance().currentUser?.uid!!
+
+            val selectedActivity = activityDatabase
+                .child("users")
+                .child(userID)
+                .child("dailyDairyDummy")
+                .child(selectedDate.toString())
+
+            selectedActivity.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("Snapshot_activity", snapshot.toString())
+                    childrenOfActivities.clear()
+                    for(DataSnap in snapshot.children) {
+                        val selectedActivities = DataSnap.getValue(Information::class.java)
+
+                        if (selectedActivities != null) {
+                            childrenOfActivities.add(0, selectedActivities)
+                        }
+                    }
+                    isActivitiesLoading = false
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    isActivitiesLoading = false
                 }
             })
         }
@@ -376,62 +415,47 @@ class DailyDiaryActivity : AppCompatActivity() {
                         TabDiary(selectTabIndex = tabPage.ordinal, onSelectTab = { tabPage = it })
                         when (tabPage.ordinal) {
                             0 -> {
-                                when (val result = viewModel.response.value) {
-                                    is DataState.Loading -> {
+                                when {
+                                    childrenOfActivities.isEmpty() -> {
                                         Box(
-                                            modifier = Modifier.fillMaxSize(),
+                                            Modifier.fillMaxSize(),
                                             contentAlignment = Center
                                         ) {
-                                            CircularProgressIndicator()
+                                            Text(
+                                                text = "No data available for\n ${
+                                                    selectedDate.format(
+                                                        DateTimeFormatter.ISO_DATE
+                                                    )
+                                                }",
+                                                modifier = Modifier.padding(16.dp),
+                                                textAlign = TextAlign.Center
+                                            )
                                         }
                                     }
-                                    is DataState.Success -> {
-                                        LazyColumn {
-                                            items(result.data) { activity ->
-                                                Card(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .height(150.dp)
-                                                        .padding(16.dp),
-                                                    backgroundColor = MaterialTheme.colors.background
-                                                ) {
-                                                    Box(modifier = Modifier.fillMaxSize()) {
-                                                        Image(
-                                                            painter = rememberAsyncImagePainter(
-                                                                activity.imageLink
-                                                            ),
-                                                            contentDescription = "Activity-Image",
-                                                            contentScale = ContentScale.FillWidth,
-                                                            modifier = Modifier.fillMaxSize()
-                                                        )
-                                                    }
-                                                    Column {
-                                                        Row {
-                                                            Text(text = activity.date.toString())
-                                                            Text(text = activity.time.toString())
-                                                        }
-                                                        Text(text = activity.locationName.toString())
-                                                        Row {
-                                                            Text(text = activity.locationLongitude.toString())
-                                                            Text(text = activity.locationLatitude.toString())
-                                                        }
-                                                        Text(text = activity.locationAddress.toString())
-                                                    }
-                                                }
+                                    childrenOfActivities.isNotEmpty() -> {
+                                        LazyColumn(
+                                            state = lazyColumnState,
+                                            contentPadding = PaddingValues(
+                                                vertical = 16.dp
+                                            ),
+                                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                                        ) {
+                                            items(childrenOfActivities) { activity ->
+                                                ActivityItem(activity = activity)
                                             }
                                         }
                                     }
-                                    is DataState.Failed -> {
-                                        Text(
-                                            text = result.message,
-                                            fontSize = MaterialTheme.typography.h5.fontSize
-                                        )
-                                    }
                                     else -> {
-                                        Text(
-                                            text = "Error fetching from network!",
-                                            fontSize = MaterialTheme.typography.h5.fontSize
-                                        )
+                                        Box(
+                                            Modifier.fillMaxSize(),
+                                            contentAlignment = Center
+                                        ) {
+                                            Text(
+                                                text = "Data could not be fetched from Network!",
+                                                modifier = Modifier.padding(16.dp),
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
                                     }
                                 }
                                 BackHandler(
@@ -514,6 +538,89 @@ class DailyDiaryActivity : AppCompatActivity() {
     }
 
     /**
+     *
+     * The composable of an individual activity
+     * @author enoabasi
+     * */
+    @Composable
+    private fun ActivityItem(activity: Information) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            backgroundColor = MaterialTheme.colors.background
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            activity.imageLink
+                        ),
+                        contentDescription = "Activity-Image",
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 4.dp
+                        )
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = activity.date.toString(),
+                            style = MaterialTheme.typography.caption.copy(
+                                color = Color.LightGray,
+                                fontSize = 14.sp
+                            )
+                        )
+                        Spacer(
+                            modifier = Modifier.padding(
+                                horizontal = 6.dp
+                            )
+                        )
+                        Text(
+                            text = activity.time.toString(),
+                            style = MaterialTheme.typography.caption.copy(
+                                color = Color.LightGray,
+                                fontSize = 14.sp
+                            )
+                        )
+                    }
+                    Text(
+                        text = activity.locationName.toString(),
+                        style = MaterialTheme.typography.h6.copy(
+
+                        )
+                    )
+                    Spacer(modifier = Modifier.padding(4.dp))
+                    Text(
+                        text = activity.locationAddress.toString(),
+                        style = MaterialTheme.typography.caption.copy(
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    /**
      * Get the selected date from the a date picker dialog and uses the value for filtering through
      * the data in the database.
      *
@@ -583,10 +690,3 @@ data class Information(
     var time: String? = null,
     var userId: String? = null,
 )
-
-sealed class DataState {
-    class Success(val data: MutableList<Information>) : DataState()
-    class Failed(val message: String) : DataState()
-    object Loading : DataState()
-    object Empty : DataState()
-}
