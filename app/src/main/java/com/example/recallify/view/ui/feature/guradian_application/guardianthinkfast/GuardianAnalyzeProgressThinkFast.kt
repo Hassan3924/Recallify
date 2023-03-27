@@ -94,7 +94,7 @@ class GuardianAnalyzeProgressThinkFast : AppCompatActivity() {
                             analyzeProgressBinding.percentShow.text =
                                 percent_correct.toInt().toString() + "%"
                             analyzeProgressBinding.todayScoreFeedbackViewValue.text =
-                                "Congrats,User has achieved the daily target"
+                                "Congrats, User has achieved the daily target"
                         } else {
 
                             analyzeProgressBinding.percentShow.text =
@@ -125,7 +125,7 @@ class GuardianAnalyzeProgressThinkFast : AppCompatActivity() {
                             analyzeProgressBinding.percentShowTotalPlay.text =
                                 percent_play.toInt().toString() + "%"
                             analyzeProgressBinding.todayPlayFeedbackViewValue.text =
-                                "Congrats,User has achieved the daily target"
+                                "Congrats, User has achieved the daily target"
                         } else {
 
                             analyzeProgressBinding.percentShowTotalPlay.text =
@@ -156,7 +156,7 @@ class GuardianAnalyzeProgressThinkFast : AppCompatActivity() {
             database.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     var questionCount = snapshot.childrenCount.toInt()
-                    if(questionCount==1) {
+                    if(questionCount>=1) {
                         tbi_uid = snapshot.child("TBI_ID").value.toString()
 
                     analyzeProgress(currentDate)
