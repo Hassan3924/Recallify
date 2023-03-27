@@ -76,9 +76,9 @@ class GuardianSideQuestActivity : AppCompatActivity() {
             RecallifyTheme {
                 SideQuestScreen(
                     viewScore = {
-//                        val intent = Intent(context, SideQuestProgressActivity::class.java)
-//                        startActivity(intent)
-//                        finish()
+                        val intent = Intent(context, GuardianSelectDateScoreSideQuest::class.java)
+                        startActivity(intent)
+                        finish()
                     },
                     viewAnalysis = {
                         val intent = Intent(context, GuardianSelectDateAnalyzeProgressSideQuest::class.java)

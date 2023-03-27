@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
+import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -93,7 +94,8 @@ class ForgotPasswordActivity : AppCompatActivity() {
                     }
                 }
                 Image(
-                    painter = painterResource(id = R.drawable.forgotpass),
+                  //  painter = painterResource(id = R.drawable.forgotpass),
+                    painter = painterResource(id = R.drawable.forgot_pass1),
                     contentDescription = "Login pic!",
                     modifier = Modifier
                         .weight(1f)
@@ -160,12 +162,17 @@ class ForgotPasswordActivity : AppCompatActivity() {
                                     .fillMaxWidth()
                             )
                             Button(
-                                onClick = { processEmailLink()
-                                    auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+                                
+                                onClick = {
+
+                                    processEmailLink()
+                                    auth.sendPasswordResetEmail(email.trim()).addOnCompleteListener { task ->
 
                                         if (task.isSuccessful){
 
                                             Toast.makeText(applicationContext,"We sent a password reset mail to your email address",Toast.LENGTH_SHORT).show()
+                                            val intent = Intent(this@ForgotPasswordActivity, LoginActivity::class.java)
+                                            startActivity(intent)
                                             finish() //once page is closed, it will return to login page
 
                                         }else{
@@ -176,6 +183,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
                                     }
                                           },
+
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp, vertical = 8.dp)
                                     .fillMaxWidth()
