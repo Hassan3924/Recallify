@@ -79,9 +79,11 @@ class GuardianThinkFastActivity : AppCompatActivity() {
 //                    },
                     viewScore = {
                         context.startActivity(Intent(context, GuardianSelectDateScoreThinkFast::class.java))
+                        finish()
                     },
                     viewAnalysis = {
                         context.startActivity(Intent(context, GuardianSelectDateAnalyzeProgressThinkFast::class.java))
+                        finish()
                     }
                 )
             }
@@ -160,7 +162,7 @@ class GuardianThinkFastActivity : AppCompatActivity() {
                                 modifier = Modifier.clickable(onClick = viewScore)
                             ) {
                                 Text(
-                                    "View\nScore",
+                                    "View\nResults",
                                     style = MaterialTheme.typography.button.copy(
                                         fontSize = 16.sp
                                     ),

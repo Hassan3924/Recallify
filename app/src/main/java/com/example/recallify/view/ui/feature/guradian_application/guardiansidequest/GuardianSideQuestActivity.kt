@@ -24,6 +24,7 @@ import com.example.recallify.R
 import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
 import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianSelectDateScoreThinkFast
 import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.CommonColor
@@ -80,9 +81,9 @@ class GuardianSideQuestActivity : AppCompatActivity() {
 //                        finish()
                     },
                     viewAnalysis = {
-//                        val intent = Intent(context, SideQuestAnalysisActivity::class.java)
-//                        startActivity(intent)
-//                        finish()
+                        val intent = Intent(context, GuardianSelectDateAnalyzeProgressSideQuest::class.java)
+                        startActivity(intent)
+                        finish()
                     }
                 )
             }
@@ -164,7 +165,7 @@ class GuardianSideQuestActivity : AppCompatActivity() {
                                 modifier = Modifier.clickable(onClick = viewScore)
                             ) {
                                 Text(
-                                    "View\nScore",
+                                    "View\nResults",
                                     style = MaterialTheme.typography.button.copy(
                                         fontSize = 16.sp
                                     ),
