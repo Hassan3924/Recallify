@@ -1,4 +1,4 @@
-package com.example.recallify.view.ui.feature.application.dashboard
+package com.example.recallify.view.ui.feature.application.tbi_applications.dashboard
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,7 +11,6 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 
 class NotificationService : Service() {
     private lateinit var notificationManager: NotificationManager
@@ -21,7 +20,6 @@ class NotificationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -40,7 +38,8 @@ class NotificationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notificationIntent = Intent(this, DashboardActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent
+            .getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val notification = notificationBuilder
             .setContentIntent(pendingIntent)
@@ -80,6 +79,7 @@ class NotificationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        @Suppress("DEPRECATION")
         stopForeground(true)
     }
 }

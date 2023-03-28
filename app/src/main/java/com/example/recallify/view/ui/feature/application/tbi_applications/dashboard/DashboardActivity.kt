@@ -28,9 +28,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.recallify.R
 import com.example.recallify.databinding.ActivityDashboardBinding
 import com.example.recallify.view.common.components.DashBoardTopAppBar
-import com.example.recallify.view.ui.feature.application.dashboard.NotificationService
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.Information
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI

@@ -11,8 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +48,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -59,7 +55,7 @@ import java.util.*
 
 class GuardianDailyDairyActivity : AppCompatActivity() {
 
-    private var tbi_uid: String = ""
+    private var tbiUID = mutableStateOf("")
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -164,12 +160,12 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
 
             val conversationSum = database
                 .getReference("users")
-                .child(tbi_uid)
+                .child(tbiUID.value)
                 .child("conversation-summary")
                 .child(selectedDate.toString())
 
             val tbiActivityRef = database.getReference("users")
-                .child(tbi_uid)
+                .child(tbiUID.value)
                 .child("dailyDairyDummy")
                 .child(selectedDate.toString())
 
@@ -198,7 +194,7 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
             * */
             guardianLinkRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    tbi_uid = snapshot.getValue(String::class.java).toString()
+                    tbiUID.value = snapshot.getValue(String::class.java).toString()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -230,9 +226,9 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     childrenOfActivities.clear()
                     for (DataSnap in snapshot.children) {
-                        val selectedActvities = DataSnap.getValue(Information::class.java)
-                        if (selectedActvities != null) {
-                            childrenOfActivities.add(0, selectedActvities)
+                        val selectedActivities = DataSnap.getValue(Information::class.java)
+                        if (selectedActivities != null) {
+                            childrenOfActivities.add(0, selectedActivities)
                         }
                     }
                     isActivitiesLoading = false
@@ -337,7 +333,7 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
                             ) {
                                 when {
 
-                                    children.isNullOrEmpty() -> {
+                                    children.isEmpty() -> {
 
                                         Text(
                                             text = "No data available for ${
@@ -472,7 +468,7 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
         }
     }
 
-    fun pickDate(context: Context, onDateSelected: (Date) -> Unit) {
+    private fun pickDate(context: Context, onDateSelected: (Date) -> Unit) {
         val calendar = Calendar.getInstance()
         val datePicker = DatePickerDialog(
             context,
@@ -486,54 +482,4 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
         )
         datePicker.show()
     }
-
-    @Composable
-    fun ActionSheetItem(icon: Int, text: String, onStart: () -> Unit) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-                .clickable {
-                    onStart()
-                },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = text,
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colors.onSurface
-            )
-            Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-            Text(
-                text,
-                style = MaterialTheme.typography.button,
-                color = MaterialTheme.colors.onSurface
-            )
-        }
-    }
-
-
-    @Composable
-    fun ItemCount(text: String) {
-        Text(
-            "count: $text",
-            style = MaterialTheme.typography.caption,
-            color = if (isSystemInDarkTheme()) Color.LightGray else Color.Gray,
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-        )
-    }
-
-
-    fun getCurrentDate(): String {
-
-        val date = Date().time
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return formatter.format(date)
-
-    }
-
 }

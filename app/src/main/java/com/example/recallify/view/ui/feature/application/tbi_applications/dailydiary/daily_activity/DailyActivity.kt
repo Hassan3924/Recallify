@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.widget.Space
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -387,7 +386,6 @@ class DailyActivity : AppCompatActivity() {
                                                         activityRef.child(key)
                                                             .child("userId")
                                                             .setValue(userID)
-
                                                         activityRef.child(key)
                                                             .child("activityId")
                                                             .setValue(key)

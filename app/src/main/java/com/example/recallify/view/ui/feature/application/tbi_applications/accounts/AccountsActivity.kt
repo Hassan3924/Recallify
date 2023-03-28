@@ -11,23 +11,17 @@ import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
@@ -53,26 +47,31 @@ import java.util.*
 
 val copiedLocation = mutableStateOf("")
 val copiedLongitude = mutableStateOf("")
-val copiedLatitude =  mutableStateOf("")
+val copiedLatitude = mutableStateOf("")
+
 class AccountsActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var currentLocation: MutableLiveData<LatLng>
-    var locationText=""
+    var locationText = ""
     private val label = "User Location"
     val database = FirebaseDatabase.getInstance()
-    val locationAdd = database.reference
+    private val locationAdd = database.reference
     val auth = FirebaseAuth.getInstance()
     val user = auth.currentUser
+
     @RequiresApi(Build.VERSION_CODES.O)
     val current = LocalDateTime.now()
+
     @RequiresApi(Build.VERSION_CODES.O)
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
     @RequiresApi(Build.VERSION_CODES.O)
     val formatted = current.format(formatter)
+
     @RequiresApi(Build.VERSION_CODES.O)
-    val currentDate:String = formatted.toString()
+    val currentDate: String = formatted.toString()
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
@@ -83,27 +82,30 @@ class AccountsActivity : AppCompatActivity() {
                 currentLocation.value = LatLng(location.latitude, location.longitude)
             }
             locationResult ?: return
-            for (location in locationResult.locations) {
-                val lat = location.latitude
-                val lng = location.longitude
-                locationText= "Current location: $lat, $lng"
-                val address = getAddressName(location.latitude,location.longitude)
+            for (userLocation in locationResult.locations) {
+                val lat = userLocation.latitude
+                val lng = userLocation.longitude
+                locationText = "Current location: $lat, $lng"
+                val address = getAddressName(userLocation.latitude, userLocation.longitude)
                 copiedLocation.value = address
                 copiedLatitude.value = lat.toString()
                 copiedLongitude.value = lng.toString()
                 Log.d("CopiedLocation: ", "${copiedLocation.value} ==> $address")
-                Log.d("Currentlocation : ",locationText)
-                addLiveLocation(lat,lng,address)
+                Log.d("Current-location : ", locationText)
+                addLiveLocation(lat, lng, address)
             }
         }
     }
 
-    fun addLiveLocation(lat:Double,lng:Double,address:String){
+    fun addLiveLocation(lat: Double, lng: Double, address: String) {
         user?.let {
             val userUID = it.uid
-            locationAdd.child("users").child(userUID).child("liveLocation").child("lat").setValue(lat)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("long").setValue(lng)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("address").setValue(address)
+            locationAdd.child("users").child(userUID).child("liveLocation").child("lat")
+                .setValue(lat)
+            locationAdd.child("users").child(userUID).child("liveLocation").child("long")
+                .setValue(lng)
+            locationAdd.child("users").child(userUID).child("liveLocation").child("address")
+                .setValue(address)
         }
     }
 
@@ -112,7 +114,7 @@ class AccountsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_accounts)
 
-                // Request location permissions
+        // Request location permissions
         requestLocationPermissions()
 
         // Initialize location services
@@ -136,14 +138,13 @@ class AccountsActivity : AppCompatActivity() {
 
     @Composable
     fun AccountsScreen() {
-
         val auth: FirebaseAuth = Firebase.auth
         val database = Firebase.database.reference.child("users")
         val current = auth.currentUser?.uid!!
         val childValue = remember { mutableStateOf("") }
 
-            Scaffold(
-                topBar = {AccountSettingsTopBar()} ,
+        Scaffold(
+            topBar = { AccountSettingsTopBar() },
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValues ->
@@ -172,20 +173,22 @@ class AccountsActivity : AppCompatActivity() {
 //                    Text(style = TextStyle(fontSize = 24.sp), text = "Account Settings")
 
                 }
-                Column( modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
-                    .padding(top = 50.dp)
-                    .padding(bottom = 8.dp),
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                        .padding(top = 50.dp)
+                        .padding(bottom = 8.dp),
                     Arrangement.Center,
-                    Alignment.CenterHorizontally) {
+                    Alignment.CenterHorizontally
+                ) {
 
                     var firstName: String by remember { mutableStateOf("") }
                     var lastName: String by remember { mutableStateOf("") }
                     var email: String by remember { mutableStateOf("") }
                     var password: String by remember { mutableStateOf("") }
-                    var PIN : String by remember { mutableStateOf("") }
-//                    var password by rememberSaveable { mutableStateOf("") }
+                    var PIN: String by remember { mutableStateOf("") }
+//                    var password by rememberSavable { mutableStateOf("") }
 
 
                     LaunchedEffect(Unit) {
@@ -204,7 +207,7 @@ class AccountsActivity : AppCompatActivity() {
                         database.child(current).child("profile").child("lastname")
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    lastName = dataSnapshot.getValue(String::class.java) ?:""
+                                    lastName = dataSnapshot.getValue(String::class.java) ?: ""
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
@@ -299,7 +302,7 @@ class AccountsActivity : AppCompatActivity() {
     @Composable
     fun LogoutButton(activity: AccountsActivity) {
         Button(modifier = Modifier.padding(top = 20.dp), onClick = {
-              fusedLocationClient.removeLocationUpdates(locationCallback) //to stop the location tracking
+            fusedLocationClient.removeLocationUpdates(locationCallback) //to stop the location tracking
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this@AccountsActivity, LoginActivity::class.java)
             startActivity(intent)
@@ -359,7 +362,7 @@ class AccountsActivity : AppCompatActivity() {
     }
 
 
-        //Live location Tracking functions #Ridinbal
+    //Live location Tracking functions #Ridinbal
     private fun requestLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -447,15 +450,14 @@ class AccountsActivity : AppCompatActivity() {
         private const val LOCATION_UPDATE_INTERVAL: Long = 5000
         private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
     }
-    private fun getAddressName(lat:Double, lon:Double): String{
 
+    private fun getAddressName(lat: Double, lon: Double): String {
         var addressName = ""
-        var geoCoder = Geocoder(this, Locale.getDefault())
-        var address = geoCoder.getFromLocation(lat,lon,1)
+        val geoCoder = Geocoder(this, Locale.getDefault())
+        val address = geoCoder.getFromLocation(lat, lon, 1)
 
         if (address != null) {
             addressName = address[0].getAddressLine(0)
-
         }
         return addressName
     }

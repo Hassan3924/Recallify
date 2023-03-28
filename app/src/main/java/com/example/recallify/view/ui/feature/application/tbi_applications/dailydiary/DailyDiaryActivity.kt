@@ -59,7 +59,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -156,7 +155,7 @@ class DailyDiaryActivity : AppCompatActivity() {
     }
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading
+    private val isLoading = _isLoading
 
     /**
      * Daily Diary Screen. The Daily Diary ...
