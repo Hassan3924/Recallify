@@ -16,12 +16,40 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/recallify_logo_ridin"
+
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Recallify"
         tools:targetApi="31">
-
+        <activity
+            android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianDisplayResultsSideQuest"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianSelectDateScoreSideQuest"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianSelectDateAnalyzeProgressSideQuest"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianAnalyzeProgressSideQuest"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".view.ui.feature.application.tbi_applications.thinkfast.SelectDateScoreThinkFast"
             android:exported="false">

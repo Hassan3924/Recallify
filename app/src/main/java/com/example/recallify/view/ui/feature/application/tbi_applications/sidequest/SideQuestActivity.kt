@@ -82,12 +82,12 @@ class SideQuestActivity : AppCompatActivity() {
                     viewScore = {
                         val intent = Intent(context, SideQuestProgressActivity::class.java)
                         startActivity(intent)
-                      //  finish()
+                        finish()
                     },
                     viewAnalysis = {
                         val intent = Intent(context, SelectDateAnalyzeSideQuestprogress::class.java)
                         startActivity(intent)
-                      //  finish()
+                        finish()
                     }
                 )
             }

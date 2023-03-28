@@ -66,10 +66,12 @@ class LoginActivity : AppCompatActivity() {
                     onNavToForgotPassword = {
                         val intent = Intent(context, ForgotPasswordActivity::class.java)
                         startActivity(intent)
+                        finish() //added by Ridin
                     },
                     onNavToSignUp = {
                         val intent = Intent(context, RegisterActivity::class.java)
                         startActivity(intent)
+                        finish() //added by ridin
                     },
                 )
             }

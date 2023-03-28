@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.feature.guradian_application.guardianthinkfast.GuardianSelectDateScoreThinkFast">
+    tools:context=".view.ui.feature.guradian_application.guardiansidequest.GuardianSelectDateScoreSideQuest">
     <LinearLayout
         android:id="@+id/linearLayoutInfo"
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Check Think Fast Results"
+            android:text="Check Side Quest Results"
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold" />

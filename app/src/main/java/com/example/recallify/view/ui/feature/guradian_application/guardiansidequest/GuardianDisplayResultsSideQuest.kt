@@ -1,11 +1,14 @@
-package com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast
+package com.example.recallify.view.ui.feature.guradian_application.guardiansidequest
 
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import com.example.recallify.R
+import com.example.recallify.databinding.ActivityGuardianDisplayResultsSideQuestBinding
 import com.example.recallify.databinding.ActivityGuardianDisplayResultsThinkFastBinding
+import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -15,9 +18,9 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 
-class GuardianDisplayResultsThinkFast : AppCompatActivity() {
+class GuardianDisplayResultsSideQuest : AppCompatActivity() {
+    lateinit var displayResultsBinding:ActivityGuardianDisplayResultsSideQuestBinding
 
-    lateinit var displayResultsBinding:ActivityGuardianDisplayResultsThinkFastBinding
     val auth = FirebaseAuth.getInstance()
     val user = auth.currentUser
     var questionCount = 0 //number of questions in database, initial valu set to 0
@@ -29,31 +32,35 @@ class GuardianDisplayResultsThinkFast : AppCompatActivity() {
     var imageName = ""
     var percentage = 0
     var question = ""
-var tbi_uid=""
-            override fun onCreate(savedInstanceState: Bundle?) {
+    var tbi_uid=""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-                displayResultsBinding =ActivityGuardianDisplayResultsThinkFastBinding.inflate(layoutInflater)
-                val view = displayResultsBinding.root
-                setContentView(view)
-                var currentDate:String = intent.getStringExtra("currentDate").toString()
+        displayResultsBinding = ActivityGuardianDisplayResultsSideQuestBinding.inflate(layoutInflater)
+        val view = displayResultsBinding.root
+        setContentView(view)
+        var currentDate:String = intent.getStringExtra("currentDate").toString()
 //                viewScoreTable(currentDate)
-                getTbiUid(currentDate)
-                displayResultsBinding.buttonNext.setOnClickListener {
-                   // viewScoreTable(currentDate)
-                    getTbiUid(currentDate)
-                }
+        getTbiUid(currentDate)
+        displayResultsBinding.buttonNext.setOnClickListener {
+            // viewScoreTable(currentDate)
+            getTbiUid(currentDate)
+        }
 
-                displayResultsBinding.buttonFinish.setOnClickListener{
-                    val intent = Intent(this,GuardianThinkFastActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }
-            }
+        displayResultsBinding.buttonFinish.setOnClickListener{
+            val intent = Intent(this, GuardianSideQuestActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun viewScoreTable(currentDate:String) {
         val uid = Firebase.auth.currentUser?.uid
         if (uid != null) {
-            val database = Firebase.database.reference.child("viewScoresTable").child(tbi_uid).child(currentDate)
+//            val database = Firebase.database.reference.child("viewScoresTableSideQuest").child(uid).child(currentDate)
+            val database = Firebase.database.reference.child("users").child(tbi_uid).child("viewScoresTableSideQuest").child(currentDate)
             var currentDate1=""
             database.addValueEventListener(object : ValueEventListener {
                 @RequiresApi(Build.VERSION_CODES.O)
@@ -101,6 +108,7 @@ var tbi_uid=""
             val database = Firebase.database.reference.child("users").child("GuardiansLinkTable").child(uid)
 
             database.addValueEventListener(object : ValueEventListener {
+                @RequiresApi(Build.VERSION_CODES.O)
                 override fun onDataChange(snapshot: DataSnapshot) {
                     var questionCount = snapshot.childrenCount.toInt()
                     if(questionCount>=1) {
