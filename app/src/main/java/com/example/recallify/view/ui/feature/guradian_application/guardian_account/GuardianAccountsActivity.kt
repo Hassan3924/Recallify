@@ -429,11 +429,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         painter = painterResource(id = R.drawable.round_arrow_back_24),
                         contentDescription = "Go back to Main Settings",
                         modifier = Modifier
-                            .size(42.dp)
-                            .border(
-                                border = BorderStroke(2.dp, SolidColor(Color.Black)),
-                                shape = RoundedCornerShape(20.dp)
-                            )
+                            .size(28.dp)
                     )
                 }
                 Text(
