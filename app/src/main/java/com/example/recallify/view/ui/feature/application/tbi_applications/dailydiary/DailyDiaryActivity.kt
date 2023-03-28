@@ -146,7 +146,7 @@ class DailyDiaryActivity : AppCompatActivity() {
          * @return The composable-layout interpolation of the composable function
          * **"DailyDiaryScreen()"**
          *
-         * @author enoabasi
+         * @author Enoabasi
          * */
         val dailyDiaryCompose: ComposeView = findViewById(R.id.activity_daily_diary_screen)
         dailyDiaryCompose.setContent {
