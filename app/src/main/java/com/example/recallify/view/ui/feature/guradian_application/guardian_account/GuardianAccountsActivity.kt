@@ -254,7 +254,8 @@ class GuardianAccountsActivity : AppCompatActivity() {
                                 value = tbiEmail,
                                 onValueChange = { newValue -> tbiEmail = newValue },
                                 label = { Text("Enter new email") },
-                                modifier = Modifier.width(200.dp)
+                                modifier = Modifier.width(200.dp),
+                                singleLine = true
                             )
                         } else {
                             Text(
@@ -280,7 +281,8 @@ class GuardianAccountsActivity : AppCompatActivity() {
                                 value = PIN.toString(),
                                 onValueChange = { newValue -> PIN = newValue },
                                 label = { Text("Enter PIN") },
-                                modifier = Modifier.width(200.dp)
+                                modifier = Modifier.width(200.dp),
+                                singleLine = true
                             )
                         } else {
                             Text(

@@ -19,9 +19,14 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
@@ -110,26 +115,27 @@ class LoginActivity : AppCompatActivity() {
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Login, right here.",
+                        text = "Log in to Recallify",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 12.dp)
+                            .padding(top = 12.dp, bottom = 12.dp)
                             .padding(horizontal = 16.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.h4
                     )
-                    Text(
-                        text = "These will just take some few minutes",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp)
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.h6.copy(
-                            color = Color.Gray
-                        )
-                    )
+//                    Text(
+//                        text = "These will just take some few minutes",
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(bottom = 12.dp)
+//                            .padding(horizontal = 16.dp, vertical = 4.dp),
+//                        style = MaterialTheme.typography.h6.copy(
+//                            color = Color.Gray
+//                        )
+//                    )
                 }
                 Card(
                     Modifier.weight(2f),
@@ -143,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
                     ) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "We miss you!",
+                            text = "We missed you!",
                             color = Color.Gray,
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.subtitle2,
@@ -343,7 +349,12 @@ class LoginActivity : AppCompatActivity() {
                             }
 
                             Text(
-                                text = "Don't have an Account?  Sign up.",
+                                text = buildAnnotatedString {
+                                                            append("Don't have an Account? ")
+                                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("Sign up")
+                                    }
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 14.dp, bottom = 10.dp)

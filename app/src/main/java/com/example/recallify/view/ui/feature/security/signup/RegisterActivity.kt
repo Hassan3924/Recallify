@@ -36,6 +36,12 @@ import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -88,6 +94,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+
+
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun SignUpScreen() {
@@ -95,33 +103,68 @@ class RegisterActivity : AppCompatActivity() {
         val auth = Firebase.auth
         val database = Firebase.database.reference
 
-        var firstname by remember {
-            mutableStateOf("")
-        }
-        var lastname by remember {
-            mutableStateOf("")
-        }
-        var email by remember {
-            mutableStateOf("")
-        }
-        var password by remember {
-            mutableStateOf("")
-        }
-        var confirmPassword by remember {
-            mutableStateOf("")
-        }
-        var role by remember {
-            mutableStateOf("")
-        }
-        var PIN by remember {
-            mutableStateOf("")
-        }
-        var isExpanded by remember {
-            mutableStateOf(false)
-        }
-        val errors = mutableListOf<String>()
+        var firstname by remember { mutableStateOf("") }
+        var lastname by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var confirmPassword by remember { mutableStateOf("") }
+        var role by remember { mutableStateOf("") }
+        var PIN by remember { mutableStateOf("") }
+        var isExpanded by remember { mutableStateOf(false) }
+        val showConfirmedPassword = remember { mutableStateOf(false) }
+        val showPassword = remember { mutableStateOf(false) }
+
 
         PIN = fourNumberGenerator()
+
+        fun validateFields(): Boolean {
+            var isValid = true
+
+            if (firstname.isEmpty()) {
+                isValid = false
+
+                Toast.makeText(context, "Please enter your first name", Toast.LENGTH_SHORT).show()
+            }
+
+            if (lastname.isEmpty()) {
+                isValid = false
+
+                Toast.makeText(context, "Please enter your last name", Toast.LENGTH_SHORT).show()
+            }
+
+            if (email.isEmpty()) {
+                isValid = false
+
+                Toast.makeText(context, "Please enter your email address", Toast.LENGTH_SHORT).show()
+            }
+
+            if (password.isEmpty()) {
+                isValid = false
+
+                Toast.makeText(context, "Please enter your password", Toast.LENGTH_SHORT).show()
+            }
+
+            if (confirmPassword.isEmpty()) {
+                isValid = false
+
+                Toast.makeText(context, "Please confirm your password", Toast.LENGTH_SHORT).show()
+            }
+
+            if (role.isEmpty()) {
+                isValid = false
+
+                Toast.makeText(context, "Please choose a role", Toast.LENGTH_SHORT).show()
+
+            }
+
+            if (password != confirmPassword) {
+                isValid = false
+
+                Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            }
+
+            return isValid
+        }
 
         Scaffold(
             scaffoldState = rememberScaffoldState(),
@@ -165,20 +208,20 @@ class RegisterActivity : AppCompatActivity() {
                     text = "Sign up, right here.",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp)
+                        .padding(top = 12.dp, bottom = 12.dp)
                         .padding(horizontal = 16.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.h4
                 )
-                Text(
-                    text = "These will just take a few minutes",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    style = MaterialTheme.typography.h6.copy(
-                        color = Color.Gray
-                    )
-                )
+//                Text(
+//                    text = "These will just take a few minutes",
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(bottom = 12.dp)
+//                        .padding(horizontal = 16.dp, vertical = 4.dp),
+//                    style = MaterialTheme.typography.h6.copy(
+//                        color = Color.Gray
+//                    )
+//                )
                 Card(
                     modifier = Modifier.weight(1.5f),
                     backgroundColor = MaterialTheme.colors.background,
@@ -199,8 +242,8 @@ class RegisterActivity : AppCompatActivity() {
                                 value = firstname,
                                 onValueChange = { firstname = it },
                                 singleLine = true,
-                                label = { Text(text = "Firstname") },
-                                placeholder = { Text("your first name") },
+                                label = { Text(text = "First Name") },
+                                placeholder = { Text("First Name") },
                                 leadingIcon = {
                                     Icon(
                                         painter = painterResource(id = R.drawable.edit_name),
@@ -230,12 +273,12 @@ class RegisterActivity : AppCompatActivity() {
                                 value = lastname,
                                 onValueChange = { lastname = it },
                                 singleLine = true,
-                                label = { Text(text = "Lastname") },
-                                placeholder = { Text("your last name") },
+                                label = { Text(text = "Last Name") },
+                                placeholder = { Text("Last Name") },
                                 leadingIcon = {
                                     Icon(
                                         painter = painterResource(id = R.drawable.edit_name),
-                                        contentDescription = "first name icon",
+                                        contentDescription = "last name icon",
                                         modifier = Modifier.size(24.dp),
                                         tint = Color.Gray
                                     )
@@ -244,7 +287,7 @@ class RegisterActivity : AppCompatActivity() {
                                     IconButton(onClick = { lastname = "" }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.backspace_48),
-                                            contentDescription = "lastname",
+                                            contentDescription = "last name",
                                             modifier = Modifier.size(24.dp),
                                             tint = Color.Gray
                                         )
@@ -266,7 +309,7 @@ class RegisterActivity : AppCompatActivity() {
                                 leadingIcon = {
                                     Icon(
                                         painter = painterResource(id = R.drawable.round_email_24),
-                                        contentDescription = "first name icon",
+                                        contentDescription = "email address icon",
                                         modifier = Modifier.size(24.dp),
                                         tint = Color.Gray
                                     )
@@ -302,12 +345,16 @@ class RegisterActivity : AppCompatActivity() {
                                     )
                                 },
                                 trailingIcon = {
-                                    IconButton(onClick = {
-                                        TODO("Implement password change")
-                                    }) {
+                                    val painter = if (showPassword.value) {
+                                        painterResource(id = R.drawable.visibility_48)
+                                    } else {
+                                        painterResource(id = R.drawable.visibility_off_48)
+                                    }
+
+                                    IconButton(onClick = { showPassword.value = !showPassword.value }) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.visibility_48),
-                                            contentDescription = "email",
+                                            painter = painter,
+                                            contentDescription = "Toggle password visibility",
                                             modifier = Modifier.size(24.dp),
                                             tint = Color.Gray
                                         )
@@ -317,7 +364,11 @@ class RegisterActivity : AppCompatActivity() {
                                     keyboardType = KeyboardType.Password,
                                     imeAction = ImeAction.Next
                                 ),
-                                visualTransformation = PasswordVisualTransformation()
+                                visualTransformation = if (showPassword.value) {
+                                    VisualTransformation.None
+                                } else {
+                                    PasswordVisualTransformation()
+                                }
                             )
                             // confirm password
                             OutlinedTextField(
@@ -336,11 +387,11 @@ class RegisterActivity : AppCompatActivity() {
                                 },
                                 trailingIcon = {
                                     IconButton(onClick = {
-//                                        password.value != password.value
+                                        showConfirmedPassword.value = !showConfirmedPassword.value
                                     }) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.visibility_48),
-                                            contentDescription = "email",
+                                            painter = painterResource(id = if(showConfirmedPassword.value) R.drawable.visibility_48 else R.drawable.visibility_off_48),
+                                            contentDescription = "confirm password",
                                             modifier = Modifier.size(24.dp),
                                             tint = Color.Gray
                                         )
@@ -350,7 +401,12 @@ class RegisterActivity : AppCompatActivity() {
                                     keyboardType = KeyboardType.Password,
                                     imeAction = ImeAction.Next
                                 ),
-                            visualTransformation = PasswordVisualTransformation()
+                            visualTransformation = if (showConfirmedPassword.value) {
+                                VisualTransformation.None
+                            }
+                            else {
+                                PasswordVisualTransformation()
+                            }
                             )
                             // user role
                             ExposedDropdownMenuBox(
@@ -403,68 +459,77 @@ class RegisterActivity : AppCompatActivity() {
                                     )
                                 }
                             }
+
                             Button(
                                 onClick = {
 
-                                    auth.createUserWithEmailAndPassword(email, password)
-                                        .addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                val user = task.result?.user
-                                                val data = hashMapOf(
-                                                    "firstname" to firstname,
-                                                    "lastname" to lastname,
-                                                    "email" to email,
-                                                    "password" to password,
-                                                    "role" to role,
-                                                    "pin" to PIN
-                                                )
-                                                database.child("users")
-                                                    .child(user?.uid.toString())
-                                                    .child("profile")
-                                                    .setValue(data)
-                                                    .addOnSuccessListener {
-                                                        Log.i(ContentValues.TAG, "RegistrationSuccessful: () -> ")
-                                                    }
-                                                    .addOnFailureListener {
-                                                        Log.w(ContentValues.TAG, "RegistrationFailed: () -> ")
-                                                    }
+                                    if(validateFields()) {
 
-                                                val sanitizedEmail = email.replace(Regex("[.#$\\[\\]]"), "_")
-
-                                                if (role == "TBI Patient") {
-
-                                                    // Adding the UID under connection1
-                                                    database.child("users")
-                                                        .child("connections")
-                                                        .child(sanitizedEmail)
-                                                        .child("userID").setValue(user?.uid.toString())
+                                        auth.createUserWithEmailAndPassword(email, password)
+                                            .addOnCompleteListener { task ->
+                                                if (task.isSuccessful) {
+                                                    val user = task.result?.user
+                                                    val data = hashMapOf(
+                                                        "firstname" to firstname,
+                                                        "lastname" to lastname,
+                                                        "email" to email,
+                                                        "password" to password,
+                                                        "role" to role,
+                                                        "pin" to PIN
+                                                    )
                                                     database.child("users")
                                                         .child(user?.uid.toString())
                                                         .child("profile")
-                                                        .child("PIN").setValue(PIN)
-                                                    database.child("users")
-                                                        .child("connections")
-                                                        .child(sanitizedEmail)
-                                                        .child("PIN").setValue(PIN)
+                                                        .setValue(data)
+                                                        .addOnSuccessListener {
+                                                            Log.i(ContentValues.TAG, "RegistrationSuccessful: () -> ")
+                                                        }
+                                                        .addOnFailureListener {
+                                                            Log.w(ContentValues.TAG, "RegistrationFailed: () -> ")
+                                                        }
 
-                                                    val intent = Intent(context, AccountsActivity::class.java)
-                                                    startActivity(intent)
-                                                    finish()
+                                                    val sanitizedEmail = email.replace(Regex("[.#$\\[\\]]"), "_")
+
+                                                    if (role == "TBI Patient") {
+
+                                                        // Adding the UID under connection1
+                                                        database.child("users")
+                                                            .child("connections")
+                                                            .child(sanitizedEmail)
+                                                            .child("userID").setValue(user?.uid.toString())
+                                                        database.child("users")
+                                                            .child(user?.uid.toString())
+                                                            .child("profile")
+                                                            .child("PIN").setValue(PIN)
+                                                        database.child("users")
+                                                            .child("connections")
+                                                            .child(sanitizedEmail)
+                                                            .child("PIN").setValue(PIN)
+
+                                                        val intent = Intent(context, AccountsActivity::class.java)
+                                                        startActivity(intent)
+                                                        finish()
+
+                                                    }
+
+                                                    else {
+
+                                                        val intent = Intent(context, GuardianAccountsActivity::class.java)
+                                                        startActivity(intent)
+                                                        finish()
+
+                                                    }
 
                                                 }
                                                 else {
-
-                                                    val intent = Intent(context, GuardianAccountsActivity::class.java)
-                                                    startActivity(intent)
-                                                    finish()
-
+                                                    Toast.makeText(context, "Email already exists!", Toast.LENGTH_SHORT).show()
                                                 }
-
-
-                                            } else {
-                                                Toast.makeText(context, "Registration failed!", Toast.LENGTH_SHORT).show()
                                             }
-                                        }
+                                    }
+
+//                                    else {
+//                                        Toast.makeText(context, "Please fill out all required fields", Toast.LENGTH_SHORT).show()
+//                                    }
                                 },
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp, vertical = 16.dp)
@@ -477,7 +542,12 @@ class RegisterActivity : AppCompatActivity() {
                                 )
                             }
                             Text(
-                                text = "Already have an Account?  Sign in.",
+                                text = buildAnnotatedString {
+                                    append("Already have an Account? ")
+                                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("Sign in")
+                                    }
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 14.dp, bottom = 10.dp)
@@ -493,7 +563,10 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+
+
     }
+
 
     /**
      *

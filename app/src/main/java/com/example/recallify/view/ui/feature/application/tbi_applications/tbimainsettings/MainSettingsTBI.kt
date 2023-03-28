@@ -48,6 +48,7 @@ class MainSettingsTBI : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
 
             when (item.itemId) {
+
                 R.id.bottom_home -> {
                     startActivity(Intent(applicationContext, DashboardActivity::class.java))
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
