@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import com.example.recallify.R
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityNotification
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
@@ -54,26 +56,58 @@ class AccountsActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var currentLocation: MutableLiveData<LatLng>
-    var locationText = ""
-    private val label = "User Location"
-    val database = FirebaseDatabase.getInstance()
-    private val locationAdd = database.reference
-    val auth = FirebaseAuth.getInstance()
-    val user = auth.currentUser
+    private val databaseReference = FirebaseDatabase.getInstance().reference
+    private val user = FirebaseAuth.getInstance().currentUser
+    private var locationText = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val current = LocalDateTime.now()
+    private val current = LocalDateTime.now()!!
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val formatted = current.format(formatter)
+    private val formatted = current.format(formatter)!!
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val currentDate: String = formatted.toString()
+    private val currentDate: String = formatted
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm a")!!
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val timeFormatted = current.format(timeFormatter)!!
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val currentTime = timeFormatted
+
+    // Firebase location
+    private val firebaseLocation = mutableStateOf("")
+    private val firebaseLatitude = mutableStateOf("")
+    private val firebaseLongitude = mutableStateOf("")
+
+    // user Id
+    private val userId = user?.uid!!
+
+    // imageLink
+    private val imageLink = mutableStateOf("")
+
+    // locationName
+    private val locationName = mutableStateOf("")
+
+    // location Address
+    private val locationAddress = mutableStateOf("")
+
+    // new date
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val date = mutableStateOf(currentDate)
+
+    // new time
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val time = mutableStateOf(currentTime)
 
     private val locationCallback = object : LocationCallback() {
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(locationResult: LocationResult) {
 
             super.onLocationResult(locationResult)
@@ -92,6 +126,61 @@ class AccountsActivity : AppCompatActivity() {
                 copiedLongitude.value = lng.toString()
                 Log.d("CopiedLocation: ", "${copiedLocation.value} ==> $address")
                 Log.d("Current-location : ", locationText)
+                if ( (copiedLatitude.value == firebaseLatitude.value) &&
+                    (copiedLongitude.value == firebaseLongitude.value) &&
+                    (copiedLocation.value != firebaseLocation.value)
+                ) {
+                    val notice = ActivityNotification(
+                        this@AccountsActivity,
+                        "New Location Discovered!",
+                        "Let's moment this 🥳"
+                    )
+                    notice.launchNotification()
+                } else {
+                    val autoCreate = databaseReference
+                        .child("users")
+                        .child(userId)
+                        .child("dailDairyDummy")
+                        .child(getCurrentDate())
+
+                    val key = autoCreate.push().key!!
+
+                    // user Id
+                    autoCreate
+                        .child(key)
+                        .child("userId")
+                        .setValue(userId)
+                    // activity Id
+                    autoCreate
+                        .child(key)
+                        .child("activityId")
+                        .setValue(key)
+                    // imageLink
+                    autoCreate
+                        .child(key)
+                        .child("imageLink")
+                        .setValue(imageLink.value)
+                    // locationName
+                    autoCreate
+                        .child(key)
+                        .child("locationName")
+                        .setValue(locationName.value)
+                    // location Address
+                    autoCreate
+                        .child(key)
+                        .child("locationAddress")
+                        .setValue(locationAddress.value)
+                    // new date
+                    autoCreate
+                        .child(key)
+                        .child("date")
+                        .setValue(date.value)
+                    // new time
+                    autoCreate
+                        .child(key)
+                        .child("time")
+                        .setValue(time.value)
+                }
                 addLiveLocation(lat, lng, address)
             }
         }
@@ -100,12 +189,14 @@ class AccountsActivity : AppCompatActivity() {
     fun addLiveLocation(lat: Double, lng: Double, address: String) {
         user?.let {
             val userUID = it.uid
-            locationAdd.child("users").child(userUID).child("liveLocation").child("lat")
+            databaseReference.child("users").child(userUID).child("liveLocation").child("lat")
                 .setValue(lat)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("long")
+            databaseReference.child("users").child(userUID).child("liveLocation").child("long")
                 .setValue(lng)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("address")
+            databaseReference.child("users").child(userUID).child("liveLocation").child("address")
                 .setValue(address)
+
+
         }
     }
 
@@ -141,7 +232,6 @@ class AccountsActivity : AppCompatActivity() {
         val auth: FirebaseAuth = Firebase.auth
         val database = Firebase.database.reference.child("users")
         val current = auth.currentUser?.uid!!
-        val childValue = remember { mutableStateOf("") }
 
         Scaffold(
             topBar = { AccountSettingsTopBar() },

@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-feature android:name="android.hardware.camera.any"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera.any" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -18,12 +19,27 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/recallify_logo_ridin"
-
+        android:icon="@drawable/ic_launcher_recallify_foreground"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Recallify"
         tools:targetApi="31">
+
+        <!-- push notification -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_recallify_foreground" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/black" />
+        <service
+            android:name=".view.ui.feature.application.tbi_applications.dailydiary.daily_activity.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianDisplayResultsSideQuest"
             android:exported="false">
@@ -96,8 +112,6 @@
         </activity>
 
         <service android:name=".view.ui.feature.application.tbi_applications.dashboard.NotificationService" />
-
-        <service android:name=".view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityNotificationService" />
 
         <activity
             android:name=".view.ui.feature.application.tbi_applications.dailydiary.daily_log.DailyLogActivity"
