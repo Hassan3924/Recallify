@@ -191,12 +191,6 @@ class DailyActivity : AppCompatActivity() {
                         .padding(bottom = 8.dp)
                 ) {
                     Spacer(modifier = Modifier.size(4.dp))
-//                    Text(
-//                        text = "your last preview will be used as a placeholder.\nyou can delete it, add an image, create an activity. ",
-//                        style = MaterialTheme.typography.caption.copy(
-//                            color = MaterialTheme.colors.onSurface
-//                        )
-//                    )
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
