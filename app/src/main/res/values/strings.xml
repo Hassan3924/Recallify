@@ -11,4 +11,5 @@
     <string name="analyze_your_think_fast_game_progress">Analyze your think fast game progress</string>
     <string name="content_description">target</string>
     <string name="completed">Done</string>
+    <string name="push_notification">RecallifyPushNotification</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.recallify.view.common.components
+package com.example.recallify.view.common.resources
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

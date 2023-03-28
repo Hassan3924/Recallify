@@ -1,11 +1,8 @@
-package com.example.recallify.view.common.components
+package com.example.recallify.view.common.resources
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -15,8 +12,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun DiaryActivityTopAppBar(
-    context: Context,
-    navToDailyFeed: @Composable()  (() -> Unit)
+    navToDailyFeed: @Composable (() -> Unit)
 ) {
     Box(
         modifier = Modifier

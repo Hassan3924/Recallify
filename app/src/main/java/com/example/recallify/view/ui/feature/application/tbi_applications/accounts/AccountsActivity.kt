@@ -11,24 +11,26 @@ import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import com.example.recallify.R
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityNotification
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
-import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
+import com.example.recallify.view.common.resources.AccountsTopAppBar
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
@@ -42,8 +44,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -59,52 +59,6 @@ class AccountsActivity : AppCompatActivity() {
     private val databaseReference = FirebaseDatabase.getInstance().reference
     private val user = FirebaseAuth.getInstance().currentUser
     private var locationText = ""
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val current = LocalDateTime.now()!!
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val formatted = current.format(formatter)!!
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val currentDate: String = formatted
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm a")!!
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val timeFormatted = current.format(timeFormatter)!!
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val currentTime = timeFormatted
-
-    // Firebase location
-    private val firebaseLocation = mutableStateOf("")
-    private val firebaseLatitude = mutableStateOf("")
-    private val firebaseLongitude = mutableStateOf("")
-
-    // user Id
-    private val userId = user?.uid!!
-
-    // imageLink
-    private val imageLink = mutableStateOf("")
-
-    // locationName
-    private val locationName = mutableStateOf("")
-
-    // location Address
-    private val locationAddress = mutableStateOf("")
-
-    // new date
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val date = mutableStateOf(currentDate)
-
-    // new time
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val time = mutableStateOf(currentTime)
 
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.O)
@@ -126,61 +80,6 @@ class AccountsActivity : AppCompatActivity() {
                 copiedLongitude.value = lng.toString()
                 Log.d("CopiedLocation: ", "${copiedLocation.value} ==> $address")
                 Log.d("Current-location : ", locationText)
-                if ( (copiedLatitude.value == firebaseLatitude.value) &&
-                    (copiedLongitude.value == firebaseLongitude.value) &&
-                    (copiedLocation.value != firebaseLocation.value)
-                ) {
-                    val notice = ActivityNotification(
-                        this@AccountsActivity,
-                        "New Location Discovered!",
-                        "Let's moment this 🥳"
-                    )
-                    notice.launchNotification()
-                } else {
-                    val autoCreate = databaseReference
-                        .child("users")
-                        .child(userId)
-                        .child("dailDairyDummy")
-                        .child(getCurrentDate())
-
-                    val key = autoCreate.push().key!!
-
-                    // user Id
-                    autoCreate
-                        .child(key)
-                        .child("userId")
-                        .setValue(userId)
-                    // activity Id
-                    autoCreate
-                        .child(key)
-                        .child("activityId")
-                        .setValue(key)
-                    // imageLink
-                    autoCreate
-                        .child(key)
-                        .child("imageLink")
-                        .setValue(imageLink.value)
-                    // locationName
-                    autoCreate
-                        .child(key)
-                        .child("locationName")
-                        .setValue(locationName.value)
-                    // location Address
-                    autoCreate
-                        .child(key)
-                        .child("locationAddress")
-                        .setValue(locationAddress.value)
-                    // new date
-                    autoCreate
-                        .child(key)
-                        .child("date")
-                        .setValue(date.value)
-                    // new time
-                    autoCreate
-                        .child(key)
-                        .child("time")
-                        .setValue(time.value)
-                }
                 addLiveLocation(lat, lng, address)
             }
         }
@@ -195,8 +94,6 @@ class AccountsActivity : AppCompatActivity() {
                 .setValue(lng)
             databaseReference.child("users").child(userUID).child("liveLocation").child("address")
                 .setValue(address)
-
-
         }
     }
 
@@ -232,9 +129,13 @@ class AccountsActivity : AppCompatActivity() {
         val auth: FirebaseAuth = Firebase.auth
         val database = Firebase.database.reference.child("users")
         val current = auth.currentUser?.uid!!
+        val scaffoldState = rememberScaffoldState()
 
         Scaffold(
-            topBar = { AccountSettingsTopBar() },
+            scaffoldState = scaffoldState,
+            topBar = {
+                AccountsTopAppBar { LogoutButton(activity = this@AccountsActivity) }
+            },
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValues ->
@@ -248,27 +149,7 @@ class AccountsActivity : AppCompatActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .padding(top = 4.dp)
-                        .padding(bottom = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    Icon(
-                        Icons.Filled.Person,
-                        contentDescription = "User icon",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(150.dp)
-                    )
-
-//                    Text(style = TextStyle(fontSize = 24.sp), text = "Account Settings")
-
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp)
-                        .padding(top = 50.dp)
-                        .padding(bottom = 8.dp),
+                        .padding(vertical = 8.dp),
                     Arrangement.Center,
                     Alignment.CenterHorizontally
                 ) {
@@ -278,11 +159,8 @@ class AccountsActivity : AppCompatActivity() {
                     var email: String by remember { mutableStateOf("") }
                     var password: String by remember { mutableStateOf("") }
                     var PIN: String by remember { mutableStateOf("") }
-//                    var password by rememberSavable { mutableStateOf("") }
-
 
                     LaunchedEffect(Unit) {
-
                         database.child(current).child("profile").child("firstname")
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -339,28 +217,25 @@ class AccountsActivity : AppCompatActivity() {
                             })
 
                     }
+
                     Row(
                         modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-
                         Text(text = "First Name:")
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = firstName)
                     }
-
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
                     ) {
-
                         Text(text = "Last Name:")
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = lastName)
                     }
-
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -369,21 +244,114 @@ class AccountsActivity : AppCompatActivity() {
                         Text(text = "Email:")
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = email)
-
                     }
-
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
                     ) {
-
                         Text(text = "PIN:")
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = PIN)
-
                     }
-                    LogoutButton(activity = this@AccountsActivity)
+
+                    // The expandable preferences + switch to enable the work manager
+                    CustomCard()
+
+                    Button(onClick = {
+                        val intent = Intent(this@AccountsActivity, DashboardActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }) {
+                        Text(text = "Go to Dashboard")
+                    }
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    private
+    @Composable
+    fun CustomCard() {
+        var expandedCard by remember {
+            mutableStateOf(false)
+        }
+        val checkedState = remember {
+            mutableStateOf(true)
+        }
+        var timer by remember {
+            mutableStateOf("")
+        }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(
+                    animationSpec = tween(
+                        delayMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+            shape = RoundedCornerShape(4.dp),
+            onClick = {
+                expandedCard = !expandedCard
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Auto create activities",
+                        fontSize = MaterialTheme.typography.h6.fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "$timer minutes",
+                            fontSize = MaterialTheme.typography.caption.fontSize,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(4.dp)
+                        )
+                        IconButton(
+                            modifier = Modifier.alpha(ContentAlpha.medium),
+                            onClick = {
+                                expandedCard = !expandedCard
+                            }) {
+                            if (expandedCard) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.round_arrow_left_24),
+                                    contentDescription = null
+                                )
+                            } else {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.round_arrow_drop_down_24),
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    }
+                    if (expandedCard) {
+                        Column {
+                            Text(text = "")
+                            TextField(value = timer, onValueChange = {timer = it})
+                            Switch(
+                                checked = checkedState.value,
+                                onCheckedChange = { checkedState.value = it },
+                                colors = SwitchDefaults.colors(Color.Green)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -391,66 +359,21 @@ class AccountsActivity : AppCompatActivity() {
 
     @Composable
     fun LogoutButton(activity: AccountsActivity) {
-        Button(modifier = Modifier.padding(top = 20.dp), onClick = {
-            fusedLocationClient.removeLocationUpdates(locationCallback) //to stop the location tracking
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(this@AccountsActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }) {
-            Text(text = "Log Out")
-        }
-    }
-
-    @Composable
-    private fun AccountSettingsTopBar() {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-//                .padding(horizontal = 16.dp)
-                .padding(top = 4.dp)
-//                .clip(shape = RoundedCornerShape(26.dp))
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                IconButton(
-                    onClick = {
-                        val intent = Intent(
-                            applicationContext,
-                            MainSettingsTBI::class.java
-                        )
-                        startActivity(intent)
-                        overridePendingTransition(
-                            R.anim.slide_in_right,
-                            R.anim.slide_out_left
-                        )
-                        finish()
-                    },
-                    Modifier.weight(1f)
-
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_arrow_back_24),
-                        contentDescription = "Go back to Main Settings",
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-                Text(
-                    text = "Account Settings",
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.weight(2f)
-                )
+        IconButton(
+            onClick = {
+                fusedLocationClient.removeLocationUpdates(locationCallback)
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(activity, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
             }
+        ) {
+            Icon(
+                painterResource(id = R.drawable.round_logout_24),
+                "log out button"
+            )
         }
     }
-
 
     //Live location Tracking functions #Ridinbal
     private fun requestLocationPermissions() {

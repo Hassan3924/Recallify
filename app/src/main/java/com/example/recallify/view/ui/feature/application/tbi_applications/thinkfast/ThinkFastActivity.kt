@@ -3,7 +3,6 @@ package com.example.recallify.view.ui.feature.application.tbi_applications.think
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
+import com.example.recallify.view.common.resources.ThinkFastTopAppBar
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
@@ -79,13 +79,18 @@ class ThinkFastActivity : AppCompatActivity() {
                         finish()
                     },
                     viewScore = {
-                      //  context.startActivity(Intent(context, ThinkfastProgressActivity::class.java))
+                        //  context.startActivity(Intent(context, ThinkfastProgressActivity::class.java))
                         context.startActivity(Intent(context, SelectDateScoreThinkFast::class.java))
                         finish()
                     },
                     viewAnalysis = {
-                       // context.startActivity(Intent(context, ThinkfastAnalysisActivity::class.java))
-                        context.startActivity(Intent(context, SelectDateAnalyzeProgressThinkFast::class.java))
+                        // context.startActivity(Intent(context, ThinkfastAnalysisActivity::class.java))
+                        context.startActivity(
+                            Intent(
+                                context,
+                                SelectDateAnalyzeProgressThinkFast::class.java
+                            )
+                        )
                         finish()
                     }
                 )
@@ -101,7 +106,7 @@ class ThinkFastActivity : AppCompatActivity() {
     ) {
         Scaffold(
             bottomBar = { BottomBarFiller() },
-            topBar = { ThinkFastTopBar() },
+            topBar = { ThinkFastTopAppBar() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValues ->
             Column(
@@ -264,25 +269,6 @@ class ThinkFastActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun ThinkFastTopBar() {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-//                .padding(horizontal = 16.dp)
-                .padding(top = 4.dp)
-//                .clip(shape = RoundedCornerShape(26.dp))
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Think Fast",
-                style = MaterialTheme.typography.h6
-            )
         }
     }
 }

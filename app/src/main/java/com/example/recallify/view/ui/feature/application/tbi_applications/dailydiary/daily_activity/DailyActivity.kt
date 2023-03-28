@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.common.components.DiaryActivityTopAppBar
+import com.example.recallify.view.common.resources.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLatitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLocation
@@ -163,7 +163,7 @@ class DailyActivity : AppCompatActivity() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
-                DiaryActivityTopAppBar(context) {
+                DiaryActivityTopAppBar {
                     IconButton(onClick = {
                         context.startActivity(Intent(context, DailyDiaryActivity::class.java))
                         finish()

@@ -1,4 +1,4 @@
-package com.example.recallify.view.common.components
+package com.example.recallify.view.common.resources
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +14,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AccountsTopAppBar() {
+fun AccountsTopAppBar(
+    onNavToHome: @Composable (() -> Unit)
+) {
     Box(
         modifier = Modifier
             .height(56.dp)
@@ -23,10 +25,10 @@ fun AccountsTopAppBar() {
         TopAppBar(
             title = { Text("Accounts") },
             backgroundColor = MaterialTheme.colors.background,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(6.dp)),
+            modifier = Modifier.fillMaxWidth(),
+            actions = {
+                onNavToHome()
+            }
         )
     }
 }

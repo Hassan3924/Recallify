@@ -1,4 +1,4 @@
-package com.example.recallify.view.common.components
+package com.example.recallify.view.common.resources
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,8 +25,6 @@ fun ThinkFastTopAppBar() {
             backgroundColor = MaterialTheme.colors.background,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(6.dp)),
         )
     }
 }
