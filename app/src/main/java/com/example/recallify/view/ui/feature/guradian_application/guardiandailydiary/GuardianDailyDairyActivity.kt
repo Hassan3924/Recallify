@@ -129,7 +129,6 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
 //        val ref = database.getReference("users").child(currentUser).child("conversation-summary").child(getCurrentDate())
 
         val children = remember { mutableStateListOf<DataSnapshot>() }
-
         var isLoading by remember { mutableStateOf(true) }
 
         var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -138,19 +137,16 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
 //
 //        val tbiGULinkID: String = ""
 
-        val tbiEmail = remember {
-            mutableStateOf("")
-        }
+        val tbiEmail = remember { mutableStateOf("") }
 
-        val childrenOfActivities = remember {
-            mutableStateListOf<Information>()
-        }
+        val childrenOfActivities = remember { mutableStateListOf<Information>() }
 
         var isActivitiesLoading by remember { mutableStateOf(true) }
 
+
         val lazyColumnState = rememberLazyListState()
 
-        LaunchedEffect(selectedDate) {
+        LaunchedEffect(selectedDate, tbiUID.value) {
 
             val tbiEmailRef = database
                 .getReference("users")
@@ -210,6 +206,8 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
                     children.clear()
                     snapshot.children.forEach { child ->
                         children.add(child)
+                        Log.d("Child data", "Added child: ${child.value}")
+
                     }
                     isLoading = false
                 }
@@ -238,6 +236,7 @@ class GuardianDailyDairyActivity : AppCompatActivity() {
                     isActivitiesLoading = false
                 }
             })
+
         }
 
         Scaffold(
