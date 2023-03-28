@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
@@ -33,7 +34,7 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.accoun
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLongitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.moment_snap.MomentSnapActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.moment_snap.copideImageLink
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -78,7 +79,7 @@ class DailyActivity : AppCompatActivity() {
     fun DailyActivityScreen() {
 
         val imageLink: MutableState<Uri?> = remember {
-            mutableStateOf(null)
+            mutableStateOf(copideImageLink.value)
         }
 
         val location = remember {
@@ -154,6 +155,11 @@ class DailyActivity : AppCompatActivity() {
          * */
         val context = LocalContext.current
 
+//        val msIntent = intent
+//        val msImageLink = msIntent.getStringExtra("MSIMAGELINK")
+//        val msUri = Uri.parse(msImageLink)
+//        imageLink.value = msUri
+
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
@@ -185,6 +191,12 @@ class DailyActivity : AppCompatActivity() {
                         .padding(bottom = 8.dp)
                 ) {
                     Spacer(modifier = Modifier.size(4.dp))
+//                    Text(
+//                        text = "your last preview will be used as a placeholder.\nyou can delete it, add an image, create an activity. ",
+//                        style = MaterialTheme.typography.caption.copy(
+//                            color = MaterialTheme.colors.onSurface
+//                        )
+//                    )
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -205,7 +217,10 @@ class DailyActivity : AppCompatActivity() {
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(text = "No images added!")
+                                Text(
+                                    text = "No images added!",
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
                     }
@@ -225,13 +240,13 @@ class DailyActivity : AppCompatActivity() {
                         ) {
                             Text(text = "Add images")
                         }
-                        Spacer(modifier = Modifier.padding(horizontal = 6.dp))
-                        Button(onClick = {
-                            context.startActivity(Intent(context, MomentSnapActivity::class.java))
-                        }
-                        ) {
-                            Text(text = "Take photo")
-                        }
+//                        Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+//                        Button(onClick = {
+//                            context.startActivity(Intent(context, MomentSnapActivity::class.java))
+//                        }
+//                        ) {
+//                            Text(text = "Take photo")
+//                        }
                     }
                     /**
                      * Functionality for adding title to the post and a description
@@ -377,87 +392,97 @@ class DailyActivity : AppCompatActivity() {
                                         .child(userID)
                                         .child(getCurrentDate())
                                         .child(key)
-
-                                    imageLink.let { link ->
-                                        activityImage.putFile(link.value!!)
-                                            .addOnCompleteListener { task ->
-                                                if (task.isSuccessful) {
-                                                    activityImage.downloadUrl.addOnSuccessListener { uri ->
-                                                        activityRef.child(key)
-                                                            .child("userId")
-                                                            .setValue(userID)
-                                                        activityRef.child(key)
-                                                            .child("activityId")
-                                                            .setValue(key)
-                                                        allActivities.child(key)
-                                                            .child("activityId")
-                                                            .setValue(key)
-                                                        activityRef.child(key)
-                                                            .child("imageLink")
-                                                            .setValue(uri.toString())
-                                                        allActivities.child(key)
-                                                            .child("imageLink")
-                                                            .setValue(uri.toString())
-                                                        activityRef.child(key)
-                                                            .child("locationName")
-                                                            .setValue(location.value)
-                                                        allActivities.child(key)
-                                                            .child("locationName")
-                                                            .setValue(location.value)
-                                                        activityRef.child(key)
-                                                            .child("time")
-                                                            .setValue(currentTime)
-                                                        allActivities.child(key)
-                                                            .child("time")
-                                                            .setValue(currentTime)
-                                                        activityRef.child(key)
-                                                            .child("date")
-                                                            .setValue(getCurrentDate())
-                                                        allActivities.child(key)
-                                                            .child("date")
-                                                            .setValue(getCurrentDate())
-                                                        activityRef.child(key)
-                                                            .child("locationAddress")
-                                                            .setValue(copiedLocation.value)
-                                                        allActivities.child(key)
-                                                            .child("locationAddress")
-                                                            .setValue(copiedLocation.value)
-                                                        activityRef.child(key)
-                                                            .child("locationLatitude")
-                                                            .setValue(copiedLatitude.value)
-                                                        allActivities.child(key)
-                                                            .child("locationLatitude")
-                                                            .setValue(copiedLatitude.value)
-                                                        activityRef.child(key)
-                                                            .child("locationLongitude")
-                                                            .setValue(copiedLongitude.value)
-                                                        allActivities.child(key)
-                                                            .child("locationLongitude")
-                                                            .setValue(copiedLongitude.value)
-                                                    }.addOnCompleteListener {
-                                                        isLoading = false
+                                    if ((imageLink.value != null) && location.value.isNotEmpty() && location.value.length >= 6) {
+                                        imageLink.let { link ->
+                                            activityImage.putFile(link.value!!)
+                                                .addOnCompleteListener { task ->
+                                                    if (task.isSuccessful) {
+                                                        activityImage.downloadUrl.addOnSuccessListener { uri ->
+                                                            activityRef.child(key)
+                                                                .child("userId")
+                                                                .setValue(userID)
+                                                            activityRef.child(key)
+                                                                .child("activityId")
+                                                                .setValue(key)
+                                                            allActivities.child(key)
+                                                                .child("activityId")
+                                                                .setValue(key)
+                                                            activityRef.child(key)
+                                                                .child("imageLink")
+                                                                .setValue(uri.toString())
+                                                            allActivities.child(key)
+                                                                .child("imageLink")
+                                                                .setValue(uri.toString())
+                                                            activityRef.child(key)
+                                                                .child("locationName")
+                                                                .setValue(location.value)
+                                                            allActivities.child(key)
+                                                                .child("locationName")
+                                                                .setValue(location.value)
+                                                            activityRef.child(key)
+                                                                .child("time")
+                                                                .setValue(currentTime)
+                                                            allActivities.child(key)
+                                                                .child("time")
+                                                                .setValue(currentTime)
+                                                            activityRef.child(key)
+                                                                .child("date")
+                                                                .setValue(getCurrentDate())
+                                                            allActivities.child(key)
+                                                                .child("date")
+                                                                .setValue(getCurrentDate())
+                                                            activityRef.child(key)
+                                                                .child("locationAddress")
+                                                                .setValue(copiedLocation.value)
+                                                            allActivities.child(key)
+                                                                .child("locationAddress")
+                                                                .setValue(copiedLocation.value)
+                                                            activityRef.child(key)
+                                                                .child("locationLatitude")
+                                                                .setValue(copiedLatitude.value)
+                                                            allActivities.child(key)
+                                                                .child("locationLatitude")
+                                                                .setValue(copiedLatitude.value)
+                                                            activityRef.child(key)
+                                                                .child("locationLongitude")
+                                                                .setValue(copiedLongitude.value)
+                                                            allActivities.child(key)
+                                                                .child("locationLongitude")
+                                                                .setValue(copiedLongitude.value)
+                                                        }.addOnCompleteListener {
+                                                            isLoading = false
+                                                            Toast.makeText(
+                                                                context,
+                                                                "Activity Posted! 👍",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                            context.startActivity(
+                                                                Intent(
+                                                                    context,
+                                                                    DailyDiaryActivity::class.java
+                                                                )
+                                                            )
+                                                            finish()
+                                                        }
+                                                    } else {
                                                         Toast.makeText(
                                                             context,
-                                                            "Activity Posted! 👍",
+                                                            task.exception?.message,
                                                             Toast.LENGTH_SHORT
                                                         ).show()
-                                                        context.startActivity(
-                                                            Intent(
-                                                                context,
-                                                                DailyDiaryActivity::class.java
-                                                            )
-                                                        )
-                                                        finish()
                                                     }
-                                                } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        task.exception?.message,
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
                                                 }
-                                            }
+                                        }
+                                    } else {
+                                        isLoading = false
+                                        Toast.makeText(
+                                            context,
+                                            "There needs to be an Image, Location and location " +
+                                                    "needs to be more descriptive.",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
+
                                 }
                             },
                             modifier = Modifier.padding(4.dp),

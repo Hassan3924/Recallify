@@ -40,6 +40,7 @@ import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.moment_snap.MomentSnapActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
@@ -413,9 +414,12 @@ class DailyDiaryActivity : AppCompatActivity() {
                             icon = R.drawable.moment_snap,
                             text = "Moment snap",
                             onStart = {
-                                // todo: implement the moment snap functionalities
-
-
+                                val intent =
+                                    Intent(
+                                        this@DailyDiaryActivity,
+                                        MomentSnapActivity::class.java
+                                    )
+                                startActivity(intent)
                             }
                         )
                     },
