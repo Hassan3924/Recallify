@@ -2,6 +2,7 @@ package com.example.recallify.view.common.function
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.work.CoroutineWorker
@@ -26,9 +27,9 @@ val firebaseLocationAddress = mutableStateOf("")
 val firebaseLongitude = mutableStateOf("")
 val firebaseLatitude = mutableStateOf("")
 
-class FirebaseHandlers(
-    private val context: Context,
-    private val workerParameters: WorkerParameters
+class ActivityWorker(
+    context: Context,
+    workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
     private val database =
         FirebaseDatabase.getInstance().reference.child("users")
@@ -47,10 +48,16 @@ class FirebaseHandlers(
     @RequiresApi(Build.VERSION_CODES.O)
     private val currentTime = timeFormatted.toString()
 
-    suspend fun notificationAutoCreateLogin(context: Context) {
+    override suspend fun doWork(): Result {
+        fetchDataFromFirebase()
+        notificationAutoCreateLogin(applicationContext)
+        return Result.success()
+    }
+
+    private suspend fun notificationAutoCreateLogin(context: Context) {
         if (
-            firebaseLongitude.value.toBigDecimal() == copiedLongitude.value.toBigDecimal() &&
-            firebaseLatitude.value.toBigDecimal() == copiedLatitude.value.toBigDecimal()
+            firebaseLongitude.value.toDouble() == copiedLongitude.value.toDouble() &&
+            firebaseLatitude.value.toDouble() == copiedLatitude.value.toDouble()
         ) {
             val locationNotification = ActivityNotification(
                 context = context,
@@ -63,7 +70,7 @@ class FirebaseHandlers(
         }
     }
 
-    suspend fun fetchDataFromFirebase() {
+    private fun fetchDataFromFirebase() {
         val userLocation = database
             .child(userId)
             .child("allActivities")
@@ -85,7 +92,7 @@ class FirebaseHandlers(
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                Log.e("onCancelledFetch", "Error from DB: ${error.message}")
             }
         })
     }
@@ -134,12 +141,8 @@ class FirebaseHandlers(
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                Log.e("onCancelledPost", "Error from DB: ${error.message}")
             }
         })
-    }
-
-    override suspend fun doWork(): Result {
-        return Result.success()
     }
 }

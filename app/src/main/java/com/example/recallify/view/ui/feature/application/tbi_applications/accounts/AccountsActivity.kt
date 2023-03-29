@@ -30,7 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.work.*
 import com.example.recallify.R
+import com.example.recallify.view.common.function.ActivityWorker
 import com.example.recallify.view.common.resources.AccountsTopAppBar
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
@@ -48,20 +50,28 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 val copiedLocation = mutableStateOf("")
 val copiedLongitude = mutableStateOf("")
 val copiedLatitude = mutableStateOf("")
-
+val activityWorkTimer = mutableStateOf(0L)
 class AccountsActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var currentLocation: MutableLiveData<LatLng>
+    private lateinit var activityWorkRequest: WorkRequest
+
     private val databaseReference = FirebaseDatabase.getInstance().reference
     private val user = FirebaseAuth.getInstance().currentUser
-    private var locationText = ""
+    private var locationText: String = ""
+    private var workTimer: Long = 0L
+
+    private val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
 
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.O)
@@ -118,6 +128,13 @@ class AccountsActivity : AppCompatActivity() {
 
         // Start receiving location updates
         startLocationUpdates()
+
+        // Start Activity Work manager
+        activityWorkRequest =
+            PeriodicWorkRequestBuilder<ActivityWorker>(activityWorkTimer.value, TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .build()
+
 
         val accountsCompose: ComposeView = findViewById(R.id.activity_accounts_screen)
         accountsCompose.setContent {
@@ -293,12 +310,24 @@ class AccountsActivity : AppCompatActivity() {
         val checkedState = remember {
             mutableStateOf(true)
         }
-        var timer by remember {
-            mutableStateOf(5)
-        }
+        val timer = remember { mutableStateOf(15L) }
+
         var turnOff by remember {
             mutableStateOf(true)
         }
+
+        if (!turnOff) {
+            activityWorkTimer.value = timer.value
+        } else {
+            activityWorkTimer.value = 16L
+        }
+
+        if (checkedState.value) {
+            WorkManager
+                .getInstance(this@AccountsActivity)
+                .enqueue(activityWorkRequest)
+        }
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -318,7 +347,6 @@ class AccountsActivity : AppCompatActivity() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-//                    .padding(vertical = 3.dp)
             ) {
                 Row(
                     Modifier.fillMaxWidth(),
@@ -336,7 +364,7 @@ class AccountsActivity : AppCompatActivity() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "$timer mins",
+                            text = "${timer.value} mins",
                             fontSize = MaterialTheme.typography.body2.fontSize,
                             fontWeight = FontWeight.Bold,
                             color = Color.Gray,
@@ -396,7 +424,7 @@ class AccountsActivity : AppCompatActivity() {
                                 ) {
                                     OutlinedTextField(
                                         modifier = Modifier.fillMaxWidth(),
-                                        value = timer.toString(),
+                                        value = timer.value.toString(),
                                         onValueChange = { },
                                         readOnly = true,
                                         enabled = turnOff,
@@ -420,40 +448,30 @@ class AccountsActivity : AppCompatActivity() {
                                     ) {
                                         DropdownMenuItem(
                                             content = {
-                                                Text(text = "5")
+                                                Text(text = "15 mins")
                                             },
                                             onClick = {
-                                                timer = 5
+                                                timer.value = 15
                                                 expandedTimer = false
                                             },
                                             enabled = turnOff
                                         )
                                         DropdownMenuItem(
                                             content = {
-                                                Text(text = "15")
+                                                Text(text = "25 mins")
                                             },
                                             onClick = {
-                                                timer = 15
+                                                timer.value = 25
                                                 expandedTimer = false
                                             },
                                             enabled = turnOff
                                         )
                                         DropdownMenuItem(
                                             content = {
-                                                Text(text = "25")
+                                                Text(text = "35 mins")
                                             },
                                             onClick = {
-                                                timer = 25
-                                                expandedTimer = false
-                                            },
-                                            enabled = turnOff
-                                        )
-                                        DropdownMenuItem(
-                                            content = {
-                                                Text(text = "35")
-                                            },
-                                            onClick = {
-                                                timer = 35
+                                                timer.value = 35
                                                 expandedTimer = false
                                             },
                                             enabled = turnOff
