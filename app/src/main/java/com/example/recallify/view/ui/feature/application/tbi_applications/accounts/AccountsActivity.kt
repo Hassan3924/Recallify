@@ -60,6 +60,7 @@ val copiedLocation = mutableStateOf("")
 val copiedLongitude = mutableStateOf("")
 val copiedLatitude = mutableStateOf("")
 val activityWorkTimer = mutableStateOf(20L)
+
 class AccountsActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -70,7 +71,6 @@ class AccountsActivity : AppCompatActivity() {
     private val databaseReference = FirebaseDatabase.getInstance().reference
     private val user = FirebaseAuth.getInstance().currentUser
     private var locationText: String = ""
-    private var workTimer: Long = 0L
 
     private val constraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -134,7 +134,7 @@ class AccountsActivity : AppCompatActivity() {
 
         // Start Activity Work manager
         activityWorkRequest =
-            PeriodicWorkRequestBuilder<ActivityWorker>(activityWorkTimer.value, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<ActivityWorker>(20, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build()
 
