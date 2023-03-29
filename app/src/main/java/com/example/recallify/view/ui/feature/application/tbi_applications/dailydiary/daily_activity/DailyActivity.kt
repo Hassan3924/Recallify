@@ -212,7 +212,7 @@ class DailyActivity : AppCompatActivity() {
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "No images added!",
+                                    text = "No image added!",
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -232,7 +232,7 @@ class DailyActivity : AppCompatActivity() {
                                 permissionState.launchPermissionRequest()
                         }
                         ) {
-                            Text(text = "Add images")
+                            Text(text = "Add image")
                         }
 //                        Spacer(modifier = Modifier.padding(horizontal = 6.dp))
 //                        Button(onClick = {
@@ -276,8 +276,8 @@ class DailyActivity : AppCompatActivity() {
                                 fontSize = 22.sp,
                                 fontWeight = FontWeight.SemiBold
                             ),
-                            label = { Text(text = "Location") },
-                            placeholder = { Text(text = "Tell us where this is...") },
+                            label = { Text(text = "Please enter location") },
+                            placeholder = { Text(text = "Example: Place, City, Country") },
                             singleLine = false,
                             maxLines = 3,
                             shape = RoundedCornerShape(6.dp),
@@ -302,7 +302,7 @@ class DailyActivity : AppCompatActivity() {
                             onDismissRequest = { cancelDialog = false },
                             confirmButton = {
                                 TextButton(onClick = { cancelDialog = false }
-                                ) { Text(text = "cancel") }
+                                ) { Text(text = "Cancel") }
                             },
                             dismissButton = {
                                 TextButton(
@@ -486,7 +486,7 @@ class DailyActivity : AppCompatActivity() {
                                 contentColor = MaterialTheme.colors.onPrimary,
                             )
                         ) {
-                            Text(text = "post")
+                            Text(text = "Post")
                         }
                     }
                 }
