@@ -351,7 +351,7 @@ class GuardianMainSettings : AppCompatActivity() {
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                                         Text(
-                                            text = "Help and Support",
+                                            text = "Recallify Customer Care",
                                             style = MaterialTheme.typography.button
                                         )
                                     }

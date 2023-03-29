@@ -565,8 +565,6 @@ class AccountsActivity : AppCompatActivity() {
                 }
             )
         }
-
-
     }
 
     //Live location Tracking functions #Ridinbal

@@ -9,6 +9,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -19,8 +21,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
@@ -36,35 +43,14 @@ class PrivacyAndSecurity : AppCompatActivity() {
 
         setContentView(R.layout.activity_privacy_security)
 
-        checkPermissions()
+        val privacySecurityGuardian: ComposeView = findViewById(R.id.privacy_security)
 
-        if (!allPermissionsGranted()) {
-            requestPermissions()
-        }
-
-        val privacySecurity: ComposeView = findViewById(R.id.privacy_security)
-
-        privacySecurity.setContent {
+        privacySecurityGuardian.setContent {
             RecallifyTheme {
                 PrivacyAndSecurityScreen()
             }
         }
     }
-
-
-    private val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
-    private val cameraPermission = Manifest.permission.CAMERA
-    private val microphonePermission = Manifest.permission.RECORD_AUDIO
-    private val bluetoothPermission = Manifest.permission.BLUETOOTH_CONNECT
-    private val notificationPermission = Manifest.permission.POST_NOTIFICATIONS
-
-    private val permissionRequestCode = 101
-
-    private var locationPermissionGranted = false
-    private var cameraPermissionGranted = false
-    private var microphonePermissionGranted = false
-    private var bluetoothPermissionGranted = false
-    private var notificationPermissionGranted = false
 
     @Composable
     fun PrivacyAndSecurityScreen() {
@@ -74,24 +60,72 @@ class PrivacyAndSecurity : AppCompatActivity() {
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValues ->
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValues),
+                contentPadding = PaddingValues(horizontal = 15.dp, vertical = 4.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                state = rememberLazyListState()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp)
-                        .padding(top = 4.dp)
-                        .padding(bottom = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
+                val robotoBlack = FontFamily(Font(R.font.roboto_black))
 
+                item {
+                    Text(
+                        text = "As a team dedicated to helping individuals with traumatic brain injuries (TBI) and their guardians, we understand the importance of privacy and security in maintaining the trust of our users. We are committed to ensuring that your personal information is kept confidential and secure while using our memory improvement application.",
+                        style = TextStyle(fontSize = 16.sp, fontFamily = MaterialTheme.typography.body1.fontFamily),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.padding(bottom = 16.dp, top = 16.dp)
+                    )
+                }
 
+                item {
+                    Text(
+                        text = "Our Privacy and Security settings are designed to give you control over what data is collected, how it's shared, and how it's managed. We encourage you to review and adjust these settings to your preferences.",
+                        style = TextStyle(fontSize = 16.sp, fontFamily = MaterialTheme.typography.body1.fontFamily),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
+                item {
+                    Text(
+                        text = "We know that memory loss and other cognitive challenges can be difficult to manage, which is why we are here to support you. Our application is designed to improve memory and help you manage daily tasks more easily. We hope that our application can make a meaningful difference in your life.",
+                        style = TextStyle(fontSize = 16.sp, fontFamily = MaterialTheme.typography.body1.fontFamily),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
+                item {
+                    Text(
+                        text = "If you have any questions or concerns about your privacy or security, please don't hesitate to contact us. We are here to help you.",
+                        style = TextStyle(fontSize = 16.sp, fontFamily = MaterialTheme.typography.body1.fontFamily),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
+                item {
+                    Text(
+                        text = "Thank you for choosing our memory improvement application.",
+                        style = TextStyle(fontSize = 16.sp, fontFamily = MaterialTheme.typography.body1.fontFamily),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 16.dp)
+//                                MaterialTheme.typography.body1.copy(
+//                                fontWeight = FontWeight.Medium
+//                                )
+                    )
+                }
+
+                item {
+                    Text(
+                        text = "Best regards,\nTeam Techno",
+                        style = TextStyle(fontSize = 16.sp, fontFamily = MaterialTheme.typography.body1.fontFamily),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
                 }
             }
         }
@@ -144,63 +178,6 @@ class PrivacyAndSecurity : AppCompatActivity() {
                     ),
                     modifier = Modifier.weight(2f)
                 )
-            }
-        }
-    }
-
-
-    private fun checkPermissions() {
-        locationPermissionGranted = ContextCompat.checkSelfPermission(
-            this, locationPermission) == PackageManager.PERMISSION_GRANTED
-        cameraPermissionGranted = ContextCompat.checkSelfPermission(
-            this, cameraPermission) == PackageManager.PERMISSION_GRANTED
-        microphonePermissionGranted = ContextCompat.checkSelfPermission(
-            this, microphonePermission) == PackageManager.PERMISSION_GRANTED
-        bluetoothPermissionGranted = ContextCompat.checkSelfPermission(
-            this, bluetoothPermission) == PackageManager.PERMISSION_GRANTED
-        notificationPermissionGranted = ContextCompat.checkSelfPermission(
-            this, notificationPermission) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun allPermissionsGranted() = locationPermissionGranted &&
-            cameraPermissionGranted &&
-            microphonePermissionGranted &&
-            bluetoothPermissionGranted &&
-            notificationPermissionGranted
-
-    private fun requestPermissions() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                locationPermission,
-                cameraPermission,
-                microphonePermission,
-                bluetoothPermission,
-                notificationPermission
-            ),
-            permissionRequestCode
-        )
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == permissionRequestCode) {
-            // Check if all permissions are granted
-            checkPermissions()
-
-            // Use the permissions as needed
-            // ...
-
-            // Handle denied permissions
-            for (i in grantResults.indices) {
-                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                    // User denied the permission
-                    // ...
-                }
             }
         }
     }
