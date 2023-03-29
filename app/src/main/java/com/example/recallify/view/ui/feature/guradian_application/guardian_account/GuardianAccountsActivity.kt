@@ -23,10 +23,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.recallify.R
+import com.example.recallify.view.common.resources.GuardiansAccountTopAppBar
+import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.AccountsActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
+import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
 //import com.example.recallify.view.ui.feature.BaseActivity
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
@@ -76,7 +83,10 @@ class GuardianAccountsActivity : AppCompatActivity() {
         
 
         Scaffold(
-            topBar = {AccountSettingsTopBar()},
+            topBar = {
+                GuardiansAccountTopAppBar {
+                    LogoutButton(activity = this@GuardianAccountsActivity)
+                } },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValues ->
             Column(
@@ -102,7 +112,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 16.dp)
                         .padding(top = 10.dp)
                         .padding(bottom = 8.dp),
                     Arrangement.Center,
@@ -299,9 +309,21 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(horizontal = 30.dp, vertical = 30.dp)
                     ) {
+
+                        Button(onClick = {
+                            val intent = Intent(this@GuardianAccountsActivity, GuardiansDashboardActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }) {
+                            Text(text = "Go to Dashboard")
+                        }
+
+                        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+
                         SaveButton(tbiEmail = tbiEmail, PIN = PIN ,database, current)
-                        Spacer(modifier = Modifier.width(50.dp))
-                        LogoutButton(activity = this@GuardianAccountsActivity)
+
+
+
                     }
                 }
             }
@@ -384,15 +406,70 @@ class GuardianAccountsActivity : AppCompatActivity() {
 
     @Composable
     fun LogoutButton(activity: GuardianAccountsActivity) {
+        val showDialog = remember { mutableStateOf(false) }
 
-        Button(
+        IconButton(
             onClick = {
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(this@GuardianAccountsActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }) {
-            Text(text = "Log Out")
+                showDialog.value = true
+            }
+        ) {
+            Icon(
+                painterResource(id = R.drawable.round_logout_24),
+                "log out button"
+            )
+        }
+
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Text(
+                            text = "Log out of\nyour account?",
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                },
+                text = { },
+                backgroundColor = Color.White,
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.size(width = 260.dp, height = 200.dp),
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+
+                            // Sign out from FirebaseAuth
+                            FirebaseAuth.getInstance().signOut()
+
+                            // Navigate to LoginActivity
+                            val intent = Intent(activity, LoginActivity::class.java)
+                            startActivity(intent)
+                            finish()
+
+                            // Dismiss the dialog
+                            showDialog.value = false
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
+                    ) {
+                        Text(text = "Log Out", fontWeight = FontWeight.Bold, color = Color.Red)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDialog.value = false },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 

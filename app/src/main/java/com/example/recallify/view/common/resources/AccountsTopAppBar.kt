@@ -32,3 +32,23 @@ fun AccountsTopAppBar(
         )
     }
 }
+
+@Composable
+fun GuardiansAccountTopAppBar(
+    onNavToHome: @Composable (() -> Unit)
+) {
+    Box(
+        modifier = Modifier
+            .height(56.dp)
+            .fillMaxWidth()
+    ) {
+        TopAppBar(
+            title = { Text("Accounts") },
+            backgroundColor = MaterialTheme.colors.background,
+            modifier = Modifier.fillMaxWidth(),
+            actions = {
+                onNavToHome()
+            }
+        )
+    }
+}
