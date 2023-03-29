@@ -194,9 +194,11 @@ class QuizActivity : AppCompatActivity() {
                 checker = 0
                 resetCountDownTimer()
                 gameLogic(setChanger1, databaseReference)
-                if(questionNumber<=questionCount+1) { //new logic added
+             //   var questionCountPlus1 = questionCount+1
+                if(questionNumber<=questionCount ) { //new logic added
                     questionNumber1 = questionNumber - 1
                     Log.d("questionNumber: ",questionNumber1.toString())
+                    Log.d("questionNumberCount+1: ",questionCount.toString())
                     viewScoreFromDatabase()
                 }
             } else {

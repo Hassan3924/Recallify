@@ -130,10 +130,13 @@ class SideQuestQuizActivity : AppCompatActivity() {
                 mainBinding.textViewFeedback.setEnabled(false)
                 mainBinding.buttonFinish.setEnabled(true)
                 gameLogic()
-                if(questionNumber<=questionCount+1) { //new logic added
+                var questionCountPlus1 = questionCount+1
+                if(questionNumber<=questionCountPlus1) { //new logic added
 
                     var questionNumber1 = questionNumber - 1
                     Log.d("questionNumber: ",questionNumber1.toString())
+                    Log.d("questionNumberCount+1: ",questionCountPlus1.toString())
+
                     SendScore(questionNumber1)
                 }
             }
