@@ -55,19 +55,14 @@ class ActivityWorker(
     }
 
     private suspend fun notificationAutoCreateLogin(context: Context) {
-        if (
-            firebaseLongitude.value.toDouble() == copiedLongitude.value.toDouble() &&
-            firebaseLatitude.value.toDouble() == copiedLatitude.value.toDouble()
-        ) {
+
             val locationNotification = ActivityNotification(
                 context = context,
                 "New location discovered.",
                 "Let's capture the Moment!🥳",
             )
             locationNotification.launchNotification()
-        } else {
             autoCreateActivity()
-        }
     }
 
     private fun fetchDataFromFirebase() {
