@@ -14,7 +14,6 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
@@ -26,7 +25,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Recallify"
         tools:targetApi="31">
-
+        <activity
+            android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestGameSelectorDate"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <!-- push notification -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

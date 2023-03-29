@@ -194,8 +194,11 @@ class QuizActivity : AppCompatActivity() {
                 checker = 0
                 resetCountDownTimer()
                 gameLogic(setChanger1, databaseReference)
-                questionNumber1 = questionNumber - 1
-                viewScoreFromDatabase()
+                if(questionNumber<=questionCount+1) { //new logic added
+                    questionNumber1 = questionNumber - 1
+                    Log.d("questionNumber: ",questionNumber1.toString())
+                    viewScoreFromDatabase()
+                }
             } else {
                 quizActivityBinding.buttonNext.isEnabled = false
             }
