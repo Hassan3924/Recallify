@@ -162,7 +162,7 @@ class LoginActivity : AppCompatActivity() {
                         ) {
 
                             Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_recallify_logo_final_round_4),
+                                painter = painterResource(id = R.drawable.ic_launcher_recallify_logo_final_round_5),
                                 contentDescription = "App Logo" ,
                                 modifier = Modifier.size(250.dp)
                                     .padding(bottom = 70.dp))
@@ -243,7 +243,7 @@ class LoginActivity : AppCompatActivity() {
                                     .fillMaxWidth()
                                     .padding(top = 6.dp, bottom = 10.dp)
                                     .clickable { onNavToForgotPassword() },
-                                textAlign = TextAlign.Start
+                                textAlign = TextAlign.End
                             )
                             Button(
                                 onClick = {
@@ -355,7 +355,7 @@ class LoginActivity : AppCompatActivity() {
                                         }
                                 },
                                 modifier = Modifier
-                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    .padding(horizontal = 12.dp, vertical = 20.dp)
                                     .fillMaxWidth()
                             ) {
                                 Text(
