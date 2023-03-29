@@ -285,7 +285,7 @@ class AccountsActivity : AppCompatActivity() {
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
-                    CustomCard()
+//                    CustomCard()
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
                     Button(onClick = {
