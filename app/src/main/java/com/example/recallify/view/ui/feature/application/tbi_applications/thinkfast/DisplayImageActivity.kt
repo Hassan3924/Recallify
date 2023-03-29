@@ -7,6 +7,7 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.recallify.databinding.ActivityDisplayImageBinding
 import com.google.firebase.database.*
@@ -34,8 +35,24 @@ class DisplayImageActivity : AppCompatActivity() {
 
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val imageUrl = dataSnapshot.value.toString()
-                Picasso.get().load(imageUrl).into(displayImageBinding.imageDisplay)
+                if (dataSnapshot.exists()) {
+                    val imageUrl = dataSnapshot.value.toString()
+                    Picasso.get().load(imageUrl).into(displayImageBinding.imageDisplay)
+                    launchCountDownTimer()
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed({
+                        val intent = Intent(this@DisplayImageActivity, QuizActivity::class.java)
+                        intent.putExtra("setChangerFromConfirm", setChanger1)
+                        startActivity(intent)
+                        finish()
+                    }, 30000) //before 9000
+                }
+                else{
+                    val intent = Intent(this@DisplayImageActivity,ThinkFastActivity::class.java)
+                    Toast.makeText(this@DisplayImageActivity,"You have finished all levels \uD83D\uDE0A ",Toast.LENGTH_SHORT).show()
+                    startActivity(intent)
+                    finish()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -43,14 +60,7 @@ class DisplayImageActivity : AppCompatActivity() {
             }
         })
 
-        launchCountDownTimer()
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
-            val intent = Intent(this@DisplayImageActivity, QuizActivity::class.java)
-            intent.putExtra("setChangerFromConfirm", setChanger1)
-            startActivity(intent)
-            finish()
-        }, 30000) //before 9000
+
     }
 
     private fun launchCountDownTimer() {
