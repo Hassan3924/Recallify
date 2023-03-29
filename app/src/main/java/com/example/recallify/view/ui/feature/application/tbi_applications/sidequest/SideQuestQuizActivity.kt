@@ -207,7 +207,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
 
                             val dialogMessage = AlertDialog.Builder(this@SideQuestQuizActivity)
                             dialogMessage.setTitle("Quiz Game")
-                            dialogMessage.setMessage("Congratulations!!!\nYou have answered all the questions. Do you want to see the result?")
+                            dialogMessage.setMessage("Congratulations \uD83D\uDC4F \nYou have answered all the questions. Do you want to see the result?")
                             dialogMessage.setCancelable(false) //if user clicks anywhere on screen, it should not be closed, so false is set
 
                             dialogMessage.setPositiveButton("See Result") { dialogWindow, position ->

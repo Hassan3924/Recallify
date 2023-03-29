@@ -27,7 +27,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Analyze Think Fast Progress"
+            android:text="Analyze User's Think Fast Progress"
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold" />

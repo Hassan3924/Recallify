@@ -94,15 +94,19 @@ class GuardianAnalyzeProgressThinkFast : AppCompatActivity() {
                             analyzeProgressBinding.percentShow.text =
                                 percent_correct.toInt().toString() + "%"
                             analyzeProgressBinding.todayScoreFeedbackViewValue.text =
-                                "Congrats, User has achieved the daily target"
+                                "Congrats, User has achieved their daily target \uD83D\uDC4F"
                         } else {
 
                             analyzeProgressBinding.percentShow.text =
                                 percent_correct.toInt().toString() + "%"
 
                             var minCorrect = maxTotalCorrect - totelCorrect
+                            var answer2 = "scores"
+                            if(minCorrect == 1){
+                                answer2="score"
+                            }
                             analyzeProgressBinding.todayScoreFeedbackViewValue.text =
-                                "User need to get ${minCorrect} + scores to reach daily target"
+                                "User needs to get ${minCorrect} + $answer2 to reach their daily target \uD83D\uDE0A"
                         }
 
                         //Total Play related code
@@ -125,15 +129,18 @@ class GuardianAnalyzeProgressThinkFast : AppCompatActivity() {
                             analyzeProgressBinding.percentShowTotalPlay.text =
                                 percent_play.toInt().toString() + "%"
                             analyzeProgressBinding.todayPlayFeedbackViewValue.text =
-                                "Congrats, User has achieved the daily target"
+                                "Congrats, User has achieved their daily target \uD83D\uDC4F"
                         } else {
 
                             analyzeProgressBinding.percentShowTotalPlay.text =
                                 percent_play.toInt().toString() + "%"
 
                             var minCorrect = maxTotalPlay - totalPlay
-                            analyzeProgressBinding.todayPlayFeedbackViewValue.text =
-                                "User need to play ${minCorrect} more games to reach daily target"
+                            var answer1 = "games"
+                            if(minCorrect == 1){
+                                answer1="game"
+                            }
+                            analyzeProgressBinding.todayPlayFeedbackViewValue.text = "User needs to play ${minCorrect} + $answer1 to reach their daily target \uD83D\uDE0A"
                         }
                     }//if
 

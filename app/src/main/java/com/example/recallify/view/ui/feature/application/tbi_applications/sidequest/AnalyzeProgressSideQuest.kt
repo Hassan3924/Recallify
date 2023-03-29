@@ -83,15 +83,20 @@ class AnalyzeProgressSideQuest : AppCompatActivity() {
                             analyzeProgressBinding.percentShow.text =
                                 percent_correct.toString() + "%"
                             analyzeProgressBinding.todayScoreFeedbackViewValue.text =
-                                "Congrats, you have achieved your daily target"
+                                "Congrats, for achieving your daily target \uD83D\uDC4F"
                         } else {
 
                             analyzeProgressBinding.percentShow.text =
                                 totelCorrect.toString() + "%"
 
-                            var minCorrect = maxTotalCorrect - totelCorrect
-                            analyzeProgressBinding.todayScoreFeedbackViewValue.text =
-                                "You need to get ${difference} + correct answer to reach daily target"
+                      //      var minCorrect = maxTotalCorrect - totelCorrect
+                            var answer1 = "scores"
+                            if(difference == 1){
+                                answer1="score"
+                            }
+                          //  analyzeProgressBinding.todayScoreFeedbackViewValue.text = "You need to get ${difference} + correct answer to reach daily target"
+                            analyzeProgressBinding.todayScoreFeedbackViewValue.text = "${difference} + $answer1 needed to reach your daily target \uD83D\uDE0A"
+
                         }
 
                     }

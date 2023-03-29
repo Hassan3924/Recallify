@@ -237,7 +237,7 @@ class QuizActivity : AppCompatActivity() {
 
                     val dialogMessage = AlertDialog.Builder(this@QuizActivity)
                     dialogMessage.setTitle("Quiz Game")
-                    dialogMessage.setMessage("Congratulations!!!\nYou have answered all the questions. Do you want to see the result?")
+                    dialogMessage.setMessage("Congratulations!!! \uD83D\uDC4F \nYou have answered all the questions. Do you want to see the result?")
                     dialogMessage.setCancelable(false)
 
                     dialogMessage.setPositiveButton("See Result") { _, _ ->

@@ -67,15 +67,19 @@ class GuardianAnalyzeProgressSideQuest : AppCompatActivity() {
                             analyzeProgressBinding.percentShow.text =
                                 percent_correct.toString() + "%"
                             analyzeProgressBinding.todayScoreFeedbackViewValue.text =
-                                "Congrats, User has achieved the daily target"
+                                "Congrats, User has achieved their daily target \uD83D\uDC4F"
                         } else {
 
                             analyzeProgressBinding.percentShow.text =
                                 totelCorrect.toString() + "%"
 
-                            var minCorrect = maxTotalCorrect - totelCorrect
-                            analyzeProgressBinding.todayScoreFeedbackViewValue.text =
-                                "User need to get ${difference} + correct answer to reach daily target"
+                          //  var minCorrect = maxTotalCorrect - totelCorrect
+                            var answer1 = "scores"
+                            if(difference == 1){
+                                answer1="score"
+                            }
+                          //  analyzeProgressBinding.todayScoreFeedbackViewValue.text = "User need to get ${difference} + correct answer to reach daily target"
+                            analyzeProgressBinding.todayScoreFeedbackViewValue.text = "User needs to get ${difference} + $answer1 to reach their daily target \uD83D\uDE0A"
                         }
 
                     }

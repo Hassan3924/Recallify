@@ -27,7 +27,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Check Side Quest Results"
+            android:text="Check User's Side Quest Results"
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold" />
