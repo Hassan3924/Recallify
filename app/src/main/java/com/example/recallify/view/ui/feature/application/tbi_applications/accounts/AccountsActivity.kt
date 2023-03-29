@@ -52,6 +52,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
 import java.util.concurrent.TimeUnit
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 
 
 val copiedLocation = mutableStateOf("")
@@ -236,7 +238,6 @@ class AccountsActivity : AppCompatActivity() {
                                     TODO("Not yet implemented")
                                 }
                             })
-
                     }
 
                     Row(
@@ -497,13 +498,11 @@ class AccountsActivity : AppCompatActivity() {
 
     @Composable
     fun LogoutButton(activity: AccountsActivity) {
+        val showDialog = remember { mutableStateOf(false) }
+
         IconButton(
             onClick = {
-                fusedLocationClient.removeLocationUpdates(locationCallback)
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(activity, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
+                showDialog.value = true
             }
         ) {
             Icon(
@@ -511,6 +510,63 @@ class AccountsActivity : AppCompatActivity() {
                 "log out button"
             )
         }
+
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Text(
+                            text = "Log out of\nyour account?",
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                },
+                text = { },
+                backgroundColor = Color.White,
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.size(width = 260.dp, height = 200.dp),
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            // Stop location tracking
+                            fusedLocationClient.removeLocationUpdates(locationCallback)
+
+                            // Sign out from FirebaseAuth
+                            FirebaseAuth.getInstance().signOut()
+
+                            // Navigate to LoginActivity
+                            val intent = Intent(activity, LoginActivity::class.java)
+                            startActivity(intent)
+                            finish()
+
+                            // Dismiss the dialog
+                            showDialog.value = false
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
+                    ) {
+                        Text(text = "Log Out", fontWeight = FontWeight.Bold, color = Color.Red)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDialog.value = false },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+
     }
 
     //Live location Tracking functions #Ridinbal
