@@ -25,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -146,12 +147,27 @@ class GuardianMainSettings : AppCompatActivity() {
                         }
 
 
-                        Column(modifier = Modifier.padding(top = 100.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)) {
-
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                            elevation = 5.dp) {
+                        Column(
+                            modifier = Modifier.padding(
+                                top = 100.dp,
+                                bottom = 10.dp,
+                                start = 10.dp,
+                                end = 10.dp
+                            )
+                        ) {
+                            /*
+                            * Account settings
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier
+                                    .padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -165,17 +181,49 @@ class GuardianMainSettings : AppCompatActivity() {
                                             )
                                             finish()
                                         })
-                                        .padding(horizontal = 10.dp, vertical = 10.dp)
-                                        .fillMaxWidth()
-                                ) {
-                                    Text(text = "Account Setting")
+                                        .padding(
+                                            horizontal = 10.dp,
+                                            vertical = 10.dp
+                                        )
+                                        .fillMaxWidth(),
+
+                                    ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.account),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Account Setting",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
 
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                                elevation = 5.dp) {
+                            /*
+                            * Privacy and Security
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier
+                                    .padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -192,15 +240,40 @@ class GuardianMainSettings : AppCompatActivity() {
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    Text(text = "Privacy & Security")
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.round_security_24),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Privacy and Security",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
-
-
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                                elevation = 5.dp) {
+                            /*
+                            * Terms and Condition
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier.padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -217,14 +290,40 @@ class GuardianMainSettings : AppCompatActivity() {
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    Text(text = "Terms & Conditions")
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.round_gavel_24),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Terms and Conditions",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
-
-                            Card(modifier = Modifier.padding(top = 30.dp),
-                                elevation = 5.dp) {
+                            /*
+                            * Help and Support
+                            *
+                            * */
+                            Card(
+                                modifier = Modifier.padding(top = 30.dp),
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
+                            ) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Start,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .clickable(onClick = {
                                             val intent = Intent(
@@ -241,7 +340,26 @@ class GuardianMainSettings : AppCompatActivity() {
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    Text(text = "Help & Support")
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.round_help_outline_24),
+                                            contentDescription = null,
+                                            Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                                        Text(
+                                            text = "Help and Support",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Icon(
+                                        painterResource(id = R.drawable.round_arrow_forward_24),
+                                        contentDescription = null,
+                                        Modifier.size(24.dp)
+                                    )
                                 }
                             }
                         }

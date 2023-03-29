@@ -111,7 +111,7 @@ class SummarizeConversation : AppCompatActivity() {
             speechRecognizer.stopListening()
             speechRecognizer.cancel()
             speechRecognizer.destroy()
-            mainBinding.textView.text = "Please tap on the button to speak"
+            mainBinding.textView.text = "Tap to start recording"
             //  mainBinding.SummarizedConversation.text = conversationtText
           //  callFlaskService()
 
