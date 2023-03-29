@@ -1,8 +1,11 @@
 package com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
@@ -77,9 +80,27 @@ class DisplayResultsActivity : AppCompatActivity() {
                         displayResultsBinding.incorrectNoTextViewValue.text = wrong.toString()
                         displayResultsBinding.percentageTextViewValue.text = percentage.toString()
                         displayResultsBinding.wrongTextViewValue.text = yourAnswer
+
+                        displayResultsBinding.correctTextViewValue.setTextColor(0xFF006400.toInt())
+                        //displayResultsBinding.correctTextViewValue.setTextColor(0xFF023020.toInt())
+                        if(correctAnswer==yourAnswer){
+                            displayResultsBinding.wrongTextViewValue.setTextColor(0xFF006400.toInt())
+
+
+                        }
+                        else{
+                            displayResultsBinding.wrongTextViewValue.setTextColor(Color.RED)
+                        }
                         Picasso.get().load(imageName).into(displayResultsBinding.imageDisplay)
                     }
+                    else{
+                        //Toast.makeText(this@DisplayResultsActivity,"Thats the end! ",Toast.LENGTH_SHORT).show()
+                       // displayResultsBinding.buttonNext.setVisibility(View.INVISIBLE)
+                       // displayResultsBinding.buttonNext.setBackgroundColor(0xFF808080.toInt())
+                        displayResultsBinding.buttonNext.setVisibility(View.GONE)
+                    }
                     questionNumber++
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {}

@@ -1,9 +1,11 @@
 package com.example.recallify.view.ui.feature.guradian_application.guardiansidequest
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.RequiresApi
 import com.example.recallify.R
 import com.example.recallify.databinding.ActivityGuardianDisplayResultsSideQuestBinding
@@ -84,12 +86,23 @@ class GuardianDisplayResultsSideQuest : AppCompatActivity() {
                         displayResultsBinding.incorrectNoTextViewValue.text = wrong.toString()
                         displayResultsBinding.percentageTextViewValue.text = percentage.toString()
                         displayResultsBinding.wrongTextViewValue.text = yourAnswer
+
+                        displayResultsBinding.correctTextViewValue.setTextColor(0xFF006400.toInt())
+                        //displayResultsBinding.correctTextViewValue.setTextColor(0xFF023020.toInt())
+                        if(correctAnswer==yourAnswer){
+                            displayResultsBinding.wrongTextViewValue.setTextColor(0xFF006400.toInt())
+
+
+                        }
+                        else{
+                            displayResultsBinding.wrongTextViewValue.setTextColor(Color.RED)
+                        }
                         Picasso.get().load(imageName).into(displayResultsBinding.imageDisplay)
 
 
                     }
                     else{
-
+                        displayResultsBinding.buttonNext.setVisibility(View.GONE)
                     }
                     questionNumber++
 

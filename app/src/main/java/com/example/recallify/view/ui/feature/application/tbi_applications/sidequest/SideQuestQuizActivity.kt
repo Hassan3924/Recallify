@@ -46,9 +46,9 @@ class SideQuestQuizActivity : AppCompatActivity() {
     val formatted = current.format(formatter)
 
      @RequiresApi(Build.VERSION_CODES.O)
-   //  var currentDate:String = formatted.toString()
+     var currentDate:String = formatted.toString()
     //var currentDate = "2023-02-25"
-    var currentDate = "2023-03-28"
+//    var currentDate = "2023-03-28"
     var imageLink = ""
     var locationName = ""
     var questionNumber = 1
