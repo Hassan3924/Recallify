@@ -83,7 +83,7 @@ class MomentSnapActivity : AppCompatActivity() {
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Moment snap preview",
+                            text = "Moment Snap preview",
                             style = MaterialTheme.typography.h6.copy(
                                 color = MaterialTheme.colors.onSurface
                             ),
@@ -127,7 +127,7 @@ class MomentSnapActivity : AppCompatActivity() {
                                 modifier = Modifier
                                     .padding(8.dp)
                             ) {
-                                Text(text = "create activity")
+                                Text(text = "Create Activity")
                             }
                         }
 

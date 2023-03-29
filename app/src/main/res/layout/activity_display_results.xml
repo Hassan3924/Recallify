@@ -122,7 +122,7 @@
         <TextView
             android:id="@+id/questionTextViewValue"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="57dp"
 
             android:textColor="@color/black"
 
@@ -255,9 +255,9 @@
             android:background="@drawable/btn_finish"
             android:text="Finish"
 
-
+            android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonNext"
@@ -269,9 +269,9 @@
             android:background="@drawable/btn_next"
 
             android:text="NEXT"
-
+            android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

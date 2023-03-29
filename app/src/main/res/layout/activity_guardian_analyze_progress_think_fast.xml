@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Your Play: "
+            android:text="User's Play: "
             android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Your Score: "
+            android:text="User's Score: "
             android:textColor="@color/light_onPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />

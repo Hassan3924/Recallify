@@ -257,8 +257,8 @@
             android:layout_weight="1"
             android:background="@drawable/btn_finish"
             android:text="Finish"
-
-            android:textColor="@color/black"
+android:textStyle="bold"
+            android:textColor="@color/white"
             android:textSize="18sp" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -267,11 +267,11 @@
             android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
-
+android:textStyle="bold"
             android:background="@drawable/btn_next"
 
             android:text="NEXT"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="18sp" />
     </LinearLayout>
 

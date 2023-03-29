@@ -17,7 +17,7 @@ class DisplayImageActivity : AppCompatActivity() {
     private lateinit var displayImageBinding : ActivityDisplayImageBinding
     private val database = FirebaseDatabase.getInstance()
     private lateinit var timer: CountDownTimer
-    private val totalTime = 10000L
+    private val totalTime = 30000L //1000L
 
     private var leftTime = totalTime
     private var timerContinue = false
@@ -50,12 +50,12 @@ class DisplayImageActivity : AppCompatActivity() {
             intent.putExtra("setChangerFromConfirm", setChanger1)
             startActivity(intent)
             finish()
-        }, 9000)
+        }, 30000) //before 9000
     }
 
     private fun launchCountDownTimer() {
 
-        timer = object : CountDownTimer(leftTime, 1000) {
+        timer = object : CountDownTimer(leftTime, 100) { //before 1000
             override fun onTick(millisUntilFinish: Long) {
                 leftTime =
                     millisUntilFinish
@@ -72,7 +72,7 @@ class DisplayImageActivity : AppCompatActivity() {
     }
 
     fun updateCountDownTimerForText() {
-        val remainingTime: Int = (leftTime / 1000).toInt()
+        val remainingTime: Int = (leftTime / 1000).toInt() //1000 before
         displayImageBinding.textViewTime.text = remainingTime.toString()
     }
 

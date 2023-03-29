@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -160,6 +161,12 @@ class LoginActivity : AppCompatActivity() {
                             verticalArrangement = Arrangement.Center
                         ) {
 
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_launcher_recallify_logo_final_round_5),
+                                contentDescription = "App Logo" ,
+                                modifier = Modifier.size(250.dp)
+                                    .padding(bottom = 70.dp))
+
                             var isEmailValid by remember { mutableStateOf(false) }
 
                             OutlinedTextField(
@@ -236,7 +243,7 @@ class LoginActivity : AppCompatActivity() {
                                     .fillMaxWidth()
                                     .padding(top = 6.dp, bottom = 10.dp)
                                     .clickable { onNavToForgotPassword() },
-                                textAlign = TextAlign.Start
+                                textAlign = TextAlign.End
                             )
                             Button(
                                 onClick = {
@@ -348,7 +355,7 @@ class LoginActivity : AppCompatActivity() {
                                         }
                                 },
                                 modifier = Modifier
-                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    .padding(horizontal = 12.dp, vertical = 20.dp)
                                     .fillMaxWidth()
                             ) {
                                 Text(

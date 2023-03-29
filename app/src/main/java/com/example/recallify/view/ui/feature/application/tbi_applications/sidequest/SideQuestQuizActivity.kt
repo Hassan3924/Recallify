@@ -45,9 +45,10 @@ class SideQuestQuizActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     val formatted = current.format(formatter)
 
-    // var currentDate:String = formatted.toString()
+     @RequiresApi(Build.VERSION_CODES.O)
+     var currentDate:String = formatted.toString()
     //var currentDate = "2023-02-25"
-    var currentDate = "2023-03-28"
+//    var currentDate = "2023-03-28"
     var imageLink = ""
     var locationName = ""
     var questionNumber = 1
@@ -65,7 +66,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
     var leftTime =
         totalTime //left time value will take diff vaues when creating the timer, so initially left time variable will start equal to the totasl time
     var checker = 0
-
+   // val currentDate: String = intent.getStringExtra("currentDate").toString()
     var dailyDairySideQuestRef = database.reference
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,12 +130,20 @@ class SideQuestQuizActivity : AppCompatActivity() {
                 mainBinding.textViewFeedback.setEnabled(false)
                 mainBinding.buttonFinish.setEnabled(true)
                 gameLogic()
-                var questionNumber1 = questionNumber - 1
-                SendScore(questionNumber1)
+                var questionCountPlus1 = questionCount+1
+                if(questionNumber<=questionCountPlus1) { //new logic added
+
+                    var questionNumber1 = questionNumber - 1
+                    Log.d("questionNumber: ",questionNumber1.toString())
+                    Log.d("questionNumberCount+1: ",questionCountPlus1.toString())
+
+                    SendScore(questionNumber1)
+                }
             }
         } //button Next
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun gameLogic() {
         val uid = Firebase.auth.currentUser?.uid
         var dataRef = database.reference
@@ -144,6 +153,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
             //     val key = Firebase.database.reference.child("users").child(uid).child("dailyDairyDummy").child(currentDate).key
             //      var key_integer = key!!.toInt()
             database.addListenerForSingleValueEvent(object : ValueEventListener {
+                @RequiresApi(Build.VERSION_CODES.O)
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         questionCount =
@@ -197,7 +207,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
 
                             val dialogMessage = AlertDialog.Builder(this@SideQuestQuizActivity)
                             dialogMessage.setTitle("Quiz Game")
-                            dialogMessage.setMessage("Congratulations!!!\nYou have answered all the questions. Do you want to see the result?")
+                            dialogMessage.setMessage("Congratulations \uD83D\uDC4F \nYou have answered all the questions. Do you want to see the result?")
                             dialogMessage.setCancelable(false) //if user clicks anywhere on screen, it should not be closed, so false is set
 
                             dialogMessage.setPositiveButton("See Result") { dialogWindow, position ->
@@ -226,7 +236,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
                             "No daily Dairy entry",
                             Toast.LENGTH_SHORT
                         ).show()
-                        val intent = Intent(this@SideQuestQuizActivity, SideQuestQuizActivity::class.java)
+                        val intent = Intent(this@SideQuestQuizActivity, SideQuestActivity::class.java)
                         //intent.putExtra("currentDate",currentDate)
                         startActivity(intent)
                         finish()
@@ -302,6 +312,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun SendScore(questionNumber1: Int) {
         user?.let {
             val userUID = it.uid
@@ -320,6 +331,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun sendScore2(questionCount2: Int) {
         user?.let {
             val userUID = it.uid

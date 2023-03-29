@@ -194,8 +194,13 @@ class QuizActivity : AppCompatActivity() {
                 checker = 0
                 resetCountDownTimer()
                 gameLogic(setChanger1, databaseReference)
-                questionNumber1 = questionNumber - 1
-                viewScoreFromDatabase()
+             //   var questionCountPlus1 = questionCount+1
+                if(questionNumber<=questionCount ) { //new logic added
+                    questionNumber1 = questionNumber - 1
+                    Log.d("questionNumber: ",questionNumber1.toString())
+                    Log.d("questionNumberCount+1: ",questionCount.toString())
+                    viewScoreFromDatabase()
+                }
             } else {
                 quizActivityBinding.buttonNext.isEnabled = false
             }
@@ -232,7 +237,7 @@ class QuizActivity : AppCompatActivity() {
 
                     val dialogMessage = AlertDialog.Builder(this@QuizActivity)
                     dialogMessage.setTitle("Quiz Game")
-                    dialogMessage.setMessage("Congratulations!!!\nYou have answered all the questions. Do you want to see the result?")
+                    dialogMessage.setMessage("Congratulations!!! \uD83D\uDC4F \nYou have answered all the questions. Do you want to see the result?")
                     dialogMessage.setCancelable(false)
 
                     dialogMessage.setPositiveButton("See Result") { _, _ ->

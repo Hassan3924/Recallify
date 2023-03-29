@@ -345,7 +345,7 @@ class DailyActivity : AppCompatActivity() {
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 LinearProgressIndicator()
-                                Text(text = "finishing up activity...")
+                                Text(text = "Finishing up activity. Please wait...")
                             }
                         }
                         Button(
@@ -357,7 +357,7 @@ class DailyActivity : AppCompatActivity() {
                                 contentColor = MaterialTheme.colors.error,
                             )
                         ) {
-                            Text(text = "cancel")
+                            Text(text = "Cancel")
                         }
                         Button(
                             onClick = {

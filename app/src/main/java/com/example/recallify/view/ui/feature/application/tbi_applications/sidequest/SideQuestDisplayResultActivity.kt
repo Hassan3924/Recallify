@@ -2,8 +2,10 @@ package com.example.recallify.view.ui.feature.application.tbi_applications.sideq
 
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.recallify.databinding.ActivitySideQuestDisplayResultBinding
 import com.google.firebase.auth.ktx.auth
@@ -74,11 +76,24 @@ class SideQuestDisplayResultActivity : AppCompatActivity() {
                         sideQuestDisplayResultBinding.incorrectNoTextViewValue.text = wrong.toString()
                         sideQuestDisplayResultBinding.percentageTextViewValue.text = percentage.toString()
                         sideQuestDisplayResultBinding.wrongTextViewValue.text = yourAnswer
+
+                        sideQuestDisplayResultBinding.correctTextViewValue.setTextColor(0xFF006400.toInt())
+                        //displayResultsBinding.correctTextViewValue.setTextColor(0xFF023020.toInt())
+                        if(correctAnswer==yourAnswer){
+                            sideQuestDisplayResultBinding.wrongTextViewValue.setTextColor(0xFF006400.toInt())
+
+
+                        }
+                        else{
+                            sideQuestDisplayResultBinding.wrongTextViewValue.setTextColor(Color.RED)
+                        }
+
                         Picasso.get().load(imageName).into(sideQuestDisplayResultBinding.imageDisplay)
 
 
                     } else {
                         Log.w(ContentValues.TAG, "SideQuest_QuestionCount (ErrorOnValidation) :-> please check the count of the question from the database")
+                        sideQuestDisplayResultBinding.buttonNext.setVisibility(View.GONE)
                     }
                     questionNumber++
                 }

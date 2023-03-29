@@ -27,7 +27,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Check Think Fast Results"
+            android:text="Check User's Think Fast Results"
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold" />
