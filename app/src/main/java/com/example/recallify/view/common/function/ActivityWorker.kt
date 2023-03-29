@@ -7,8 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLatitude
-import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLongitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityNotification
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.google.firebase.auth.FirebaseAuth
@@ -49,20 +47,19 @@ class ActivityWorker(
     private val currentTime = timeFormatted.toString()
 
     override suspend fun doWork(): Result {
-        fetchDataFromFirebase()
         notificationAutoCreateLogin(applicationContext)
         return Result.success()
     }
 
     private suspend fun notificationAutoCreateLogin(context: Context) {
-
-            val locationNotification = ActivityNotification(
-                context = context,
-                "New location discovered.",
-                "Let's capture the Moment!🥳",
-            )
-            locationNotification.launchNotification()
-            autoCreateActivity()
+        fetchDataFromFirebase()
+        val locationNotification = ActivityNotification(
+            context = context,
+            "New location discovered.",
+            "Let's capture the Moment!🥳",
+        )
+        locationNotification.launchNotification()
+        autoCreateActivity()
     }
 
     private fun fetchDataFromFirebase() {

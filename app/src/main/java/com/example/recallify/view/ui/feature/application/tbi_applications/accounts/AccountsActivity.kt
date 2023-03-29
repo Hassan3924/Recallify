@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit
 val copiedLocation = mutableStateOf("")
 val copiedLongitude = mutableStateOf("")
 val copiedLatitude = mutableStateOf("")
-val activityWorkTimer = mutableStateOf(0L)
+val activityWorkTimer = mutableStateOf(20L)
 class AccountsActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient

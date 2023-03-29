@@ -246,32 +246,13 @@ open class DashboardActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (childSnapshot in snapshot.children) {
-//                            val key = childSnapshot.key!!
-//                            Log.d("key_checker", "nrgwKey: $key")
                             date.value = childSnapshot.child("date").value.toString()
                             time.value = childSnapshot.child("time").value.toString()
                             locationName.value =
                                 childSnapshot.child("locationName").value.toString()
+                            locationAddress.value =
+                                childSnapshot.child("locationAddress").value.toString()
                         }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    isActivityLoading = false
-                }
-            })
-        }
-
-        LaunchedEffect(Unit) {
-            val latestDB = FirebaseDatabase.getInstance().reference
-            val liveTrackLocation = latestDB.child("users")
-                .child(userID)
-                .child("liveLocation")
-
-            liveTrackLocation.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        locationAddress.value = snapshot.child("address").value.toString()
                     }
                 }
 
@@ -304,78 +285,85 @@ open class DashboardActivity : AppCompatActivity() {
                                 .padding(top = 8.dp)
                                 .padding(bottom = 20.dp)
                         ) {
-                            Text(
-                                text = "Latest activity",
-                                style = MaterialTheme.typography.body1.copy(
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                modifier = Modifier.padding(bottom = 4.dp)
-                            )
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                elevation = 5.dp,
-                                backgroundColor = MaterialTheme.colors.background
-                            ) {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.SpaceEvenly
+                            if (locationName.value.isNotBlank()) {
+                                Text(
+                                    text = "Latest activity",
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    elevation = 5.dp,
+                                    backgroundColor = MaterialTheme.colors.background
                                 ) {
                                     Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(
-                                                horizontal = 16.dp,
-                                                vertical = 4.dp
-                                            )
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalArrangement = Arrangement.SpaceEvenly
                                     ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.Start
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(
+                                                    horizontal = 16.dp,
+                                                    vertical = 4.dp
+                                                )
                                         ) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.Start
+                                            ) {
+                                                Text(
+                                                    text = date.value,
+                                                    style = MaterialTheme.typography.caption.copy(
+                                                        color = Color.LightGray,
+                                                        fontSize = 14.sp
+                                                    )
+                                                )
+                                                Spacer(
+                                                    modifier = Modifier.padding(
+                                                        horizontal = 6.dp
+                                                    )
+                                                )
+                                                Text(
+                                                    text = time.value,
+                                                    style = MaterialTheme.typography.caption.copy(
+                                                        color = Color.LightGray,
+                                                        fontSize = 14.sp
+                                                    )
+                                                )
+                                            }
                                             Text(
-                                                text = date.value,
+                                                text = "last seen at",
                                                 style = MaterialTheme.typography.caption.copy(
-                                                    color = Color.LightGray,
-                                                    fontSize = 14.sp
+                                                    color = Color.Gray,
+                                                    fontSize = 12.sp
                                                 )
                                             )
-                                            Spacer(
-                                                modifier = Modifier.padding(
-                                                    horizontal = 6.dp
+                                            Text(
+                                                text = locationName.value,
+                                                style = MaterialTheme.typography.h6.copy(
+
                                                 )
                                             )
+                                            Spacer(modifier = Modifier.padding(4.dp))
                                             Text(
-                                                text = time.value,
+                                                text = locationAddress.value,
                                                 style = MaterialTheme.typography.caption.copy(
-                                                    color = Color.LightGray,
-                                                    fontSize = 14.sp
+                                                    color = Color.Gray,
+                                                    fontSize = 12.sp
                                                 )
                                             )
                                         }
-                                        Text(
-                                            text = locationName.value,
-                                            style = MaterialTheme.typography.h6.copy(
-
-                                            )
-                                        )
-                                        Spacer(modifier = Modifier.padding(4.dp))
-                                        Text(
-                                            text = locationAddress.value,
-                                            style = MaterialTheme.typography.caption.copy(
-                                                color = Color.Gray,
-                                                fontSize = 12.sp
-                                            )
-                                        )
                                     }
                                 }
                             }
                         }
                         Column(
                             modifier = Modifier.padding(vertical = 8.dp),
-//                            verticalArrangement = Arrangement.spacedBy(20.dp),
-//                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = "Think fast progress",
@@ -384,13 +372,6 @@ open class DashboardActivity : AppCompatActivity() {
                                 ),
                                 modifier = Modifier.padding(bottom = 4.dp)
                             )
-//                            Text(
-//                                text = "Score",
-//                                fontWeight = FontWeight.SemiBold,
-//                                color = Color.Black,
-//                                fontSize = 20.sp,
-//                                textAlign = TextAlign.Center
-//                            )
 
                             Column(
                                 modifier = Modifier
