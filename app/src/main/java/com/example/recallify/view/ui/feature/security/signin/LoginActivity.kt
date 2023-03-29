@@ -289,7 +289,8 @@ class LoginActivity : AppCompatActivity() {
                                                                     }
                                                                 }
 
-                                                            } else {
+                                                            }
+                                                            if (role == "Guardian") {
                                                                 // Navigate to a different destination for users with other roles
                                                                 onNavToGuardianHome()
                                                                 val auth = Firebase.auth
@@ -308,6 +309,15 @@ class LoginActivity : AppCompatActivity() {
                                                                 }
 
                                                             }
+
+                                                            if (role != "Guardian" && role != "TBI Patient") {
+                                                                Toast.makeText(
+                                                                    context,
+                                                                    "Incorrect Email or Password",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            }
+
                                                         }
 
                                                         override fun onCancelled(error: DatabaseError) {
