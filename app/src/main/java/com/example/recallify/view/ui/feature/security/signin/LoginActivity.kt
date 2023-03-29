@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -160,13 +159,6 @@ class LoginActivity : AppCompatActivity() {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_recallify_logo_final_round_4),
-                                contentDescription = "Logo picture",
-                            modifier = Modifier.size(225.dp)
-                                .padding(bottom = 40.dp))
-
 
                             var isEmailValid by remember { mutableStateOf(false) }
 
