@@ -315,7 +315,7 @@ class AccountsActivity : AppCompatActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {
-                        RecallifyCustomHeader(title = "Let's head Out. ⚡")
+                        RecallifyCustomHeader(title = "Let's head out. ⚡")
                         Button(
                             onClick = {
                                 val intent =

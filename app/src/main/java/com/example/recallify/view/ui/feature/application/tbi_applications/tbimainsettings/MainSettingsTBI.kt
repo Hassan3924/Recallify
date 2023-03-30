@@ -355,7 +355,7 @@ class MainSettingsTBI : AppCompatActivity() {
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                                         Text(
-                                            text = "Recallify Customer Care",
+                                            text = "Customer Care",
                                             style = MaterialTheme.typography.button
                                         )
                                     }
