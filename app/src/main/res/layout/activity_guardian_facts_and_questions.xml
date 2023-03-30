@@ -5,9 +5,9 @@
     android:layout_height="match_parent">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/activity_accounts_screen"
+        android:id="@+id/activity_guardian_faq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:context=".view.ui.feature.application.tbi_applications.accounts.AccountsActivity" />
+        tools:context=".view.ui.feature.guradian_application.mainsettingpages.GuardianFactsAndQuestionsActivity" />
 
 </RelativeLayout>

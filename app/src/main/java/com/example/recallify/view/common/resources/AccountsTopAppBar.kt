@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AccountsTopAppBar(
+    onNavBackButton: @Composable (() -> Unit),
     onNavToHome: @Composable (() -> Unit)
 ) {
     Box(
@@ -28,13 +29,15 @@ fun AccountsTopAppBar(
             modifier = Modifier.fillMaxWidth(),
             actions = {
                 onNavToHome()
-            }
+            },
+            navigationIcon = { onNavBackButton() }
         )
     }
 }
 
 @Composable
 fun GuardiansAccountTopAppBar(
+    onNavBackButton: @Composable (() -> Unit),
     onNavToHome: @Composable (() -> Unit)
 ) {
     Box(
@@ -48,7 +51,8 @@ fun GuardiansAccountTopAppBar(
             modifier = Modifier.fillMaxWidth(),
             actions = {
                 onNavToHome()
-            }
+            },
+            navigationIcon = { onNavBackButton() }
         )
     }
 }

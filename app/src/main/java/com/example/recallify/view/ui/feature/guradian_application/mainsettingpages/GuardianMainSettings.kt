@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 
 class GuardianMainSettings : AppCompatActivity() {
@@ -105,7 +106,6 @@ class GuardianMainSettings : AppCompatActivity() {
             }
         })
 
-
         Scaffold(
             topBar = { MainSettingsTopBar() },
             bottomBar = { BottomBarFiller()},
@@ -136,10 +136,11 @@ class GuardianMainSettings : AppCompatActivity() {
                         Column(verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "Greetings ${userName.value}!",
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .padding(top = 16.dp, bottom = 8.dp),
+                                text = "Greetings ${userName.value.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.ROOT
+                                    ) else it.toString()
+                                }}!",
                                 style = MaterialTheme.typography.h4.copy(
                                     fontWeight = FontWeight.ExtraBold
                                 )
@@ -179,14 +180,12 @@ class GuardianMainSettings : AppCompatActivity() {
                                                 R.anim.slide_in_right,
                                                 R.anim.slide_out_left
                                             )
-                                            finish()
                                         })
                                         .padding(
                                             horizontal = 10.dp,
                                             vertical = 10.dp
                                         )
                                         .fillMaxWidth(),
-
                                     ) {
                                     Row(
                                         horizontalArrangement = Arrangement.Center,
@@ -375,17 +374,13 @@ class GuardianMainSettings : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(horizontal = 16.dp)
                 .padding(top = 4.dp)
-                .clip(shape = RoundedCornerShape(26.dp))
                 .background(MaterialTheme.colors.background),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Main Settings",
-                style = MaterialTheme.typography.body1.copy(
-                    fontWeight = FontWeight.Medium
-                )
+                text = "Settings",
+                style = MaterialTheme.typography.h6
             )
         }
     }

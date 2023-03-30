@@ -6,33 +6,21 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.recallify.R
+import com.example.recallify.view.common.components.RecallifyCustomHeader
 import com.example.recallify.view.common.resources.GuardiansAccountTopAppBar
-import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.AccountsActivity
-import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.mainsettingpages.GuardianMainSettings
 //import com.example.recallify.view.ui.feature.BaseActivity
@@ -46,6 +34,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class GuardianAccountsActivity : AppCompatActivity() {
 
@@ -62,8 +51,6 @@ class GuardianAccountsActivity : AppCompatActivity() {
         }
     }
 
-
-
     @Composable
     fun AccountsScreen() {
 
@@ -78,53 +65,53 @@ class GuardianAccountsActivity : AppCompatActivity() {
         var uid by remember { mutableStateOf("") }
         val sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
-        var showPINField by remember { mutableStateOf(true)}
-        var tbiEmailConfirmed : String = ""
-        
+        val showPINField by remember { mutableStateOf(true) }
+        var tbiEmailConfirmed: String = ""
+
 
         Scaffold(
             topBar = {
-                GuardiansAccountTopAppBar {
+                GuardiansAccountTopAppBar(
+                    onNavBackButton = {
+                        IconButton(onClick = {
+                            val intent = Intent(
+                                this@GuardianAccountsActivity,
+                                GuardianMainSettings::class.java
+                            )
+                            startActivity(intent)
+                            finish()
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_arrow_back_24),
+                                null
+                            )
+                        }
+                    }
+                ) {
                     LogoutButton(activity = this@GuardianAccountsActivity)
-                } },
+                }
+            },
             backgroundColor = MaterialTheme.colors.surface
         ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                verticalArrangement = Arrangement.Center
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .padding(top = 4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        Icons.Filled.Person,
-                        contentDescription = "User icon",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(150.dp)
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 10.dp)
-                        .padding(bottom = 8.dp),
-                    Arrangement.Center,
+                        .padding(vertical = 16.dp),
+                    Arrangement.Top,
                     Alignment.CenterHorizontally
                 ) {
-
                     var firstName: String by remember { mutableStateOf("") }
                     var lastName: String by remember { mutableStateOf("") }
                     var email: String by remember { mutableStateOf("") }
                     var password: String by remember { mutableStateOf("") }
                     var tbiEmail: String by remember { mutableStateOf("") }
-                    var PIN: String by remember { mutableStateOf("")}
+                    var PIN: String by remember { mutableStateOf("") }
 
 
                     LaunchedEffect(Unit) {
@@ -174,47 +161,59 @@ class GuardianAccountsActivity : AppCompatActivity() {
                                 }
                             })
                     }
+                    RecallifyCustomHeader(title = "Account Details")
                     Row(
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp),
+                        modifier = Modifier.padding(vertical = 5.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-
                         Text(
                             text = "First Name:",
                             style = MaterialTheme.typography.h6.copy(
                                 fontWeight = FontWeight.SemiBold
-                            ))
+                            )
+                        )
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = firstName)
+                        Text(text = firstName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        })
                     }
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
+                        modifier = Modifier.padding(vertical = 10.dp)
                     ) {
 
-                        Text(text = "Last Name:",
+                        Text(
+                            text = "Last Name:",
                             style = MaterialTheme.typography.h6.copy(
                                 fontWeight = FontWeight.SemiBold
-                            ))
+                            )
+                        )
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = lastName)
+                        Text(text = lastName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        })
                     }
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
+                        modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "Email:",
+                        Text(
+                            text = "Email:",
                             style = MaterialTheme.typography.h6.copy(
                                 fontWeight = FontWeight.SemiBold
-                            ))
+                            )
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = email)
-
                     }
 
                     database.child(current).child("profile").child("TBI Email")
@@ -231,41 +230,54 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
+                        modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "TBI Email:",
+                        Text(
+                            text = "TBI Email:",
                             style = MaterialTheme.typography.h6.copy(
                                 fontWeight = FontWeight.SemiBold
-                            ))
-                        Spacer(modifier = Modifier.width(40.dp))
+                            )
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
 
-                        if (tbiEmailConfirmed.isNullOrEmpty()) {
+                        if (tbiEmailConfirmed.isEmpty()) {
                             Text(text = "No patient's email connected to this account")
-                        }
-                        else {
-                            Text(text= tbiEmailConfirmed)
+                        } else {
+                            Text(text = tbiEmailConfirmed)
                         }
 
 
                     }
-
+                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                    RecallifyCustomHeader(title = "Add new TBI user")
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
+                        modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "TBI Email:",
-                            style = MaterialTheme.typography.h6.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ))
                         Spacer(modifier = Modifier.weight(1f))
                         if (showEmailField) {
-                            TextField(
+                            OutlinedTextField(
                                 value = tbiEmail,
                                 onValueChange = { newValue -> tbiEmail = newValue },
-                                label = { Text("Enter new email") },
-                                modifier = Modifier.width(200.dp),
-                                singleLine = true
+                                label = { Text("TBI Email Address") },
+                                placeholder = {
+                                    Text(text = "Example: user@gmail.com")
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                trailingIcon = {
+                                    IconButton(onClick = {
+                                        tbiEmail = ""
+                                    }) {
+                                        Icon(
+                                            painterResource(id = R.drawable.backspace_48),
+                                            null,
+                                            tint = Color.Black,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    }
+                                }
                             )
                         } else {
                             Text(
@@ -279,20 +291,32 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
+                        modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "PIN:",
-                            style = MaterialTheme.typography.h6.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ))
                         Spacer(modifier = Modifier.weight(1f))
                         if (showPINField) {
-                            TextField(
-                                value = PIN.toString(),
-                                onValueChange = { newValue -> PIN = newValue },
-                                label = { Text("Enter PIN") },
-                                modifier = Modifier.width(200.dp),
-                                singleLine = true
+                            val maxChar = 4
+                            OutlinedTextField(
+                                value = PIN,
+                                onValueChange = { newValue -> if (newValue.length <= maxChar) PIN = newValue },
+                                label = { Text("TBI Account Pin") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                placeholder = {
+                                    Text(text = "Example: 4231")
+                                },
+                                trailingIcon = {
+                                    IconButton(onClick = {
+                                        PIN = ""
+                                    }) {
+                                        Icon(
+                                            painterResource(id = R.drawable.backspace_48),
+                                            null,
+                                            tint = Color.Black,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    }
+                                }
                             )
                         } else {
                             Text(
@@ -303,27 +327,41 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         }
                     }
 
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 30.dp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
-                        Button(onClick = {
-                            val intent = Intent(this@GuardianAccountsActivity, GuardiansDashboardActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }) {
-                            Text(text = "Go to Dashboard")
+                        SaveButton(tbiEmail = tbiEmail, PIN = PIN, database, current)
+                        Spacer(modifier = Modifier.padding(horizontal = 30.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            RecallifyCustomHeader(title = "Let's head Out. ⚡")
+                            Button(
+                                onClick = {
+                                    val intent = Intent(
+                                        this@GuardianAccountsActivity,
+                                        GuardiansDashboardActivity::class.java
+                                    )
+                                    startActivity(intent)
+                                    finish()
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = MaterialTheme.colors.primaryVariant
+                                )
+                            ) {
+                                Text(
+                                    text = "Go to Dashboard",
+                                    style = MaterialTheme.typography.button
+                                )
+                            }
                         }
-
-                        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-
-                        SaveButton(tbiEmail = tbiEmail, PIN = PIN ,database, current)
-
-
-
                     }
                 }
             }
@@ -331,83 +369,84 @@ class GuardianAccountsActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun SaveButton(tbiEmail: String, PIN: String, database: DatabaseReference, current: String){
+    fun SaveButton(tbiEmail: String, PIN: String, database: DatabaseReference, current: String) {
 
-        // State variable to track whether the button has been clicked
         var isButtonClicked by remember { mutableStateOf(false) }
 
         Button(
             onClick = {
-                // Encode email address to use as key in Firebase database
                 val encodedEmail = tbiEmail.replace(".", "_")
-
-//                database.child(current).child("profile").child("PIN").setValue(PIN)
-
-                // Update UID value in testing_connection node
                 val userIdCheck = database.child("connections").child(encodedEmail).child("userID")
                 val pinCheck = database.child("connections").child(encodedEmail).child("PIN")
                 val userEmailCheck = database.child("connections").child(encodedEmail).key
 
                 userIdCheck.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-
                         if (dataSnapshot.exists()) {
-                            var uid = dataSnapshot.getValue(String::class.java)
+                            val uid = dataSnapshot.getValue(String::class.java)
                             Log.i("This is the uid", uid!!)
-
                             pinCheck.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot2: DataSnapshot) {
-
                                     if (dataSnapshot2.exists()) {
                                         val pin = dataSnapshot2.getValue(String::class.java)
                                         Log.i("This is the pin", pin!!)
-
                                         if (userEmailCheck.equals(encodedEmail) && (pin.equals(PIN))) {
-//                                             If both uid and pin exist, make the connection
                                             database.child("GuardiansLinkTable").child(current)
                                                 .child("TBI_ID").setValue(uid)
 
-                                            // Set the isButtonClicked state variable to true
                                             isButtonClicked = true
 
-                                            // Set TBI Email value in database
-                                            database.child(current).child("profile").child("TBI Email")
+                                            database.child(current).child("profile")
+                                                .child("TBI Email")
                                                 .setValue(tbiEmail)
 
-                                            Toast.makeText(this@GuardianAccountsActivity, "Congratulations! Accounts have been connected", Toast.LENGTH_SHORT).show()
-
+                                            Toast.makeText(
+                                                this@GuardianAccountsActivity,
+                                                "Congratulations! Accounts have been connected",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
 
                                         } else {
-                                            Toast.makeText(this@GuardianAccountsActivity, "Wrong Email or PIN", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                this@GuardianAccountsActivity,
+                                                "Wrong Email or PIN",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
-                                    Log.e("onCancelled", "Unable to read value: ${error.toException()}")
+                                    Log.e(
+                                        "onCancelled",
+                                        "Unable to read value: ${error.toException()}"
+                                    )
                                 }
-                            }
-                            )
+                            })
                         }
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-
+                        Log.e(
+                            "onCancelled",
+                            "Unable to read value: ${error.toException()}"
+                        )
                     }
                 })
             },
-            // Disable the button if it has already been clicked
-            enabled = !isButtonClicked
+            enabled = !isButtonClicked,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Save")
+            Text(
+                "Save",
+                style = MaterialTheme.typography.button
+            )
         }
     }
-
 
     @Composable
     fun LogoutButton(activity: GuardianAccountsActivity) {
         val showDialog = remember { mutableStateOf(false) }
-
         IconButton(
             onClick = {
                 showDialog.value = true
@@ -423,101 +462,61 @@ class GuardianAccountsActivity : AppCompatActivity() {
             AlertDialog(
                 onDismissRequest = { showDialog.value = false },
                 title = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Text(
-                            text = "Log out of\nyour account?",
-                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 16.dp)
+
+                    Text(
+                        text = "Log Out.",
+                        style = MaterialTheme.typography.h6.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.padding(
+                            vertical = 8.dp
                         )
-                    }
+                    )
+
                 },
-                text = { },
+                text = {
+                    Text(
+                        text = "Logging out of your account. Come back soon!",
+                        style = MaterialTheme.typography.body1
+                    )
+                },
                 backgroundColor = Color.White,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.size(width = 260.dp, height = 200.dp),
                 confirmButton = {
                     TextButton(
                         onClick = {
-
-                            // Sign out from FirebaseAuth
                             FirebaseAuth.getInstance().signOut()
-
-                            // Navigate to LoginActivity
                             val intent = Intent(activity, LoginActivity::class.java)
                             startActivity(intent)
                             finish()
-
-                            // Dismiss the dialog
                             showDialog.value = false
                         },
-                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
                     ) {
-                        Text(text = "Log Out", fontWeight = FontWeight.Bold, color = Color.Red)
+                        Text(
+                            text = "Log Out",
+                            style = MaterialTheme.typography.button.copy(
+                                color = MaterialTheme.colors.error,
+                                fontWeight = FontWeight.Medium
+                            ),
+                        )
                     }
                 },
                 dismissButton = {
                     TextButton(
                         onClick = { showDialog.value = false },
-                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
                     ) {
-                        Text("Cancel")
+                        Text(
+                            "Cancel",
+                            style = MaterialTheme.typography.button.copy(
+                                color = MaterialTheme.colors.onBackground,
+                                fontWeight = FontWeight.Medium
+                            ),
+                        )
                     }
                 }
             )
         }
     }
-
-    @Composable
-    private fun AccountSettingsTopBar() {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = 16.dp)
-                .padding(top = 4.dp)
-                .clip(shape = RoundedCornerShape(26.dp))
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceEvenly) {
-                IconButton(
-                    onClick = {
-                        val intent = Intent(
-                            applicationContext,
-                            GuardianMainSettings::class.java
-                        )
-                        startActivity(intent)
-                        overridePendingTransition(
-                            R.anim.slide_in_right,
-                            R.anim.slide_out_left
-                        )
-                        finish()
-                    },
-                    Modifier.weight(1f)
-
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_arrow_back_24),
-                        contentDescription = "Go back to Main Settings",
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-                Text(
-                    text = "Account Settings",
-                    style = MaterialTheme.typography.body1.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
-                    modifier = Modifier.weight(2f)
-                )
-            }
-        }
-    }
 }
+
 

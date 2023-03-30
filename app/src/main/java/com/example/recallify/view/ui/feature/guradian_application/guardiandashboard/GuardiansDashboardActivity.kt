@@ -24,12 +24,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
+import com.example.recallify.view.common.components.RecallifyCustomHeader2
 import com.example.recallify.view.common.components.DashBoardTopAppBar
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
@@ -107,21 +107,6 @@ class GuardiansDashboardActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onBackPressed() {
-//
-//        val sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-//        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
-//
-//        if (isLoggedIn) {
-//            // User is logged in, don't allow them to go back to the login screen
-//            super.onBackPressedDispatcher
-//
-//        } else {
-//            // User is not logged in, allow them to go back to the login screen
-//            Toast.makeText(this, "Please log in to continue", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
     private fun refreshLocationData(
         tbiUID: String,
         latitude: MutableState<Double?>,
@@ -195,9 +180,9 @@ class GuardiansDashboardActivity : AppCompatActivity() {
         val locationAddress = remember {
             mutableStateOf("")
         }
-
-        Log.d("latitude", "${latitude.value}")
-        Log.d("longitude", "${longitude.value}")
+        val context = LocalContext.current
+        val launcher =
+            rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {}
 
         LaunchedEffect(Unit) {
 
@@ -222,7 +207,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
+                            Log.d("onCancelledFirebase", "Error Message: ${error.toException()}")
                         }
 
                     })
@@ -240,7 +225,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
+                            Log.d("onCancelledFirebase", "Error Message: ${error.toException()}")
                         }
 
                     })
@@ -258,7 +243,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
+                            Log.d("onCancelledFirebase", "Error Message: ${error.toException()}")
                         }
 
                     })
@@ -276,7 +261,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
+                            Log.d("onCancelledFirebase", "Error Message: ${error.toException()}")
                         }
 
                     })
@@ -306,10 +291,14 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                             for (childSnapshot in snapshot.children) {
                                 val key = childSnapshot.key!!
                                 Log.d("key_checker", "nrgwKey: $key")
-                                date.value = childSnapshot.child("date").value.toString()
-                                time.value = childSnapshot.child("time").value.toString()
+                                date.value =
+                                    childSnapshot.child("date").value.toString()
+                                time.value =
+                                    childSnapshot.child("time").value.toString()
                                 locationName.value =
                                     childSnapshot.child("locationName").value.toString()
+                                locationAddress.value =
+                                    childSnapshot.child("locationAddress").value.toString()
                             }
                         }
                     }
@@ -320,28 +309,6 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                 })
             }
 
-        }
-
-        LaunchedEffect(Unit) {
-            tbiUID.value = getTBIUserID()
-            if (tbiUID.value != null) {
-                val latestDB = FirebaseDatabase.getInstance().reference
-                val liveTrackLocation = latestDB.child("users")
-                    .child(tbiUID.value.toString())
-                    .child("liveLocation")
-
-                liveTrackLocation.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if (snapshot.exists()) {
-                            locationAddress.value = snapshot.child("address").value.toString()
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        isActivityLoading = false
-                    }
-                })
-            }
         }
 
         Scaffold(
@@ -356,246 +323,233 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        )
                         .verticalScroll(scrollState)
                 ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.round_location_on_24),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        RecallifyCustomHeader2(title = "Live tracking")
+                    }
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        elevation = 5.dp,
+                        backgroundColor = MaterialTheme.colors.background
+                    ) {
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp)
-                                .padding(bottom = 20.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-                            Text(
-                                text = "Live Tracking",
-                                style = MaterialTheme.typography.body1.copy(
-                                    fontWeight = FontWeight.Medium
-                                )
-                            )
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = 10.dp,
+                                        vertical = 6.dp
+                                    )
                             ) {
-                                Icon(
-                                    painterResource(id = R.drawable.round_location_on_24),
-                                    contentDescription = null
-                                )
-                                Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-                                Text(
-                                    text = "${
+                                Column(
+                                    verticalArrangement = Arrangement.Top,
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    Text(text = "${
                                         firstName.value?.replaceFirstChar {
                                             if (it.isLowerCase()) it.titlecase(
                                                 Locale.ROOT
                                             ) else it.toString()
                                         }
-                                    } is currently at: ${address.value}",
-                                    style = MaterialTheme.typography.h6.copy(
-                                        color = MaterialTheme.colors.primary.copy(
-                                            alpha = 1f
-                                        )
-                                    )
-                                )
-                            }
-                            /*
-                            * The Buttons for the locations
-                            * */
-                            val context = LocalContext.current
-                            val launcher =
-                                rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
-                                }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
-                                horizontalArrangement = Arrangement.Start,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Button(onClick = {
-                                    if (latitude.value != null && longitude.value != null) {
-//                                        Log.d("InsideButtonlatitude", "${latitude.value}")
-//                                        Log.d("InsideButtonlongitude", "${longitude.value}")
-                                        val uri = getGoogleMaps(
-                                            latitude = latitude.value!!,
-                                            longitude = longitude.value!!
-                                        )
-                                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                                        intent.setPackage("com.google.android.apps.maps")
-
-                                        if (intent.resolveActivity(context.packageManager) != null) {
-                                            launcher.launch(intent)
-                                        } else {
-                                        }
-                                    }
-                                }) {
+                                    } is currently at",
+                                        style = MaterialTheme.typography.body2.copy(
+                                            color = MaterialTheme.colors.onBackground
+                                        ))
                                     Text(
-                                        text = "See location",
-                                        style = MaterialTheme.typography.button
+                                        text = "${address.value}.",
+                                        style = MaterialTheme.typography.body2.copy(
+                                            color = MaterialTheme.colors.primary.copy(
+                                                alpha = 1f
+                                            )
+                                        )
                                     )
                                 }
-                                Spacer(modifier = Modifier.padding(horizontal = 6.dp))
-                                Button(onClick = {
-                                    tbiUID.value?.let {
-                                        refreshLocationData(
-                                            it,
-                                            latitude,
-                                            longitude,
-                                            address
-                                        )
-                                    }
-                                }) {
-                                    Text(
-                                        text = "Refresh",
-                                        style = MaterialTheme.typography.button
-                                    )
-                                }
-                            }
-
-                            Text(
-                                text = "Latest activity of ${
-                                    firstName.value?.replaceFirstChar {
-                                        if (it.isLowerCase()) it.titlecase(
-                                            Locale.ROOT
-                                        ) else it.toString()
-                                    }
-                                }",
-                                style = MaterialTheme.typography.body1.copy(
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                modifier = Modifier
-                                    .padding(bottom = 4.dp)
-                                    .padding(top = 16.dp)
-                            )
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                elevation = 5.dp,
-                                backgroundColor = MaterialTheme.colors.background
-                            ) {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(
-                                                horizontal = 16.dp,
-                                                vertical = 4.dp
-                                            )
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.Start
-                                        ) {
-                                            Text(
-                                                text = date.value,
-                                                style = MaterialTheme.typography.caption.copy(
-                                                    color = Color.LightGray,
-                                                    fontSize = 14.sp
-                                                )
-                                            )
-                                            Spacer(
-                                                modifier = Modifier.padding(
-                                                    horizontal = 6.dp
-                                                )
-                                            )
-                                            Text(
-                                                text = time.value,
-                                                style = MaterialTheme.typography.caption.copy(
-                                                    color = Color.LightGray,
-                                                    fontSize = 14.sp
-                                                )
-                                            )
-                                        }
-                                        Text(
-                                            text = locationName.value,
-                                            style = MaterialTheme.typography.h6.copy(
-
-                                            )
-                                        )
-                                        Spacer(modifier = Modifier.padding(4.dp))
-                                        Text(
-                                            text = locationAddress.value,
-                                            style = MaterialTheme.typography.caption.copy(
-                                                color = Color.Gray,
-                                                fontSize = 12.sp
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                            Column(
-                                modifier = Modifier.padding(vertical = 8.dp),
-                            ) {
-                                Text(
-                                    text = "Think fast progress",
-                                    style = MaterialTheme.typography.body1.copy(
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    modifier = Modifier.padding(top = 16.dp)
-                                )
-
-                                Column(
+                                Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(MaterialTheme.colors.background),
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                        .padding(vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    if (isLoading.value) {
-                                        CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-                                    } else {
-                                        BarChart(
-                                            // First value as date, second value as score of that date
-                                            chartData.value,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            selectedBar = selectedBar,
+                                    Button(
+                                        onClick = {
+                                            if (latitude.value != null && longitude.value != null) {
+                                                val uri = getGoogleMaps(
+                                                    latitude = latitude.value!!,
+                                                    longitude = longitude.value!!
+                                                )
+                                                val intent = Intent(Intent.ACTION_VIEW, uri)
+                                                intent.setPackage("com.google.android.apps.maps")
+
+                                                if (intent.resolveActivity(context.packageManager) != null) {
+                                                    launcher.launch(intent)
+                                                }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            backgroundColor = MaterialTheme.colors.primaryVariant
+                                        )
+                                    ) {
+                                        Text(
+                                            text = "See location",
+                                            style = MaterialTheme.typography.button
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.padding(horizontal = 6.dp))
+                                    Button(
+                                        onClick = {
+                                            tbiUID.value?.let {
+                                                refreshLocationData(
+                                                    it,
+                                                    latitude,
+                                                    longitude,
+                                                    address
+                                                )
+                                            }
+                                        }
+                                    ) {
+                                        Text(
+                                            text = "Refresh",
+                                            style = MaterialTheme.typography.button
                                         )
                                     }
                                 }
+                                if (locationName.value.isNotBlank()) {
+                                    Text(text = "last seen at -",
+                                        style = MaterialTheme.typography.body2.copy(
+                                            color = MaterialTheme.colors.onBackground
+                                        ))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Start
+                                    ) {
+                                        Text(
+                                            text = date.value,
+                                            style = MaterialTheme.typography.caption.copy(
+                                                color = Color.LightGray,
+                                                fontSize = 14.sp
+                                            )
+                                        )
+                                        Spacer(
+                                            modifier = Modifier.padding(
+                                                horizontal = 6.dp
+                                            )
+                                        )
+                                        Text(
+                                            text = time.value,
+                                            style = MaterialTheme.typography.caption.copy(
+                                                color = Color.LightGray,
+                                                fontSize = 14.sp
+                                            )
+                                        )
+                                    }
+                                    Text(
+                                        text = locationName.value,
+                                        style = MaterialTheme.typography.h6.copy(
+
+                                        )
+                                    )
+                                    Spacer(modifier = Modifier.padding(4.dp))
+                                    Text(
+                                        text = locationAddress.value,
+                                        style = MaterialTheme.typography.caption.copy(
+                                            color = Color.Gray,
+                                            fontSize = 12.sp
+                                        )
+                                    )
+                                }
                             }
-                        /*    Text(
-                                text = "Score",
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.Black,
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.Center
-                            )
+                        }
+                    }
+                    Column(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                    ) {
+                        Text(
+                            text = "Think fast progress",
+                            style = MaterialTheme.typography.body1.copy(
+                                fontWeight = FontWeight.Medium
+                            ),
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colors.background),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (isLoading.value) {
+                                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                            } else {
+                                BarChart(
+                                    // First value as date, second value as score of that date
+                                    chartData.value,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    selectedBar = selectedBar,
+                                )
+                            }
+                        }
+                    }
+                    /*    Text(
+                            text = "Score",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
 */
 
-                            Column(
-                                modifier = Modifier.padding(vertical = 8.dp),
-                            ) {
-                                Text(
-                                    text = "Side quest progress",
-                                    style = MaterialTheme.typography.body1.copy(
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    modifier = Modifier.padding(top = 16.dp)
+                    Column(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                    ) {
+                        Text(
+                            text = "Side quest progress",
+                            style = MaterialTheme.typography.body1.copy(
+                                fontWeight = FontWeight.Medium
+                            ),
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colors.background),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (isLoading.value) {
+                                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                            } else {
+
+                                BarChartSQ(
+                                    // First value as date, second value as score of that date
+                                    chartDataSQ.value,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    selectedBar = selectedBar,
                                 )
-
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(MaterialTheme.colors.background),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    if (isLoading.value) {
-                                        CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-                                    } else {
-
-                                        BarChartSQ(
-                                            // First value as date, second value as score of that date
-                                            chartDataSQ.value,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            selectedBar = selectedBar,
-                                        )
-                                    }
-                                }
                             }
                         }
                     }

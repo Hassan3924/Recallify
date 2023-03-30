@@ -11,35 +11,31 @@ import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.work.*
-import androidx.work.WorkRequest
 import com.example.recallify.R
+import com.example.recallify.view.common.components.RecallifyCustomHeader
 import com.example.recallify.view.common.function.ActivityWorker
 import com.example.recallify.view.common.resources.AccountsTopAppBar
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
+import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.security.signin.LoginActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
-import com.example.recallify.view.ui.theme.light_Secondary
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
@@ -52,14 +48,11 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
 import java.util.concurrent.TimeUnit
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 
 
 val copiedLocation = mutableStateOf("")
 val copiedLongitude = mutableStateOf("")
 val copiedLatitude = mutableStateOf("")
-val activityWorkTimer = mutableStateOf(20L)
 
 class AccountsActivity : AppCompatActivity() {
 
@@ -157,7 +150,20 @@ class AccountsActivity : AppCompatActivity() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
-                AccountsTopAppBar { LogoutButton(activity = this@AccountsActivity) }
+                AccountsTopAppBar(
+                    onNavBackButton = {
+                        IconButton(onClick = {
+                            val intent = Intent(this@AccountsActivity, MainSettingsTBI::class.java)
+                            startActivity(intent)
+                            finish()
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_arrow_back_24),
+                                contentDescription = "back button"
+                            )
+                        }
+                    }
+                ) { LogoutButton(activity = this@AccountsActivity) }
             },
             bottomBar = { BottomBarFiller() },
             backgroundColor = MaterialTheme.colors.surface
@@ -166,14 +172,13 @@ class AccountsActivity : AppCompatActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                verticalArrangement = Arrangement.Center
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .padding(vertical = 8.dp),
-                    Arrangement.Center,
+                        .padding(vertical = 16.dp),
+                    Arrangement.Top,
                     Alignment.CenterHorizontally
                 ) {
 
@@ -239,31 +244,48 @@ class AccountsActivity : AppCompatActivity() {
                                 }
                             })
                     }
-
+                    RecallifyCustomHeader(title = "Account Details")
                     Row(
                         modifier = Modifier.padding(vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.Top,
                     ) {
-                        Text(text = "First Name:")
+                        Text(text = "First Name:",style = MaterialTheme.typography.h6.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ))
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = firstName)
+                        Text(text = firstName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        })
                     }
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "Last Name:")
+                        Text(text = "Last Name:",style = MaterialTheme.typography.h6.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ))
                         Spacer(modifier = Modifier.weight(1f))
-                        Text(text = lastName)
+                        Text(text = lastName.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        })
                     }
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "Email:")
+                        Text(
+                            text = "Email:",
+                            style = MaterialTheme.typography.h6.copy(
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = email)
                     }
@@ -272,223 +294,39 @@ class AccountsActivity : AppCompatActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "PIN:")
+                        Text(
+                            text = "PIN:",
+                            style = MaterialTheme.typography.h6.copy(
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = PIN)
                     }
-                    Spacer(modifier = Modifier.padding(vertical = 6.dp))
-                    // The expandable preferences + switch to enable the work manager
-                    Text(
-                        text = "Activity preferences",
-                        style = MaterialTheme.typography.caption.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-//                    CustomCard()
-                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
-
-                    Button(onClick = {
-                        val intent = Intent(this@AccountsActivity, DashboardActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }) {
-                        Text(text = "Go to Dashboard")
-                    }
-                }
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    fun CustomCard() {
-        var expandedCard by remember {
-            mutableStateOf(false)
-        }
-        var expandedTimer by remember {
-            mutableStateOf(false)
-        }
-        val checkedState = remember {
-            mutableStateOf(true)
-        }
-        val timer = remember { mutableStateOf(15L) }
-
-        var turnOff by remember {
-            mutableStateOf(true)
-        }
-
-        if (!turnOff) {
-            activityWorkTimer.value = timer.value
-        } else {
-            activityWorkTimer.value = 16L
-        }
-
-        if (checkedState.value) {
-            WorkManager
-                .getInstance(this@AccountsActivity)
-                .enqueue(activityWorkRequest)
-        }
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .animateContentSize(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        easing = LinearOutSlowInEasing
-                    )
-                ),
-            shape = RoundedCornerShape(4.dp),
-            onClick = {
-                expandedCard = !expandedCard
-            },
-            backgroundColor = if (!expandedCard) MaterialTheme.colors.background else light_Secondary
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Auto activities",
-                        fontSize = MaterialTheme.typography.button.fontSize,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "${timer.value} mins",
-                            fontSize = MaterialTheme.typography.body2.fontSize,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(4.dp)
-                        )
-                        IconButton(
-                            modifier = Modifier.alpha(ContentAlpha.medium),
-                            onClick = {
-                                expandedCard = !expandedCard
-
-                            }) {
-                            if (expandedCard) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.round_arrow_drop_down_24),
-                                    contentDescription = null
-                                )
-                            } else {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.round_arrow_left_24),
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                    }
-                }
-                if (expandedCard) {
+                    Spacer(modifier = Modifier.padding(vertical = 20.dp))
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colors.background)
+                            .padding(vertical = 16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                        RecallifyCustomHeader(title = "Let's head Out. ⚡")
+                        Button(
+                            onClick = {
+                                val intent =
+                                    Intent(this@AccountsActivity, DashboardActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = MaterialTheme.colors.primaryVariant
+                            )
                         ) {
                             Text(
-                                text = "Build an activity by introducing a new location.",
-                                style = MaterialTheme.typography.body1.copy(
-                                    fontSize = 14.sp
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(2.dp)
+                                text = "Go to Dashboard",
+                                style = MaterialTheme.typography.button
                             )
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                ExposedDropdownMenuBox(
-                                    modifier = Modifier
-                                        .weight(5f)
-                                        .padding(vertical = 8.dp),
-                                    expanded = expandedTimer,
-                                    onExpandedChange = { expandedTimer = it }
-                                ) {
-                                    OutlinedTextField(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        value = timer.value.toString(),
-                                        onValueChange = { },
-                                        readOnly = true,
-                                        enabled = turnOff,
-                                        label = { Text("Time interval") },
-                                        placeholder = { Text("Select time interval (minutes)") },
-                                        trailingIcon = {
-                                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                                expanded = expandedTimer
-                                            )
-                                        },
-                                        colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                            backgroundColor = Color.Transparent,
-                                            focusedIndicatorColor = MaterialTheme.colors.primary,
-                                            focusedTrailingIconColor = MaterialTheme.colors.primary,
-                                        ),
-                                    )
-                                    ExposedDropdownMenu(
-                                        expanded = expandedTimer,
-                                        modifier = Modifier.width(50.dp),
-                                        onDismissRequest = { expandedTimer = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            content = {
-                                                Text(text = "15 mins")
-                                            },
-                                            onClick = {
-                                                timer.value = 15
-                                                expandedTimer = false
-                                            },
-                                            enabled = turnOff
-                                        )
-                                        DropdownMenuItem(
-                                            content = {
-                                                Text(text = "25 mins")
-                                            },
-                                            onClick = {
-                                                timer.value = 25
-                                                expandedTimer = false
-                                            },
-                                            enabled = turnOff
-                                        )
-                                        DropdownMenuItem(
-                                            content = {
-                                                Text(text = "35 mins")
-                                            },
-                                            onClick = {
-                                                timer.value = 35
-                                                expandedTimer = false
-                                            },
-                                            enabled = turnOff
-                                        )
-                                    }
-                                }
-                                Switch(
-                                    checked = checkedState.value,
-                                    onCheckedChange = {
-                                        checkedState.value = it
-                                        turnOff = it
-                                    },
-                                    modifier = Modifier.weight(2f)
-                                )
-                            }
                         }
                     }
                 }
@@ -499,7 +337,6 @@ class AccountsActivity : AppCompatActivity() {
     @Composable
     fun LogoutButton(activity: AccountsActivity) {
         val showDialog = remember { mutableStateOf(false) }
-
         IconButton(
             onClick = {
                 showDialog.value = true

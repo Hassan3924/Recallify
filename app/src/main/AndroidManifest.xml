@@ -26,13 +26,18 @@
         android:theme="@style/Theme.Recallify"
         tools:targetApi="31">
         <activity
+            android:name=".view.ui.feature.guradian_application.mainsettingpages.GuardianFactsAndQuestionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.feature.application.tbi_applications.tbimainsettings.FactsAndQuestionsActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.ui.feature.application.tbi_applications.sidequest.SideQuestGameSelectorDate"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
-        <!-- push notification -->
+        </activity> <!-- push notification -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_launcher_recallify_foreground" />
