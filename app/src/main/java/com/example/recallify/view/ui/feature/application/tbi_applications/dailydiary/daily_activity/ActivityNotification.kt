@@ -17,7 +17,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 class ActivityNotification(
     var context: Context,
     var title: String,
-    var message: String
+    var message: String,
+    var desiredDestination: Class<*>,
+    var intentMessage: String,
+    var intentIcon: Int
 ) {
     private val channelId: String = "FCM100"
     private val channelName: String = "FCMMessage"
@@ -35,7 +38,7 @@ class ActivityNotification(
             notificationManager.createNotificationChannel(notificationChannel)
         }
 
-        val intent = Intent(context, MomentSnapActivity::class.java)
+        val intent = Intent(context, desiredDestination)
 
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
@@ -47,7 +50,7 @@ class ActivityNotification(
 
         notificationBuilder = NotificationCompat.Builder(context, channelId)
         notificationBuilder.setSmallIcon(R.drawable.ic_launcher_recallify_foreground)
-        notificationBuilder.addAction(R.drawable.moment_snap,"Create a Moment", pendingIntent)
+        notificationBuilder.addAction(intentIcon,intentMessage, pendingIntent)
         notificationBuilder.setContentTitle(title)
         notificationBuilder.setContentText(message)
         notificationBuilder.setAutoCancel(true)

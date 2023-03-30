@@ -49,7 +49,6 @@ import com.google.firebase.ktx.Firebase
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 val copiedLocation = mutableStateOf("")
 val copiedLongitude = mutableStateOf("")
 val copiedLatitude = mutableStateOf("")
@@ -127,7 +126,7 @@ class AccountsActivity : AppCompatActivity() {
 
         // Start Activity Work manager
         activityWorkRequest =
-            PeriodicWorkRequestBuilder<ActivityWorker>(20, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<ActivityWorker>(15, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build()
 
@@ -177,7 +176,7 @@ class AccountsActivity : AppCompatActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .padding(vertical = 20.dp),
+                        .padding(vertical = 26.dp),
                     Arrangement.Top,
                     Alignment.CenterHorizontally
                 ) {
@@ -307,11 +306,9 @@ class AccountsActivity : AppCompatActivity() {
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = PIN)
                     }
-                    Spacer(modifier = Modifier.padding(vertical = 20.dp))
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {

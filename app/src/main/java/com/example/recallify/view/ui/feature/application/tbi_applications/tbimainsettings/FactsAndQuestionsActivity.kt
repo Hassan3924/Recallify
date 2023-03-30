@@ -74,14 +74,14 @@ class FactsAndQuestionsActivity : AppCompatActivity() {
                     CustomFaq(
                         title = "What is Recallify?",
                         message = "Recallify is a productivity application for individuals in the " +
-                                "early stages of traumatic brain injury.",
+                                "early stages of Traumatic Brain Injury.",
                     )
                     CustomFaq(
                         title = "What features does the app offer to help improve memory for TBI patients?",
                         message = "Daily Activity --\nAllows users to record their day and what " +
-                                "they do." +
+                                "they did." +
                                 "\n\nSide Quest --\nTakes information from " +
-                                "Daily Activity and questions users about it. Users can later on as well" +
+                                "Daily Activity and questions users about it. Users can later on" +
                                 " review their mistakes.\n\nThink Fast --\nUser have " +
                                 "to look at a visual for a certain period of time and try to recall " +
                                 "variations in the visual in a series of questions. It can be reviewed later on as well.",
@@ -98,20 +98,20 @@ class FactsAndQuestionsActivity : AppCompatActivity() {
                     )
                     CustomFaq(
                         title = "Are there any customization options to tailor the app to individual needs and preferences?",
-                        message = "At the moment, No. We are still in the beta and are looking to adding customization features " +
+                        message = "At the moment, no. We are still in beta development and are looking to adding customization features " +
                                 "to further improve the user experience. So be on the look out for updates."
                     )
                     CustomFaq(
                         title = "How does the app ensure user privacy and data security is secured?",
                         message = "We do not share our user's information with any third-party vendor" +
                                 "all information are consumed by the system and the GUARDIAN in charge." +
-                                " We want to keep our users safe and privacy private."
+                                " We want to keep our users safe and privacy secure."
                     )
                     CustomFaq(
                         title = "Is the app suitable for TBI patients of all ages and severity levels?",
                         message = "The application is intended for ages 9 and above who have sufficient" +
                                 " technological knowledge and are in our audience scope of individuals with" +
-                                " early of traumatic brain injury"
+                                " early stages of Traumatic Brain Injury"
                     )
                     CustomFaq(
                         title = "Are there any costs associated with using the app?",

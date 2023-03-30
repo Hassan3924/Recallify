@@ -87,7 +87,6 @@ class GuardianThinkFastActivity : AppCompatActivity() {
 
     @Composable
     private fun ThinkFastScreen(
-//        playGame: () -> Unit,
         viewScore: () -> Unit,
         viewAnalysis: () -> Unit,
     ) {

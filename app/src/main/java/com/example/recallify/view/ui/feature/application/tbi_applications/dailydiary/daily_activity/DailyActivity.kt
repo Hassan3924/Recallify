@@ -18,7 +18,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.ComposeView
@@ -306,7 +305,6 @@ class DailyActivity : AppCompatActivity() {
                                         ),
                                     )
                                 }
-
                             },
                             dismissButton = {
                                 TextButton(
@@ -367,7 +365,7 @@ class DailyActivity : AppCompatActivity() {
                                 contentColor = MaterialTheme.colors.error,
                             )
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = "Cancel", style = MaterialTheme.typography.button)
                         }
                         Button(
                             onClick = {
@@ -496,7 +494,7 @@ class DailyActivity : AppCompatActivity() {
                                 contentColor = MaterialTheme.colors.onPrimary,
                             )
                         ) {
-                            Text(text = "Post")
+                            Text(text = "Post", style = MaterialTheme.typography.button)
                         }
                     }
                 }

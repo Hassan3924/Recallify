@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.example.recallify.R
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiandashboard.GuardiansDashboardActivity
@@ -43,41 +44,89 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
 
+        val isLoggedIn = mutableStateOf(true)
+
+        lifecycleScope.launch(Dispatchers.Default) {
+            val auth = FirebaseAuth.getInstance()
+            val user = auth.currentUser?.uid.toString()
+            val database = Firebase.database.reference
+            val userRole = database
+                .child("users")
+                .child(user)
+                .child("profile")
+                .child("role")
+
+            userRole.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val role = snapshot.getValue(String::class.java)
+                    if (role == "TBI Patient") {
+                        val intent = Intent(
+                            applicationContext,
+                            DashboardActivity::class.java
+                        )
+                        startActivity(intent)
+                        finish()
+                        isLoggedIn.value = false
+                    } else {
+                        if (role == "Guardian") {
+                            val intent =
+                                Intent(
+                                    applicationContext,
+                                    GuardiansDashboardActivity::class.java
+                                )
+                            startActivity(intent)
+                            finish()
+                            isLoggedIn.value = false
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("UserRole", "retrieval error: ${error.message}")
+
+                }
+            })
+            isLoggedIn.value = false
+        }
+
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                isLoggedIn.value
+            }
+        }
+        setContentView(R.layout.activity_login)
         val binding: ComposeView = findViewById(R.id.activity_login_screen)
         binding.setContent {
             RecallifyTheme {
                 val context = LocalContext.current
                 SignInScreen(
                     onNavToTBIHome = {
-
                         val intent = Intent(context, DashboardActivity::class.java)
                         startActivity(intent)
                         finish()
-
                     },
                     onNavToGuardianHome = {
-
-                      val intent = Intent(context, GuardiansDashboardActivity::class.java)
-                      startActivity(intent)
-                      finish()
-
+                        val intent = Intent(context, GuardiansDashboardActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     },
                     onNavToForgotPassword = {
                         val intent = Intent(context, ForgotPasswordActivity::class.java)
                         startActivity(intent)
-                        finish() //added by Ridin
+                        finish()
                     },
                     onNavToSignUp = {
                         val intent = Intent(context, RegisterActivity::class.java)
                         startActivity(intent)
-                        finish() //added by ridin
+                        finish()
                     },
                 )
             }
@@ -111,33 +160,6 @@ class LoginActivity : AppCompatActivity() {
                     .padding(paddingValue),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Log in to Recallify",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp, bottom = 12.dp)
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.h4
-                    )
-//                    Text(
-//                        text = "These will just take some few minutes",
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(bottom = 12.dp)
-//                            .padding(horizontal = 16.dp, vertical = 4.dp),
-//                        style = MaterialTheme.typography.h6.copy(
-//                            color = Color.Gray
-//                        )
-//                    )
-                }
                 Card(
                     Modifier.weight(2f),
                     backgroundColor = MaterialTheme.colors.background,
@@ -148,27 +170,26 @@ class LoginActivity : AppCompatActivity() {
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "We missed you!",
-                            color = Color.Gray,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.subtitle2,
-                        )
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-
                             Image(
                                 painter = painterResource(id = R.drawable.ic_launcher_recallify_logo_final_round_5),
-                                contentDescription = "App Logo" ,
-                                modifier = Modifier.size(250.dp)
-                                    .padding(bottom = 70.dp))
-
-                            var isEmailValid by remember { mutableStateOf(false) }
-
+                                contentDescription = "App Logo",
+                                modifier = Modifier
+                                    .size(250.dp)
+                                    .padding(bottom = 70.dp)
+                            )
+                            Text(
+                                text = "Log In.",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp, bottom = 12.dp)
+                                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.h4
+                            )
                             OutlinedTextField(
                                 value = email.value,
                                 onValueChange = { email.value = it },
@@ -213,13 +234,12 @@ class LoginActivity : AppCompatActivity() {
                                     )
                                 },
                                 trailingIcon = {
-                                    val painter = if (showPassword.value) {
-                                        painterResource(id = R.drawable.visibility_48)
-                                    } else {
-                                        painterResource(id = R.drawable.visibility_off_48)
-                                    }
-
-                                    IconButton(onClick = { showPassword.value = !showPassword.value }) {
+                                    if (showPassword.value) {
+                                        val painter = if (showPassword.value) {
+                                            painterResource(id = R.drawable.visibility_48)
+                                        } else {
+                                            painterResource(id = R.drawable.visibility_off_48)
+                                        }
                                         Icon(
                                             painter = painter,
                                             contentDescription = "Toggle password visibility",
@@ -233,7 +253,7 @@ class LoginActivity : AppCompatActivity() {
                                 keyboardActions = KeyboardActions(
                                     onDone = {
                                         focusManager.clearFocus()
-                                        isPasswordValid = !password.value.isBlank()
+                                        isPasswordValid = password.value.isNotBlank()
                                     }
                                 )
                             )
@@ -251,7 +271,11 @@ class LoginActivity : AppCompatActivity() {
                                     val password = password.value.trim()
 
                                     if (email.isEmpty() || password.isEmpty()) {
-                                        Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Please enter email and password",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         return@Button
                                     }
 
@@ -279,7 +303,6 @@ class LoginActivity : AppCompatActivity() {
                                                             )
 
                                                             if (role == "TBI Patient") {
-                                                                // Navigate to a specific destination for users with role "TBI"
                                                                 onNavToTBIHome()
                                                                 val auth = Firebase.auth
                                                                 auth.addAuthStateListener { auth ->
@@ -295,10 +318,8 @@ class LoginActivity : AppCompatActivity() {
                                                                         )
                                                                     }
                                                                 }
-
                                                             }
                                                             if (role == "Guardian") {
-                                                                // Navigate to a different destination for users with other roles
                                                                 onNavToGuardianHome()
                                                                 val auth = Firebase.auth
                                                                 auth.addAuthStateListener { auth ->
@@ -346,11 +367,12 @@ class LoginActivity : AppCompatActivity() {
                                                         task.exception
                                                     )
                                                 }
-                                            }
-                                            else{ //code Added to make sure the email is correct and if its in correct format
-
-                                                Toast.makeText(applicationContext,task.exception?.localizedMessage,Toast.LENGTH_SHORT).show()
-
+                                            } else {
+                                                Toast.makeText(
+                                                    applicationContext,
+                                                    task.exception?.localizedMessage,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         }
                                 },
@@ -367,7 +389,7 @@ class LoginActivity : AppCompatActivity() {
 
                             Text(
                                 text = buildAnnotatedString {
-                                                            append("Don't have an Account? ")
+                                    append("Don't have an Account? ")
                                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                                         append("Sign up")
                                     }
@@ -384,52 +406,54 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-        override fun onStart() {
-        super.onStart()
 
-        val auth = FirebaseAuth.getInstance()
-        val user = auth.currentUser?.uid.toString()
-        val database = Firebase.database.reference
-        val userRole = database.child("users").child(user).child("profile").child("role")
-        userRole.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val role = snapshot.getValue(String::class.java)
-                Log.d("UserRole", "Retrieved user role by Ridinbal: $role")
-                if (role == "TBI Patient") {
-                    // Navigate to a specific destination for users with role "TBI"
-                    if (user != null){
-                        Toast.makeText(applicationContext,"Welcome to Recallify",Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-
-                    } else {
-                    // Navigate to a different destination for users with other roles
-                    if (user != null) {
-                        if (role == "Guardian") {
-                            Toast.makeText(
-                                applicationContext,
-                                "Welcome to Recallify",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            val intent =
-                                Intent(this@LoginActivity, GuardiansDashboardActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle error here
-            }
-        })
-
-
-
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        val auth = FirebaseAuth.getInstance()
+//        val user = auth.currentUser?.uid.toString()
+//        val database = Firebase.database.reference
+//        val userRole = database.child("users").child(user).child("profile").child("role")
+//        userRole.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val role = snapshot.getValue(String::class.java)
+//                Log.d("UserRole", "Retrieved user role by Ridinbal: $role")
+//                if (role == "TBI Patient") {
+//                    Toast.makeText(
+//                        applicationContext,
+//                        "Login successful",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    val intent = Intent(
+//                        this@LoginActivity,
+//                        DashboardActivity::class.java
+//                    )
+//                    startActivity(intent)
+//                    finish()
+//                } else {
+//                    if (role == "Guardian") {
+//                        Toast.makeText(
+//                            applicationContext,
+//                            "Login successful",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                        val intent =
+//                            Intent(
+//                                this@LoginActivity,
+//                                GuardiansDashboardActivity::class.java
+//                            )
+//                        startActivity(intent)
+//                        finish()
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Handle error here
+//            }
+//        })
+//
+//
+//    }
 }
 
 

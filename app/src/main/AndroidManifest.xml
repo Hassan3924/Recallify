@@ -25,6 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Recallify"
         tools:targetApi="31">
+
         <activity
             android:name=".view.ui.feature.guradian_application.mainsettingpages.GuardianFactsAndQuestionsActivity"
             android:exported="false" />
@@ -37,14 +38,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity> <!-- push notification -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_launcher_recallify_foreground" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/black" />
-
+        </activity>
         <activity
             android:name=".view.ui.feature.guradian_application.guardiansidequest.GuardianDisplayResultsSideQuest"
             android:exported="false">
@@ -246,7 +240,8 @@
             android:exported="false" />
         <activity
             android:name=".view.ui.feature.security.signin.LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

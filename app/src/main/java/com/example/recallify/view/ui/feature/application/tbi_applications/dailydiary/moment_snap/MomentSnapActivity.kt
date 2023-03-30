@@ -11,21 +11,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
 import com.example.recallify.R
+import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import java.io.File
@@ -75,10 +74,13 @@ class MomentSnapActivity : AppCompatActivity() {
                 }
 
                 if (shouldShowPhoto.value) {
+                    var cancelDialog by remember {
+                        mutableStateOf(false)
+                    }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
+                            .padding(horizontal = 16.dp)
                     ) {
                         Text(
                             text = "Moment Snap preview",
@@ -90,7 +92,7 @@ class MomentSnapActivity : AppCompatActivity() {
                                 .padding(vertical = 8.dp)
                         )
                         Text(
-                            text = "This image can be used to create an activity.\nLet's go!! 🚀",
+                            text = "This image can be used to create an activity. Let's go!! 🚀",
                             style = MaterialTheme.typography.body2.copy(
                                 color = Color.Gray
                             ),
@@ -103,7 +105,7 @@ class MomentSnapActivity : AppCompatActivity() {
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 20.dp)
+                                .padding(vertical = 8.dp)
                                 .clip(RoundedCornerShape(8.dp))
                         )
                         Row(
@@ -111,6 +113,78 @@ class MomentSnapActivity : AppCompatActivity() {
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            if (cancelDialog) {
+                                AlertDialog(
+                                    onDismissRequest = { cancelDialog = false },
+                                    confirmButton = {
+                                        TextButton(
+                                            onClick = {
+                                                val intent = Intent(
+                                                    this@MomentSnapActivity,
+                                                    DailyDiaryActivity::class.java
+                                                )
+                                                startActivity(intent)
+                                            }
+                                        ) {
+                                            Text(
+                                                text = "Discard",
+                                                style = MaterialTheme.typography.button.copy(
+                                                    color = MaterialTheme.colors.error,
+                                                    fontWeight = FontWeight.Medium
+                                                ),
+                                            )
+                                        }
+                                    },
+                                    dismissButton = {
+                                        TextButton(
+                                            onClick = { cancelDialog = false }
+                                        ) {
+                                            Text(
+                                                "Cancel",
+                                                style = MaterialTheme.typography.button.copy(
+                                                    color = MaterialTheme.colors.onBackground,
+                                                    fontWeight = FontWeight.Medium
+                                                ),
+                                            )
+                                        }
+                                    },
+                                    title = {
+                                        Text(
+                                            text = "Discarding Snap!",
+                                            style = MaterialTheme.typography.h6.copy(
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            modifier = Modifier.padding(
+                                                vertical = 8.dp
+                                            )
+                                        )
+                                    },
+                                    text = {
+                                        Text(
+                                            text = "Are you sure you want to discard the moment?",
+                                            style = MaterialTheme.typography.body1
+                                        )
+                                    },
+                                    shape = MaterialTheme.shapes.medium,
+                                    backgroundColor = Color.White
+                                )
+                            }
+                            Button(
+                                onClick = {
+                                    cancelDialog = true
+                                },
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = MaterialTheme.colors.onError,
+                                    contentColor = MaterialTheme.colors.error,
+                                )
+                            ) {
+                                Text(
+                                    text = "Discard",
+                                    style = MaterialTheme.typography.button
+                                )
+                            }
                             Button(
                                 onClick = {
                                     copideImageLink.value = photoUri
@@ -125,7 +199,10 @@ class MomentSnapActivity : AppCompatActivity() {
                                 modifier = Modifier
                                     .padding(8.dp)
                             ) {
-                                Text(text = "Create Activity")
+                                Text(
+                                    text = "Create Activity",
+                                    style = MaterialTheme.typography.button
+                                )
                             }
                         }
                     }

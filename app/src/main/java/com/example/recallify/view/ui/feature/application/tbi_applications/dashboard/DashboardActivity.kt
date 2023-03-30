@@ -16,9 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,7 +32,6 @@ import com.example.recallify.view.ui.feature.application.tbi_applications.sidequ
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
-import com.example.recallify.view.ui.theme.CommonColor
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
@@ -222,12 +219,12 @@ open class DashboardActivity : AppCompatActivity() {
 
         LaunchedEffect(Unit) {
 
-            FirebaseChartData { fetchedData ->
+            firebaseChartData { fetchedData ->
                 chartData.value = fetchedData
                 isLoading.value = false
             }
 
-            FirebaseChartDataSQ { fetchedData ->
+            firebaseChartDataSQ { fetchedData ->
                 chartDataSQ.value = fetchedData
                 isLoading.value = false
             }
@@ -385,18 +382,14 @@ open class DashboardActivity : AppCompatActivity() {
                                     CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                                 } else {
                                     BarChart(
-                                        // First value as date, second value as score of that date
                                         chartData.value,
                                         modifier = Modifier.fillMaxWidth(),
-                                        selectedBar = selectedBar,
                                     )
                                 }
                             }
 
                             Column(
                                 modifier = Modifier.padding(vertical = 8.dp),
-//                                verticalArrangement = Arrangement.spacedBy(20.dp),
-//                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
                                     text = "Side quest progress",
@@ -432,7 +425,7 @@ open class DashboardActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
+    private fun firebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
 
         Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
 
@@ -493,7 +486,7 @@ open class DashboardActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun FirebaseChartDataSQ(onDataFetched: (List<BarCharInputSQ>) -> Unit) {
+    fun firebaseChartDataSQ(onDataFetched: (List<BarCharInputSQ>) -> Unit) {
 
         Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
 
@@ -558,12 +551,10 @@ open class DashboardActivity : AppCompatActivity() {
         })
     }
 
-
     @Composable
     fun BarChart(
         inputList: List<BarCharInput>,
         modifier: Modifier = Modifier,
-        selectedBar: Int,
     ) {
         Column(
             modifier = modifier,
@@ -577,15 +568,12 @@ open class DashboardActivity : AppCompatActivity() {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                inputList.forEachIndexed { index, input ->
+                inputList.forEachIndexed { _, input ->
                     Bar(
                         modifier = Modifier,
-                        primaryColor = input.color,
                         value = input.value,
                         maxValue = maxValue,
-//                        description = input.description,
                         date = input.date,
-//                        showDescription = selectedBar == index
                     )
                 }
             }
@@ -617,7 +605,6 @@ open class DashboardActivity : AppCompatActivity() {
 
                     BarSQ(
                         modifier = Modifier,
-                        primaryColor = input.color,
                         value = input.value,
                         maxValue = maxValue,
                         label = input.label,
@@ -632,7 +619,6 @@ open class DashboardActivity : AppCompatActivity() {
     @Composable
     fun BarSQ(
         modifier: Modifier = Modifier,
-        primaryColor: Color,
         value: Int,
         maxValue: Int,
         label: String,
@@ -645,7 +631,6 @@ open class DashboardActivity : AppCompatActivity() {
             minHeight,
             if (maxValue != 0) 160.dp * (value.toFloat() / maxValue.toFloat()) else 0.dp
         )
-
         Column(
             modifier = modifier
                 .height(220.dp)
@@ -660,10 +645,18 @@ open class DashboardActivity : AppCompatActivity() {
                     .width(barWidth)
                     .background(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color.Gray, primaryColor),
+                            colors = if (value > 0) listOf(
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                ),
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                )
+                            ) else listOf(Color.LightGray, Color.LightGray),
                             startY = 0f,
                             endY = Float.POSITIVE_INFINITY
-                        )
+                        ),
+                        shape = RoundedCornerShape(50.dp)
                     ),
                 contentAlignment = Center
             ) {
@@ -672,11 +665,12 @@ open class DashboardActivity : AppCompatActivity() {
                     style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
                     textAlign = TextAlign.Center
                 )
-
             }
             Text(
                 text = date,
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.caption.copy(
+                    fontSize = 10.sp
+                ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .width(barWidth)
@@ -700,12 +694,10 @@ open class DashboardActivity : AppCompatActivity() {
     @Composable
     fun Bar(
         modifier: Modifier = Modifier,
-        primaryColor: Color,
         value: Int,
         maxValue: Int,
         date: String,
     ) {
-
         val barWidth = 40.dp
         val minHeight = 16.dp
         val barHeight = maxOf(
@@ -729,10 +721,18 @@ open class DashboardActivity : AppCompatActivity() {
                     .width(barWidth)
                     .background(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color.Gray, primaryColor),
+                            colors = if (value > 0) listOf(
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                ),
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                )
+                            ) else listOf(Color.LightGray, Color.LightGray),
                             startY = 0f,
                             endY = Float.POSITIVE_INFINITY
-                        )
+                        ),
+                        shape = RoundedCornerShape(50.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -744,7 +744,9 @@ open class DashboardActivity : AppCompatActivity() {
             }
             Text(
                 text = date,
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.caption.copy(
+                    fontSize = 10.sp
+                ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .width(barWidth)
@@ -767,250 +769,4 @@ open class DashboardActivity : AppCompatActivity() {
         val color: Color,
         val date: String
     )
-
-    data class ScoreData(
-        @JvmField
-        @PropertyName("date")
-        val date: String = "",
-
-        @JvmField
-        @PropertyName("score")
-        val score: Int = 0,
-    )
-
-    @Composable
-    fun DescriptionUI() {
-        Column(
-            modifier = Modifier.padding(horizontal = 30.dp)
-        ) {
-            Text(
-                text = "Description",
-                fontSize = 16.sp,
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = "Make a youtube video on  Task management app user " +
-                        "interface and make sure to post it on youtube, " +
-                        "also create thumbnail and other pages",
-                fontSize = 11.sp,
-                color = CommonColor,
-                fontWeight = FontWeight.Normal
-            )
-        }
-    }
-
-
-    @Composable
-    fun LineChart(dataPoints: List<Float>, modifier: Modifier = Modifier) {
-
-        val strokeWidth = 4.dp
-        val stroke = Stroke(width = strokeWidth.value, cap = StrokeCap.Round)
-
-        Canvas(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        ) {
-            val width = size.width
-            val height = size.height
-            val maxValue = dataPoints.maxOrNull() ?: 0f
-            val minValue = dataPoints.minOrNull() ?: 0f
-            val yScale = (maxValue - minValue) / height
-            val xScale = width / (dataPoints.size - 1)
-
-            for (i in 0 until dataPoints.size - 1) {
-                val startX = i * xScale
-                val startY = height - (dataPoints[i] - minValue) / yScale
-                val endX = (i + 1) * xScale
-                val endY = height - (dataPoints[i + 1] - minValue) / yScale
-
-                drawLine(
-                    color = Color.Blue,
-                    start = Offset(startX, startY),
-                    end = Offset(endX, endY),
-                    strokeWidth = strokeWidth.value,
-                    cap = StrokeCap.Round
-                )
-
-            }
-
-        }
-
-    }
-
-    private fun listenForDataUpdates(
-        database: DatabaseReference,
-        onDataUpdate: (List<Float>) -> Unit
-    ) {
-        database.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val dataPoints: List<Float> = parseDataSnapshot(dataSnapshot)
-                onDataUpdate(dataPoints)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
-    }
-
-    private fun parseDataSnapshot(dataSnapshot: DataSnapshot): List<Float> {
-        val dataPoints = mutableListOf<Float>()
-
-        dataSnapshot.children.forEach { childSnapshot ->
-            val dataPoint = childSnapshot.getValue(Float::class.java)
-            dataPoint?.let { dataPoints.add(it) }
-        }
-
-        return dataPoints
-    }
-
-
-/*
-    @Composable
-    fun LineChart(modifier: Modifier = Modifier, lineData: LineData) {
-        Box(modifier) {
-            AndroidView(factory = { context ->
-                LineChart(context).apply {
-                    data = lineData
-                }
-            })
-        }
-    }
-
-    @Composable
-    fun StatisticIndicatorUI() {
-        Column(
-            modifier = Modifier
-                .height(120.dp) ,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            IndicatorItemUI(text = "Finish on time")
-            IndicatorItemUI(color = light_Secondary, text = "Past the deadline")
-            IndicatorItemUI(color = Color(0xFFE3E5E7), text = "Still ongoing")
-        }
-    }
-
-    @Composable
-    fun IndicatorItemUI(color: Color = light_Primary,text:String) {
-        Row {
-            Icon(
-                painter = painterResource(id = coil.base.R.drawable.button_shape),
-                contentDescription = "",
-                tint = color,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = text,
-
-                fontSize = 12.sp,
-                color = Color(0xFF818181),
-                fontWeight = FontWeight.Normal
-            )
-        }
-    }
-
-
-    //Live location Tracking functions #Ridinbal
-    private fun requestLocationPermissions() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
-
-    private fun createLocationRequest() {
-        locationRequest = LocationRequest.create().apply {
-            interval = LOCATION_UPDATE_INTERVAL
-            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-
-    private fun startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-    }
-
-    private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    currentLocation.value = LatLng(location.latitude, location.longitude)
-                }
-            }
-    }
-
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 100
-        private const val LOCATION_UPDATE_INTERVAL: Long = 5000
-        private const val FASTEST_LOCATION_UPDATE_INTERVAL: Long = 2000
-    }
-    private fun getAddressName(lat:Double, lon:Double): String{
-
-        var addressName = ""
-        var geoCoder = Geocoder(this, Locale.getDefault())
-        var address = geoCoder.getFromLocation(lat,lon,1)
-
-        if (address != null) {
-            addressName = address[0].getAddressLine(0)
-
-        }
-        return addressName*/
-
 }
