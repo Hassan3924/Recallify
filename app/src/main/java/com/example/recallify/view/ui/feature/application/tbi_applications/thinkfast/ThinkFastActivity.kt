@@ -76,12 +76,10 @@ class ThinkFastActivity : AppCompatActivity() {
                 ThinkFastScreen(
                     playGame = {
                         context.startActivity(Intent(context, ThinkfastRulesActivity::class.java))
-                        finish()
                     },
                     viewScore = {
                         //  context.startActivity(Intent(context, ThinkfastProgressActivity::class.java))
                         context.startActivity(Intent(context, SelectDateScoreThinkFast::class.java))
-                        finish()
                     },
                     viewAnalysis = {
                         // context.startActivity(Intent(context, ThinkfastAnalysisActivity::class.java))
@@ -91,7 +89,6 @@ class ThinkFastActivity : AppCompatActivity() {
                                 SelectDateAnalyzeProgressThinkFast::class.java
                             )
                         )
-                        finish()
                     }
                 )
             }

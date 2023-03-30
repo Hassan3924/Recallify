@@ -462,7 +462,6 @@ class GuardianAccountsActivity : AppCompatActivity() {
             AlertDialog(
                 onDismissRequest = { showDialog.value = false },
                 title = {
-
                     Text(
                         text = "Log Out.",
                         style = MaterialTheme.typography.h6.copy(
@@ -472,7 +471,6 @@ class GuardianAccountsActivity : AppCompatActivity() {
                             vertical = 8.dp
                         )
                     )
-
                 },
                 text = {
                     Text(

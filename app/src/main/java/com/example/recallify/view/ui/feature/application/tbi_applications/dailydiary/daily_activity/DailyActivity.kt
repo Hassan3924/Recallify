@@ -10,13 +10,16 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
@@ -27,8 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
-import com.example.recallify.view.common.resources.DiaryActivityTopAppBar
 import com.example.recallify.view.common.components.ImagePreviewItem
+import com.example.recallify.view.common.resources.DiaryActivityTopAppBar
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLatitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLocation
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLongitude
@@ -155,11 +158,6 @@ class DailyActivity : AppCompatActivity() {
          * */
         val context = LocalContext.current
 
-//        val msIntent = intent
-//        val msImageLink = msIntent.getStringExtra("MSIMAGELINK")
-//        val msUri = Uri.parse(msImageLink)
-//        imageLink.value = msUri
-
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
@@ -194,78 +192,74 @@ class DailyActivity : AppCompatActivity() {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(screenHeight * 0.5f)
+                            .height(screenHeight * 0.4f)
                             .width(screenWidth * 0.8f)
                             .padding(2.dp)
                     ) {
                         if (imageLink.value != null) {
                             ImagePreviewItem(
                                 uri = imageLink.value!!,
-                                height = screenHeight * 0.6f,
+                                height = screenHeight * 0.5f,
                                 width = screenWidth * 0.9f
                             ) {
                                 imageLink.value = null
                             }
                         } else {
                             Box(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .border(
+                                        border = BorderStroke(2.dp, Black),
+                                        shape = RoundedCornerShape(6.dp)
+                                    ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "No image added!",
-                                    textAlign = TextAlign.Center
-                                )
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "No image added!",
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        OutlinedButton(
+                                            onClick = {
+                                                if (permissionState.status.isGranted) {
+                                                    galleryLauncher.launch("image/*")
+                                                } else
+                                                    permissionState.launchPermissionRequest()
+                                            },
+                                            border = BorderStroke(
+                                                2.dp,
+                                                MaterialTheme.colors.onSurface
+                                            )
+                                        ) {
+                                            Text(
+                                                text = "Add image",
+                                                style = MaterialTheme.typography.button.copy(
+                                                    color = MaterialTheme.colors.onSurface
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Button(onClick = {
-                            if (permissionState.status.isGranted) {
-                                galleryLauncher.launch("image/*")
-                            } else
-                                permissionState.launchPermissionRequest()
-                        }
-                        ) {
-                            Text(text = "Add image")
-                        }
-//                        Spacer(modifier = Modifier.padding(horizontal = 6.dp))
-//                        Button(onClick = {
-//                            context.startActivity(Intent(context, MomentSnapActivity::class.java))
-//                        }
-//                        ) {
-//                            Text(text = "Take photo")
-//                        }
-                    }
-                    /**
-                     * Functionality for adding title to the post and a description
-                     * The user can add a title of maximum 150 characters and for the
-                     * description a maximum of 500 characters.
-                     *
-                     * The location, date, and time will be displayed automatically
-                     * by background functions. The values are stored in a data class
-                     * and sent to the firebase.reference.getInstance().
-                     * */
+                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        /**
-                         * Text-field of the title:
-                         * A title will be able to have maximum 150 characters and
-                         * will be the identifier of the post itself. The title
-                         * cannot be empty else a post will not be granted. In
-                         * other terms the title can be deemed as a caption to
-                         * the post.
-                         *
-                         * @author essien
-                         * */
                         OutlinedTextField(
                             value = location.value,
                             onValueChange = { location.value = it },
@@ -282,29 +276,17 @@ class DailyActivity : AppCompatActivity() {
                             maxLines = 3,
                             shape = RoundedCornerShape(6.dp),
                             colors = TextFieldDefaults.textFieldColors(
-                                textColor = Color.Black,
+                                textColor = Black,
                                 backgroundColor = MaterialTheme.colors.surface
                             )
                         )
                         Spacer(modifier = Modifier.size(8.dp))
                     }
-                    /**
-                     * Post actions: Cancel and Post
-                     * Cancel - To discard and delete a post that is being edited or created.
-                     *          This does not affect the database or any other component on the main
-                     *          screen.
-                     * Post - To save amd post an activity to the main screen as well as the
-                     *        database. This affects the main screen as it will be re-composed
-                     *        with updated data/changes.
-                     * */
+
                     if (cancelDialog) {
                         AlertDialog(
                             onDismissRequest = { cancelDialog = false },
                             confirmButton = {
-                                TextButton(onClick = { cancelDialog = false }
-                                ) { Text(text = "Cancel") }
-                            },
-                            dismissButton = {
                                 TextButton(
                                     onClick = {
                                         context.startActivity(
@@ -316,19 +298,47 @@ class DailyActivity : AppCompatActivity() {
                                         finish()
                                     }
                                 ) {
-                                    Text(text = "Discard")
+                                    Text(
+                                        text = "Discard",
+                                        style = MaterialTheme.typography.button.copy(
+                                            color = MaterialTheme.colors.error,
+                                            fontWeight = FontWeight.Medium
+                                        ),
+                                    )
+                                }
+
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = { cancelDialog = false }
+                                ) {
+                                    Text(
+                                        "Cancel",
+                                        style = MaterialTheme.typography.button.copy(
+                                            color = MaterialTheme.colors.onBackground,
+                                            fontWeight = FontWeight.Medium
+                                        ),
+                                    )
                                 }
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
-                            title = { Text(text = "Leaving without creating an Activity!") },
-                            text = {
+                            title = {
                                 Text(
-                                    text = "Are you sure you want to discard activity?"
+                                    text = "Discarding Activity!",
+                                    style = MaterialTheme.typography.h6.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    modifier = Modifier.padding(
+                                        vertical = 8.dp
+                                    )
                                 )
                             },
-                            shape = RoundedCornerShape(5.dp),
+                            text = {
+                                Text(
+                                    text = "Are you sure you want to discard activity?",
+                                    style = MaterialTheme.typography.body1
+                                )
+                            },
+                            shape = MaterialTheme.shapes.medium,
                             backgroundColor = White
                         )
                     }

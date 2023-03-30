@@ -74,16 +74,11 @@ class GuardianThinkFastActivity : AppCompatActivity() {
             RecallifyTheme {
                 val context = LocalContext.current
                 ThinkFastScreen(
-//                    playGame = {
-//                        context.startActivity(Intent(context, ThinkfastRulesActivity::class.java))
-//                    },
                     viewScore = {
                         context.startActivity(Intent(context, GuardianSelectDateScoreThinkFast::class.java))
-                        finish()
                     },
                     viewAnalysis = {
                         context.startActivity(Intent(context, GuardianSelectDateAnalyzeProgressThinkFast::class.java))
-                        finish()
                     }
                 )
             }

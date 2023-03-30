@@ -187,7 +187,6 @@ class MainSettingsTBI : AppCompatActivity() {
                                                 R.anim.slide_in_right,
                                                 R.anim.slide_out_left
                                             )
-                                            finish()
                                         })
                                         .padding(
                                             horizontal = 10.dp,
@@ -243,7 +242,6 @@ class MainSettingsTBI : AppCompatActivity() {
                                                 R.anim.slide_in_right,
                                                 R.anim.slide_out_left
                                             )
-                                            finish()
                                         })
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
@@ -293,7 +291,6 @@ class MainSettingsTBI : AppCompatActivity() {
                                                 R.anim.slide_in_right,
                                                 R.anim.slide_out_left
                                             )
-                                            finish()
                                         })
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()
@@ -343,7 +340,6 @@ class MainSettingsTBI : AppCompatActivity() {
                                                 R.anim.slide_in_right,
                                                 R.anim.slide_out_left
                                             )
-                                            finish()
                                         })
                                         .padding(horizontal = 10.dp, vertical = 10.dp)
                                         .fillMaxWidth()

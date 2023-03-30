@@ -38,7 +38,6 @@ class MomentSnapActivity : AppCompatActivity() {
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
-
     private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
 
     /**
@@ -66,7 +65,6 @@ class MomentSnapActivity : AppCompatActivity() {
             findViewById(R.id.activity_daily_diary_moment_snap_screen)
         momentSnapCompose.setContent {
             RecallifyTheme {
-//                Text(text = "hello moment snap!")
                 if (shouldShowCamera.value) {
                     CameraView(
                         outputDirectory = outputDirectory,
@@ -130,16 +128,6 @@ class MomentSnapActivity : AppCompatActivity() {
                                 Text(text = "Create Activity")
                             }
                         }
-
-                        Text(
-                            text = "What a beautiful Moment. Can't wait to see this in Activity!\n",
-                            style = MaterialTheme.typography.body1.copy(
-                                color = MaterialTheme.colors.onSurface
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                        )
                     }
                 }
             }

@@ -177,7 +177,7 @@ class AccountsActivity : AppCompatActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .padding(vertical = 16.dp),
+                        .padding(vertical = 20.dp),
                     Arrangement.Top,
                     Alignment.CenterHorizontally
                 ) {
@@ -250,9 +250,11 @@ class AccountsActivity : AppCompatActivity() {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.Top,
                     ) {
-                        Text(text = "First Name:",style = MaterialTheme.typography.h6.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ))
+                        Text(
+                            text = "First Name:", style = MaterialTheme.typography.h6.copy(
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = firstName.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(
@@ -265,9 +267,11 @@ class AccountsActivity : AppCompatActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Text(text = "Last Name:",style = MaterialTheme.typography.h6.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ))
+                        Text(
+                            text = "Last Name:", style = MaterialTheme.typography.h6.copy(
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = lastName.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(
@@ -352,59 +356,65 @@ class AccountsActivity : AppCompatActivity() {
             AlertDialog(
                 onDismissRequest = { showDialog.value = false },
                 title = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Text(
-                            text = "Log out of\nyour account?",
-                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 16.dp)
+                    Text(
+                        text = "Log Out.",
+                        style = MaterialTheme.typography.h6.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.padding(
+                            vertical = 8.dp
                         )
-                    }
+                    )
                 },
-                text = { },
+                text = {
+                    Text(
+                        text = "Logging out of your account. Come back soon!",
+                        style = MaterialTheme.typography.body1
+                    )
+                },
                 backgroundColor = Color.White,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.size(width = 260.dp, height = 200.dp),
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            // Stop location tracking
                             fusedLocationClient.removeLocationUpdates(locationCallback)
-
-                            // Sign out from FirebaseAuth
                             FirebaseAuth.getInstance().signOut()
-
-                            // Navigate to LoginActivity
                             val intent = Intent(activity, LoginActivity::class.java)
                             startActivity(intent)
                             finish()
-
-                            // Dismiss the dialog
                             showDialog.value = false
                         },
-                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
                     ) {
-                        Text(text = "Log Out", fontWeight = FontWeight.Bold, color = Color.Red)
+                        Text(
+                            text = "Log Out",
+                            style = MaterialTheme.typography.button.copy(
+                                color = MaterialTheme.colors.error,
+                                fontWeight = FontWeight.Medium
+                            ),
+                        )
                     }
                 },
                 dismissButton = {
                     TextButton(
                         onClick = { showDialog.value = false },
-                        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
                     ) {
-                        Text("Cancel")
+                        Text(
+                            "Cancel",
+                            style = MaterialTheme.typography.button.copy(
+                                color = MaterialTheme.colors.onBackground,
+                                fontWeight = FontWeight.Medium
+                            ),
+                        )
                     }
                 }
             )
         }
     }
 
-    //Live location Tracking functions #Ridinbal
+    /**
+     * This function request for the location tracking permission from the user.
+     * @author Ridinbal
+     * */
     private fun requestLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(
                 this,

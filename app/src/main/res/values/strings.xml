@@ -2,8 +2,8 @@
     <string name="app_name">Recallify</string>
     <string name="Think_fast_rule_one">Look at the Image for the specified duration mentioned at the top of the screen.</string>
     <string name="think_fast_rule_two">After the specified duration, questions will be displayed to you.</string>
-    <string name="think_fast_introduction">This is Think fast, your recalling visual game.\nThis will help you with recalling visuals presented over a period of time. The aim is to solve the task provided by the game.\n\nRemember you have to think fast!</string>
-    <string name="side_quest_introduction">This is Side quest, your daily diary partner.\nThis will help you with recalling events or actions presented over a period of time. The aim is to solve the task provided by the game.\n\nRemember it is an adventure and you are the journey master!</string>
+    <string name="think_fast_introduction">Recall visual infographics presented over a period of time. Try to solve as many tasks as possible.\n\nRemember you have to think fast!</string>
+    <string name="side_quest_introduction">Recall events or actions presented over a period of time. Try to solve the tasks provided as fast as possible.\n\nRemember it is an adventure and you are the journey master!</string>
     <string name="thinkfast_progress_date">Date:</string>
     <string name="think_fast_your_play_value">Your Play:</string>
     <string name="initial_value">0</string>

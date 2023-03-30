@@ -143,7 +143,4 @@ class FactsAndQuestionsActivity : AppCompatActivity() {
             )
         }
     }
-    /*
-     * Dictating the course of fiascos in the application, we do need a splash screen ahahaha.
-     * */
 }

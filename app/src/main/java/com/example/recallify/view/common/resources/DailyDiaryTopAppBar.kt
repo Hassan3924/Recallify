@@ -1,4 +1,4 @@
- package com.example.recallify.view.common.components
+package com.example.recallify.view.common.components
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -11,29 +11,29 @@ import androidx.compose.ui.unit.dp
 import com.example.recallify.R
 import java.util.*
 
- @Composable
- fun DiaryTopAppBarGuardian(
+@Composable
+fun DiaryTopAppBarGuardian(
 
-     clickFilter: () -> Unit,
+    clickFilter: () -> Unit,
 
- ) {
-     Box(
-         modifier = Modifier
-             .height(56.dp)
-             .fillMaxWidth()
-     ) {
-         TopAppBar(
-             title = { Text("Daily Diary") },
-             backgroundColor = MaterialTheme.colors.background,
-             modifier = Modifier.fillMaxWidth(),
-             actions = {
-                 FilterAction(
-                     onClickFilter = clickFilter
-                 )
-             }
-         )
-     }
- }
+    ) {
+    Box(
+        modifier = Modifier
+            .height(56.dp)
+            .fillMaxWidth()
+    ) {
+        TopAppBar(
+            title = { Text("Daily Diary") },
+            backgroundColor = MaterialTheme.colors.background,
+            modifier = Modifier.fillMaxWidth(),
+            actions = {
+                FilterAction(
+                    onClickFilter = clickFilter
+                )
+            }
+        )
+    }
+}
 
 @Composable
 fun DiaryTopAppBar(
@@ -70,7 +70,7 @@ fun FilterAction(onClickFilter: () -> Unit) {
         onClick = { onClickFilter() }
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.filter),
+            painter = painterResource(id = R.drawable.round_calendar_month_24),
             contentDescription = "filter",
             modifier = Modifier.size(24.dp),
             tint = MaterialTheme.colors.onSurface

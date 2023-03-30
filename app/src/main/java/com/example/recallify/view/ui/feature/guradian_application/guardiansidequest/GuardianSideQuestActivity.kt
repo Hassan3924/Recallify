@@ -78,12 +78,10 @@ class GuardianSideQuestActivity : AppCompatActivity() {
                     viewScore = {
                         val intent = Intent(context, GuardianSelectDateScoreSideQuest::class.java)
                         startActivity(intent)
-                        finish()
                     },
                     viewAnalysis = {
                         val intent = Intent(context, GuardianSelectDateAnalyzeProgressSideQuest::class.java)
                         startActivity(intent)
-                        finish()
                     }
                 )
             }

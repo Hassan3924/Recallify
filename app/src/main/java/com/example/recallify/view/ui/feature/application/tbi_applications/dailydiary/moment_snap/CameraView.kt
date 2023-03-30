@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -43,9 +46,9 @@ fun CameraView(
         mutableStateOf(true)
     }
 
-    val lensFacing: Int = if (switchCamera) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
+    val lensFacing: Int =
+        if (switchCamera) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
 
-    // 1
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -58,7 +61,6 @@ fun CameraView(
 
     val fileNameFormat = "yyyy-MM-dd-HH-mm-ss-SSS"
 
-    // 2
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
         cameraProvider.unbindAll()
@@ -72,60 +74,101 @@ fun CameraView(
         preview.setSurfaceProvider(previewView.surfaceProvider)
     }
 
-    // 3
-    Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
         AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
 
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.fillMaxSize()
         ) {
-            IconButton(
-                modifier = Modifier.padding(bottom = 20.dp),
-                onClick = {
-                    Log.i("kilo", "ON CLICK")
-                    switchCamera = !switchCamera
-                },
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_cameraswitch_24),
-                        contentDescription = "switch camera",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(1.dp)
-                    )
-                }
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 44.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    modifier = Modifier
+                        .padding(bottom = 20.dp),
+                    onClick = {
+                        Log.i("kilo", "ON CLICK")
+                        switchCamera = !switchCamera
+                    },
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.round_cameraswitch_24),
+                            contentDescription = "switch camera",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(38.dp)
+                                .padding(1.dp)
+                        )
+                    }
+                )
+            }
+        }
 
-            IconButton(
-                modifier = Modifier.padding(bottom = 20.dp),
-                onClick = {
-                    Log.i("kilo", "ON CLICK")
-                    takePhoto(
-                        fileNameFormat = fileNameFormat,
-                        imageCapture = imageCapture,
-                        outputDirectory = outputDirectory,
-                        executor = executor,
-                        onImageCapture = onImageCaptured,
-                        onError = onError
-                    )
-                },
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.outline_lens_24),
-                        contentDescription = "Take picture",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(70.dp)
-                            .padding(1.dp)
-                            .border(1.dp, Color.White, CircleShape)
-                    )
-                }
-            )
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.fillMaxSize()
+
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    modifier = Modifier
+                        .padding(bottom = 20.dp),
+                    onClick = {
+                        Log.i("kilo", "ON CLICK")
+                        takePhoto(
+                            fileNameFormat = fileNameFormat,
+                            imageCapture = imageCapture,
+                            outputDirectory = outputDirectory,
+                            executor = executor,
+                            onImageCapture = onImageCaptured,
+                            onError = onError
+                        )
+                    },
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.outline_lens_24),
+                            contentDescription = "Take picture",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(60.dp)
+                                .padding(1.dp)
+                                .border(1.dp, Color.White, CircleShape)
+                        )
+                    }
+                )
+            }
+        }
+
+        Box(
+            contentAlignment = Alignment.TopCenter,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Capture the Moment.\uD83C\uDF89",
+                    style = MaterialTheme.typography.h6.copy(
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
         }
     }
 }
