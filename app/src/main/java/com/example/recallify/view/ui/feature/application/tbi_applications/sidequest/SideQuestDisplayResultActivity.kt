@@ -74,7 +74,7 @@ class SideQuestDisplayResultActivity : AppCompatActivity() {
                         sideQuestDisplayResultBinding.dateTextViewValue.text = currentDate1
                         sideQuestDisplayResultBinding.correctNoTextViewValue.text = correct.toString()
                         sideQuestDisplayResultBinding.incorrectNoTextViewValue.text = wrong.toString()
-                        sideQuestDisplayResultBinding.percentageTextViewValue.text = percentage.toString()
+                        sideQuestDisplayResultBinding.percentageTextViewValue.text = percentage.toString() + " %"
                         sideQuestDisplayResultBinding.wrongTextViewValue.text = yourAnswer
 
                         sideQuestDisplayResultBinding.correctTextViewValue.setTextColor(0xFF006400.toInt())

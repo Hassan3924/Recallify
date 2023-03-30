@@ -78,7 +78,7 @@ class DisplayResultsActivity : AppCompatActivity() {
                         displayResultsBinding.dateTextViewValue.text = currentDate1
                         displayResultsBinding.correctNoTextViewValue.text = correct.toString()
                         displayResultsBinding.incorrectNoTextViewValue.text = wrong.toString()
-                        displayResultsBinding.percentageTextViewValue.text = percentage.toString()
+                        displayResultsBinding.percentageTextViewValue.text = percentage.toString() + " %"
                         displayResultsBinding.wrongTextViewValue.text = yourAnswer
 
                         displayResultsBinding.correctTextViewValue.setTextColor(0xFF006400.toInt())
