@@ -176,6 +176,7 @@ class GuardianMainSettings : AppCompatActivity() {
                                                 GuardianAccountsActivity::class.java
                                             )
                                             startActivity(intent)
+                                            finish() //added by RB
                                             overridePendingTransition(
                                                 R.anim.slide_in_right,
                                                 R.anim.slide_out_left
@@ -350,7 +351,7 @@ class GuardianMainSettings : AppCompatActivity() {
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                                         Text(
-                                            text = "Recallify Customer Care",
+                                            text = "Customer Care",
                                             style = MaterialTheme.typography.button
                                         )
                                     }

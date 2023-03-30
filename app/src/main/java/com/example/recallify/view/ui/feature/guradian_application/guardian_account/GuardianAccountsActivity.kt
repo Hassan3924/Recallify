@@ -233,7 +233,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         modifier = Modifier.padding(vertical = 10.dp)
                     ) {
                         Text(
-                            text = "TBI Email:",
+                            text = "Patient Email:",
                             style = MaterialTheme.typography.h6.copy(
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -249,7 +249,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
 
                     }
                     Spacer(modifier = Modifier.padding(vertical = 8.dp))
-                    RecallifyCustomHeader(title = "Add new TBI user")
+                    RecallifyCustomHeader(title = "Add new TBI Patient user")
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -260,7 +260,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                             OutlinedTextField(
                                 value = tbiEmail,
                                 onValueChange = { newValue -> tbiEmail = newValue },
-                                label = { Text("TBI Email Address") },
+                                label = { Text("Patient Email Address") },
                                 placeholder = {
                                     Text(text = "Example: user@gmail.com")
                                 },
@@ -299,7 +299,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                             OutlinedTextField(
                                 value = PIN,
                                 onValueChange = { newValue -> if (newValue.length <= maxChar) PIN = newValue },
-                                label = { Text("TBI Account Pin") },
+                                label = { Text("Patient Account Pin") },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 placeholder = {
@@ -342,7 +342,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.Start
                         ) {
-                            RecallifyCustomHeader(title = "Let's head Out. ⚡")
+                            RecallifyCustomHeader(title = "Let's head out. ⚡")
                             Button(
                                 onClick = {
                                     val intent = Intent(

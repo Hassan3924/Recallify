@@ -161,6 +161,7 @@ class TermsAndConditions : AppCompatActivity() {
                             GuardianMainSettings::class.java
                         )
                         startActivity(intent)
+                        finish() //added by RB
                         overridePendingTransition(
                             R.anim.slide_in_right,
                             R.anim.slide_out_left
