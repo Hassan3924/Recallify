@@ -76,9 +76,11 @@ class GuardianThinkFastActivity : AppCompatActivity() {
                 ThinkFastScreen(
                     viewScore = {
                         context.startActivity(Intent(context, GuardianSelectDateScoreThinkFast::class.java))
+                        finish() //added by rb
                     },
                     viewAnalysis = {
                         context.startActivity(Intent(context, GuardianSelectDateAnalyzeProgressThinkFast::class.java))
+                        finish() //added by rb
                     }
                 )
             }

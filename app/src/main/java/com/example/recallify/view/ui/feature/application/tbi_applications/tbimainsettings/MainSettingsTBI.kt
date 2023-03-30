@@ -183,6 +183,7 @@ class MainSettingsTBI : AppCompatActivity() {
                                                 AccountsActivity::class.java
                                             )
                                             startActivity(intent)
+                                            finish() //added by rb
                                             overridePendingTransition(
                                                 R.anim.slide_in_right,
                                                 R.anim.slide_out_left

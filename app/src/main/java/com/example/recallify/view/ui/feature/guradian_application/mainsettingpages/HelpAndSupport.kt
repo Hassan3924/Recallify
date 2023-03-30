@@ -76,6 +76,7 @@ class HelpAndSupport : AppCompatActivity() {
                                             GuardianFactsAndQuestionsActivity::class.java
                                         )
                                         startActivity(intent)
+                                        finish() //added by rb
                                         overridePendingTransition(
                                             R.anim.slide_in_right,
                                             R.anim.slide_out_left
@@ -186,6 +187,7 @@ class HelpAndSupport : AppCompatActivity() {
                             GuardianMainSettings::class.java
                         )
                         startActivity(intent)
+                        finish() //added by rb
                         overridePendingTransition(
                             R.anim.slide_in_right,
                             R.anim.slide_out_left
