@@ -85,7 +85,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
             if (userAnswer == "") {
                 userAnswer = "Not answered"
                 mainBinding.textViewFeedback.visibility = View.VISIBLE
-                mainBinding.textViewFeedback.text = "Feedback: You haven't answered the question"
+                mainBinding.textViewFeedback.text = "Feedback: You haven't answered the question \uD83D\uDE14"
                 mainBinding.editTextUserAnswer.setEnabled(false)
                 userWrong++
                 mainBinding.textViewWrong.text = userWrong.toString()
@@ -99,7 +99,7 @@ class SideQuestQuizActivity : AppCompatActivity() {
                 mainBinding.textViewFeedback.visibility = View.VISIBLE
                 userCorrect++ //user correct increases
                 mainBinding.textViewCorrect.text = userCorrect.toString()
-                mainBinding.textViewFeedback.text = "Feedback: Correct answer"
+                mainBinding.textViewFeedback.text = "Feedback: Correct answer \uD83D\uDE0A"
                 //also we need to add the scores the db
                 checker = 1
 
@@ -110,8 +110,8 @@ class SideQuestQuizActivity : AppCompatActivity() {
                 mainBinding.textViewFeedback.visibility = View.VISIBLE
                 userWrong++
                 mainBinding.textViewWrong.text = userWrong.toString()
-                mainBinding.textViewFeedback.text =
-                    "Feedback: Wrong answer, correct answer is $correctAnswer, your answer is $userAnswer"
+             //   mainBinding.textViewFeedback.text = "Feedback: Wrong answer,  correct answer is $correctAnswer, your answer is $userAnswer"
+                mainBinding.textViewFeedback.text = "Feedback: That is wrong answer. Correct answer is $correctAnswer. \uD83D\uDE2E"
                 checker = 1
             }
 

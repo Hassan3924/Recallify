@@ -38,38 +38,43 @@ import com.android.volley.RetryPolicy
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
 import java.util.HashMap
 
-lateinit var mainBinding : ActivityConfirmScreenSummarizeConversationBinding
+
 //var conversationText=""
 
-var responseSaved = ""
 
-val database = FirebaseDatabase.getInstance()
-
-val auth = FirebaseAuth.getInstance()
-
-val user = auth.currentUser // in current user, u can reach info such as email and UID of user who logs into app using the user object
-
-@RequiresApi(Build.VERSION_CODES.O)
-val current = LocalDateTime.now()
-
-@RequiresApi(Build.VERSION_CODES.O)
-val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-@RequiresApi(Build.VERSION_CODES.O)
-val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-
-@RequiresApi(Build.VERSION_CODES.O)
-val timeFormatted = current.format(timeFormatter)
-
-@RequiresApi(Build.VERSION_CODES.O)
-val currentTime = timeFormatted.toString()
-
-@RequiresApi(Build.VERSION_CODES.O)
-val formatted: String = current.format(formatter)
-
-@RequiresApi(Build.VERSION_CODES.O)
-var currentDate:String = formatted.toString()
 class ConfirmScreenSummarizeConversation : AppCompatActivity() {
+
+    lateinit var mainBinding : ActivityConfirmScreenSummarizeConversationBinding
+
+    var responseSaved = ""
+
+    val database = FirebaseDatabase.getInstance()
+
+    val auth = FirebaseAuth.getInstance()
+
+    val user = auth.currentUser // in current user, u can reach info such as email and UID of user who logs into app using the user object
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val current = LocalDateTime.now()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val timeFormatted = current.format(timeFormatter)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val currentTime = timeFormatted.toString()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatted: String = current.format(formatter)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    var currentDate:String = formatted.toString()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = ActivityConfirmScreenSummarizeConversationBinding.inflate(layoutInflater)

@@ -57,21 +57,22 @@ android:layout_marginStart="10dp"
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonStart"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:background="@color/teal_700"
+            android:background="@drawable/btn_start_rec"
             android:text="Start Recording"
             android:textColor="@color/white"
+
             tools:ignore="TextContrastCheck" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonStop"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:background="@color/light_Error"
+            android:background="@drawable/btn_stop_rec"
             android:textColor="@color/white"
-           android:layout_marginStart="80dp"
+           android:layout_marginStart="55dp"
             android:text="Stop Recording" />
 
     </LinearLayout>

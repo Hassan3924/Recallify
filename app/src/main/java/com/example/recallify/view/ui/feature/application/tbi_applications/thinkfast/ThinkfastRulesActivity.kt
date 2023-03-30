@@ -63,7 +63,7 @@ class ThinkfastRulesActivity : AppCompatActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.thinkfast_questions),
+                        painter = painterResource(id = R.drawable.think_fast_question2),
                         contentDescription = "think fast picture",
                         modifier = Modifier
                             .padding(top = 12.dp, bottom = 24.dp)
@@ -89,17 +89,17 @@ class ThinkfastRulesActivity : AppCompatActivity() {
                     ) {
                         Rules(
                             ruleNumber = "1",
-                            imageSource = R.drawable.think_fast_rule_1,
+                            imageSource = R.drawable.think_fast_rule1,
                             ruleMessage = "Look at the Image for the specified duration mentioned at the top of the screen."
                         )
                         Rules(
                             ruleNumber = "2",
-                            imageSource = R.drawable.think_fast_rule_2,
+                            imageSource = R.drawable.think_fast_rule2,
                             ruleMessage = "After the specified duration, questions will be displayed to you."
                         )
                         Rules(
                             ruleNumber = "3",
-                            imageSource = R.drawable.think_fast_rule_3,
+                            imageSource = R.drawable.think_fast_rule3,
                             ruleMessage = "Click the option which you think is correct"
                         )
                         Button(
