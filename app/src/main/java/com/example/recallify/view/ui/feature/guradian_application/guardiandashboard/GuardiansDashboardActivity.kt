@@ -436,10 +436,12 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                                     }
                                 }
                                 if (locationName.value.isNotBlank()) {
-                                    Text(text = "last seen at -",
+                                    Text(
+                                        text = "last seen at -",
                                         style = MaterialTheme.typography.body2.copy(
                                             color = MaterialTheme.colors.onBackground
-                                        ))
+                                        )
+                                    )
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically,
@@ -505,22 +507,12 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                                 CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                             } else {
                                 BarChart(
-                                    // First value as date, second value as score of that date
                                     chartData.value,
                                     modifier = Modifier.fillMaxWidth(),
-                                    selectedBar = selectedBar,
                                 )
                             }
                         }
                     }
-                    /*    Text(
-                            text = "Score",
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.Black,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center
-                        )
-*/
 
                     Column(
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -631,7 +623,6 @@ class GuardiansDashboardActivity : AppCompatActivity() {
     fun BarChart(
         inputList: List<BarCharInput>,
         modifier: Modifier = Modifier,
-        selectedBar: Int,
     ) {
 
         Column(
@@ -654,12 +645,9 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
                     Bar(
                         modifier = Modifier,
-                        primaryColor = input.color,
                         value = input.value,
                         maxValue = maxValue,
-                        description = input.description,
                         date = input.date,
-                        showDescription = selectedBar == index
                     )
                 }
             }
@@ -669,14 +657,10 @@ class GuardiansDashboardActivity : AppCompatActivity() {
     @Composable
     fun Bar(
         modifier: Modifier = Modifier,
-        primaryColor: Color,
         value: Int,
         maxValue: Int,
-        description: String,
         date: String,
-        showDescription: Boolean
     ) {
-
         val barWidth = 40.dp
         val minHeight = 16.dp
         val barHeight = maxOf(
@@ -701,10 +685,18 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                     .width(barWidth)
                     .background(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color.Gray, primaryColor),
+                            colors = if (value > 0) listOf(
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                ),
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                )
+                            ) else listOf(Color.LightGray, Color.LightGray),
                             startY = 0f,
                             endY = Float.POSITIVE_INFINITY
-                        )
+                        ),
+                        shape = RoundedCornerShape(50.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -818,7 +810,6 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
                     BarSQ(
                         modifier = Modifier,
-                        primaryColor = input.color,
                         value = input.value,
                         maxValue = maxValue,
                         label = input.label,
@@ -833,7 +824,6 @@ class GuardiansDashboardActivity : AppCompatActivity() {
     @Composable
     fun BarSQ(
         modifier: Modifier = Modifier,
-        primaryColor: Color,
         value: Int,
         maxValue: Int,
         label: String,
@@ -861,10 +851,18 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                     .width(barWidth)
                     .background(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color.Gray, primaryColor),
+                            colors = if (value > 0) listOf(
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                ),
+                                MaterialTheme.colors.primary.copy(
+                                    alpha = ContentAlpha.medium
+                                )
+                            ) else listOf(Color.LightGray, Color.LightGray),
                             startY = 0f,
                             endY = Float.POSITIVE_INFINITY
-                        )
+                        ),
+                        shape = RoundedCornerShape(50.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
