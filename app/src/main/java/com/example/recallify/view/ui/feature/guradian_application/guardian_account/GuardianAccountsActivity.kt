@@ -68,7 +68,6 @@ class GuardianAccountsActivity : AppCompatActivity() {
         val showPINField by remember { mutableStateOf(true) }
         var tbiEmailConfirmed: String = ""
 
-
         Scaffold(
             topBar = {
                 GuardiansAccountTopAppBar(
@@ -298,7 +297,9 @@ class GuardianAccountsActivity : AppCompatActivity() {
                             val maxChar = 4
                             OutlinedTextField(
                                 value = PIN,
-                                onValueChange = { newValue -> if (newValue.length <= maxChar) PIN = newValue },
+                                onValueChange = { newValue ->
+                                    if (newValue.length <= maxChar) PIN = newValue
+                                },
                                 label = { Text("Patient Account Pin") },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
@@ -485,6 +486,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         onClick = {
                             FirebaseAuth.getInstance().signOut()
                             val intent = Intent(activity, LoginActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
                             startActivity(intent)
                             finish()
                             showDialog.value = false

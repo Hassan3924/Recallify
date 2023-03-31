@@ -21,11 +21,15 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
@@ -36,11 +40,6 @@ import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 
 
 class RegisterActivity : AppCompatActivity() {
@@ -212,16 +211,6 @@ class RegisterActivity : AppCompatActivity() {
                         .padding(horizontal = 16.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.h4
                 )
-//                Text(
-//                    text = "These will just take a few minutes",
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(bottom = 12.dp)
-//                        .padding(horizontal = 16.dp, vertical = 4.dp),
-//                    style = MaterialTheme.typography.h6.copy(
-//                        color = Color.Gray
-//                    )
-//                )
                 Card(
                     modifier = Modifier.weight(1.5f),
                     backgroundColor = MaterialTheme.colors.background,

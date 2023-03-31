@@ -241,7 +241,7 @@
         <activity
             android:name=".view.ui.feature.security.signin.LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.App.Starting">
+            android:theme="@style/Theme.Recallify">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

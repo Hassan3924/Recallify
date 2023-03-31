@@ -19,17 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.work.*
 import com.example.recallify.R
 import com.example.recallify.view.common.components.RecallifyCustomHeader
-import com.example.recallify.view.common.function.ActivityWorker
 import com.example.recallify.view.common.resources.AccountsTopAppBar
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
@@ -47,7 +43,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 val copiedLocation = mutableStateOf("")
 val copiedLongitude = mutableStateOf("")
@@ -58,15 +53,10 @@ class AccountsActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var currentLocation: MutableLiveData<LatLng>
-    private lateinit var activityWorkRequest: WorkRequest
 
     private val databaseReference = FirebaseDatabase.getInstance().reference
     private val user = FirebaseAuth.getInstance().currentUser
     private var locationText: String = ""
-
-    private val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
-        .build()
 
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.O)
@@ -123,13 +113,6 @@ class AccountsActivity : AppCompatActivity() {
 
         // Start receiving location updates
         startLocationUpdates()
-
-        // Start Activity Work manager
-        activityWorkRequest =
-            PeriodicWorkRequestBuilder<ActivityWorker>(15, TimeUnit.MINUTES)
-                .setConstraints(constraints)
-                .build()
-
 
         val accountsCompose: ComposeView = findViewById(R.id.activity_accounts_screen)
         accountsCompose.setContent {
@@ -377,6 +360,7 @@ class AccountsActivity : AppCompatActivity() {
                             fusedLocationClient.removeLocationUpdates(locationCallback)
                             FirebaseAuth.getInstance().signOut()
                             val intent = Intent(activity, LoginActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
                             startActivity(intent)
                             finish()
                             showDialog.value = false
