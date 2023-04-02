@@ -55,18 +55,16 @@ class GuardianAccountsActivity : AppCompatActivity() {
     fun AccountsScreen() {
 
         val auth: FirebaseAuth = Firebase.auth
-        val test = Firebase.database.reference
+        Firebase.database.reference
         val database = Firebase.database.reference.child("users")
         val current = auth.currentUser?.uid!!
-        val childValue = remember { mutableStateOf("") }
-        var tbiEmail = remember { mutableStateOf(TextFieldValue()) }
+        remember { mutableStateOf("") }
+        remember { mutableStateOf(TextFieldValue()) }
         var showEmailField by remember { mutableStateOf(true) }
-        var isDataChanged by remember { mutableStateOf(false) }
-        var uid by remember { mutableStateOf("") }
         val sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+        sharedPref.getBoolean("isLoggedIn", false)
         val showPINField by remember { mutableStateOf(true) }
-        var tbiEmailConfirmed: String = ""
+        var tbiEmailConfirmed = ""
 
         Scaffold(
             topBar = {
@@ -110,7 +108,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     var email: String by remember { mutableStateOf("") }
                     var password: String by remember { mutableStateOf("") }
                     var tbiEmail: String by remember { mutableStateOf("") }
-                    var PIN: String by remember { mutableStateOf("") }
+                    var tbiPin: String by remember { mutableStateOf("") }
 
 
                     LaunchedEffect(Unit) {
@@ -296,9 +294,9 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         if (showPINField) {
                             val maxChar = 4
                             OutlinedTextField(
-                                value = PIN,
+                                value = tbiPin,
                                 onValueChange = { newValue ->
-                                    if (newValue.length <= maxChar) PIN = newValue
+                                    if (newValue.length <= maxChar) tbiPin = newValue
                                 },
                                 label = { Text("Patient Account Pin") },
                                 modifier = Modifier.fillMaxWidth(),
@@ -308,7 +306,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                                 },
                                 trailingIcon = {
                                     IconButton(onClick = {
-                                        PIN = ""
+                                        tbiPin = ""
                                     }) {
                                         Icon(
                                             painterResource(id = R.drawable.backspace_48),
@@ -334,7 +332,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        SaveButton(tbiEmail = tbiEmail, PIN = PIN, database, current)
+                        SaveButton(tbiEmail = tbiEmail, PIN = tbiPin, database, current)
                         Spacer(modifier = Modifier.padding(horizontal = 30.dp))
                         Column(
                             modifier = Modifier
@@ -385,13 +383,11 @@ class GuardianAccountsActivity : AppCompatActivity() {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
                             val uid = dataSnapshot.getValue(String::class.java)
-                            Log.i("This is the uid", uid!!)
                             pinCheck.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot2: DataSnapshot) {
                                     if (dataSnapshot2.exists()) {
                                         val pin = dataSnapshot2.getValue(String::class.java)
-                                        Log.i("This is the pin", pin!!)
-                                        if (userEmailCheck.equals(encodedEmail) && (pin.equals(PIN))) {
+                                        if (userEmailCheck.equals(encodedEmail) && (pin == PIN)) {
                                             database.child("GuardiansLinkTable").child(current)
                                                 .child("TBI_ID").setValue(uid)
 
@@ -486,7 +482,7 @@ class GuardianAccountsActivity : AppCompatActivity() {
                         onClick = {
                             FirebaseAuth.getInstance().signOut()
                             val intent = Intent(activity, LoginActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                             startActivity(intent)
                             finish()
                             showDialog.value = false

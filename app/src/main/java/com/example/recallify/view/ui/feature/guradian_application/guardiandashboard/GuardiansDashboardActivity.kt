@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.RecallifyCustomHeader2
 import com.example.recallify.view.common.components.DashBoardTopAppBar
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
+import com.example.recallify.view.common.function.getCurrentDate
 import com.example.recallify.view.ui.feature.guradian_application.guardiandailydiary.GuardianDailyDairyActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardiansidequest.GuardianSideQuestActivity
 import com.example.recallify.view.ui.feature.guradian_application.guardianthinkfast.GuardianThinkFastActivity
@@ -44,6 +44,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -186,12 +187,12 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
         LaunchedEffect(Unit) {
 
-            FirebaseChartData { fetchedData ->
+            firebaseChartData { fetchedData ->
                 chartData.value = fetchedData
                 isLoading.value = false
             }
 
-            FirebaseChartDataSQ { fetchedData ->
+            firebaseChartDataSQ { fetchedData ->
                 chartDataSQ.value = fetchedData
                 isLoading.value = false
             }
@@ -289,8 +290,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.exists()) {
                             for (childSnapshot in snapshot.children) {
-                                val key = childSnapshot.key!!
-                                Log.d("key_checker", "nrgwKey: $key")
+                                childSnapshot.key!!
                                 date.value =
                                     childSnapshot.child("date").value.toString()
                                 time.value =
@@ -550,7 +550,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
         }
     }
 
-    fun launchInCoroutine(block: suspend () -> Unit) {
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun launchInCoroutine(block: suspend () -> Unit) {
         GlobalScope.launch(Dispatchers.Main) {
             block()
         }
@@ -558,7 +559,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun FirebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
+    fun firebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
 
         launchInCoroutine {
 
@@ -579,33 +580,22 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
             database.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("FirebaseChartData", "onDataChange called")
 
-                    val rawData = snapshot.children.toList()
-                    Log.d("FirebaseChartData", "User data: ${snapshot.getValue()}")
-
+                    snapshot.children.toList()
 
                     val barCharInputData = sevenDays.map { date ->
                         val dataSnapshot = snapshot.child(date.toString())
                         val totalCorrect =
                             dataSnapshot.child("totalCorrect").getValue(Int::class.java) ?: 0
-                        val totalPlay =
-                            dataSnapshot.child("totalPlay").getValue(Int::class.java) ?: 0
-
-                        val score = totalCorrect
-
-                        Log.d(
-                            "FirebaseChartData2",
-                            "Fetched Date: $date, totalCorrect: $totalCorrect, totalPlay: $totalPlay"
-                        )
+                        dataSnapshot.child("totalPlay").getValue(Int::class.java) ?: 0
 
                         BarCharInput(
-                            score,
+                            totalCorrect,
                             date.toString(),
                             colors[sevenDays.indexOf(date) % colors.size],
                             date.toString()
                         )
-                    }.filterNotNull()
+                    }
 
                     Log.d("FirebaseChartData", "Fetched data: $barCharInputData")
 
@@ -641,7 +631,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
             ) {
 
 
-                inputList.forEachIndexed { index, input ->
+                inputList.forEachIndexed { _, input ->
 
                     Bar(
                         modifier = Modifier,
@@ -718,7 +708,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun FirebaseChartDataSQ(onDataFetched: (List<BarCharInputSQ>) -> Unit) {
+    fun firebaseChartDataSQ(onDataFetched: (List<BarCharInputSQ>) -> Unit) {
 
         launchInCoroutine {
             val tbiUID = getTBIUserID()
@@ -741,11 +731,8 @@ class GuardiansDashboardActivity : AppCompatActivity() {
 
             database.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("FirebaseChartData", "onDataChange called")
 
-                    val rawData = snapshot.children.toList()
-                    Log.d("FirebaseChartData", "User data: ${snapshot.getValue()}")
-
+                    snapshot.children.toList()
 
                     val barCharInputData = sevenDays.map { date ->
                         val dataSnapshot = snapshot.child(date.toString())
@@ -770,7 +757,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                             color = colors[sevenDays.indexOf(date) % colors.size],
                             date = date.toString() // Pass the date as a property to BarCharInput
                         )
-                    }.filterNotNull()
+                    }
 
                     Log.d("FirebaseChartData", "Fetched data: $barCharInputData")
 
@@ -778,7 +765,7 @@ class GuardiansDashboardActivity : AppCompatActivity() {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("FirebaseChartDataonCancelled", "onCalled called ${error.message}")
+                    Log.e("FirebaseChartDataOnCancelled", "onCalled called ${error.message}")
                 }
 
             })
@@ -911,13 +898,4 @@ class GuardiansDashboardActivity : AppCompatActivity() {
         val date: String
     )
 
-    data class ScoreData(
-        @JvmField
-        @PropertyName("date")
-        val date: String = "",
-
-        @JvmField
-        @PropertyName("score")
-        val score: Int = 0,
-    )
 }

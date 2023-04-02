@@ -2,19 +2,37 @@
 
 ## Table of Contents
 
-[Development Structure](#development-structure)
-[The features](#the-features)
-
-* [Dashboard](#1-dashboard)
-* [Daily Diary](#2-daily-dairy)
-* [Side Quest](#3-side-quest)
-* [Think Fast](#4-think-fast)
-* [Main Settings](#5-main-settings)
-
-[Download the Application](#downloading-the-application)
-
-* [Application Download](#1-using-the-application-release-apk)
-* [Application IDE tooling](#2-using-the-ide-tool)
+- [Recallify - Instruction and Development Manual](#recallify---instruction-and-development-manual)
+    * [Development Structure](#development-structure)
+    * [The features](#the-features)
+        + [1. Dashboard](#1-dashboard)
+        + [2. Daily Dairy](#2-daily-dairy)
+        + [3. Side Quest](#3-side-quest)
+        + [4. Think Fast](#4-think-fast)
+        + [5. Main Settings](#5-main-settings)
+    * [Downloading the Application](#downloading-the-application)
+        + [1. Using the Application Release .apk](#1-using-the-application-release-apk)
+        + [2. Using the IDE tool](#2-using-the-ide-tool)
+    * [How-to-use guide: TBI Version](#how-to-use-guide-tbi-version)
+    * [Section A : Daily Dairy Feed](#section-a--daily-dairy-feed)
+        + [1. Creating a conversation summary](#1-creating-a-conversation-summary)
+        + [2. Creating a daily activity](#2-creating-a-daily-activity)
+        + [3. Creating an activity through moment snap](#3-creating-an-activity-through-moment-snap)
+        + [4. View the activity feed and the conversation summary feeds](#4-view-the-activity-feed-and-the-conversation-summary-feeds)
+        + [5. How to Filter the activity feed and the conversation summary](#5-how-to-filter-the-activity-feed-and-the-conversation-summary)
+    * [Section B: Side Quest](#section-b-side-quest)
+        + [1. Play Side Quest](#1-play-side-quest)
+        + [2. View the side quest result using the "View result button"](#2-view-the-side-quest-result-using-the-view-result-button)
+        + [3. View the side quest Analysis using the "View Analysis button"](#3-view-the-side-quest-analysis-using-the-view-analysis-button)
+    * [Section C: Think Fast](#section-c-think-fast)
+        + [1: Play Think fast](#1-play-think-fast)
+        + [2. View the Think fast result using the "View result button"](#2-view-the-think-fast-result-using-the-view-result-button)
+        + [3. View the Think fast Analysis using the "View Analysis button"](#3-view-the-think-fast-analysis-using-the-view-analysis-button)
+    * [Section D: Main Settings](#section-d-main-settings)
+        + [1. Account Settings](#1-account-settings)
+        + [2. Privacy and Security](#2-privacy-and-security)
+        + [3. Terms and Conditions](#3-terms-and-conditions)
+        + [4. Customer Care](#4-customer-care)
 
 ## Development Structure
 
@@ -23,122 +41,122 @@ The application's stable version structure is described in the following tree.
 ```markdown
 Recallify
 ├── .gradle
-│   └── gradle components files
+│ └── gradle components files
 ├── .idea
-│   └── idea component files
+│ └── idea component files
 ├── app
-│   ├── build
-│   ├── release
-│   ├── sampledata
-│   ├── manifests
-│   └── src
-│       ├── androidTest
-│       │   └── Application test components
-│       ├── main
-│       │   ├── java
-│       │   │   └── com
-│       │   │       └── example
-│       │   │           └── recallify
-│       │   │               └── view
-│       │   │                   ├── common
-│       │   │                   │   ├── components
-│       │   │                   │   │   ├── CustomFaq.kt
-│       │   │                   │   │   ├── CustomHeader.kt
-│       │   │                   │   │   ├── ImagePreview.kt
-│       │   │                   │   │   ├── LoadingAnimation.kt
-│       │   │                   │   │   ├── ProgressBar.kt
-│       │   │                   │   │   └── TabDiary.kt
-│       │   │                   │   ├── function
-│       │   │                   │   │   └── DatePicker.kt
-│       │   │                   │   └── resources
-│       │   │                   │       ├── AccountsTopAppBar.kt
-│       │   │                   │       ├── BottomBarFiller.kt
-│       │   │                   │       ├── DailyDiaryTopAppBar.kt
-│       │   │                   │       ├── DashboardTopAppBar.kt
-│       │   │                   │       ├── DiaryActivityTopAppBar.kt
-│       │   │                   │       ├── SideQuestTopAppBar.kt
-│       │   │                   │       └── ThinkFastTopAppBar.kt
-│       │   │                   └── ui
-│       │   │                       ├── feature
-│       │   │                       │   ├── application
-│       │   │                       │   │   ├── dailydiary
-│       │   │                       │   │   │   └── conversationSummary
-│       │   │                       │   │   │       ├── ConfirmScreenSummarizeConversation
-│       │   │                       │   │   │       └── SummarizeConversation
-│       │   │                       │   │   └── tbi_applications
-│       │   │                       │   │       ├── accounts
-│       │   │                       │   │       │   └── AccountsActivity.kt
-│       │   │                       │   │       ├── dailydiary
-│       │   │                       │   │       │   ├── daily_activity
-│       │   │                       │   │       │   │   └── DailyActivity.kt
-│       │   │                       │   │       │   ├── moment_snap
-│       │   │                       │   │       │   │   ├── CameraView.kt
-│       │   │                       │   │       │   │   └── MomentSnapActivity.kt
-│       │   │                       │   │       │   └── DailyDiaryActivity.kt
-│       │   │                       │   │       ├── dashboard
-│       │   │                       │   │       │   └── DashboardActivity.kt
-│       │   │                       │   │       ├── sidequest
-│       │   │                       │   │       │   └── SidequestActivity.kt
-│       │   │                       │   │       ├── tbimainsettings
-│       │   │                       │   │       └── thinkfast
-│       │   │                       │   ├── guardian_application
-│       │   │                       │   │   ├── guardian_account
-│       │   │                       │   │   │   └── GuardianAccountsActivity.kt
-│       │   │                       │   │   ├── guardiandailydiary
-│       │   │                       │   │   │   └── GuardianDailyDiaryActivity.kt
-│       │   │                       │   │   ├── guardiandashboard
-│       │   │                       │   │   │   └── GuardianDashboardActivity.kt
-│       │   │                       │   │   ├── guardiansidequest
-│       │   │                       │   │   │   ├── GuardianSideQuestActivity.kt
-│       │   │                       │   │   │   └── other guardian side quest related files
-│       │   │                       │   │   ├── guardianthinkfast
-│       │   │                       │   │   │   ├── GuardianThinkFast.kt
-│       │   │                       │   │   │   └── other guardian think fast related files
-│       │   │                       │   │   └── mainsettingspage
-│       │   │                       │   │       ├── GuardianFactsAndQuestions.kt
-│       │   │                       │   │       ├── GuardianMainSettings.kt
-│       │   │                       │   │       ├── HelpAndSupport.kt
-│       │   │                       │   │       ├── PrivacyAndSecurity.kt
-│       │   │                       │   │       └── TermsAndConditions.kt
-│       │   │                       │   └── security
-│       │   │                       │       ├── forgotpassword
-│       │   │                       │       │   └── ForgotPasswordActivity.kt
-│       │   │                       │       ├── signin
-│       │   │                       │       │   └── LoginActivity.kt
-│       │   │                       │       └── signup
-│       │   │                       │           └── RegisterActivity.kt
-│       │   │                       └── theme
-│       │   │                           ├── modules
-│       │   │                           ├── Color.kt
-│       │   │                           ├── Shape.kt
-│       │   │                           ├── Theme.kt
-│       │   │                           └── Tyoe.kt
-│       │   └── res
-│       │       ├── anim
-│       │       │   └── Screen animation files
-│       │       ├── drawables
-│       │       │   └── Application vector and image assets
-│       │       ├── font
-│       │       │   └── Application fonts
-│       │       ├── layout
-│       │       │   └── Application screens
-│       │       ├── menu
-│       │       │   └── bottom_menu.xml
-│       │       ├── mipmap
-│       │       │   └── Application launcher files for different screens
-│       │       ├── values
-│       │       │   ├── colors
-│       │       │   ├── application logo and icons
-│       │       │   └── strings.xml
-│       │       └── xml
-│       │           ├── backup files 
-│       │           └── data extraction files
-│       └── test [unitTest]
-│           └── Unit test cases components
+│ ├── build
+│ ├── release
+│ ├── sampledata
+│ ├── manifests
+│ └── src
+│ ├── androidTest
+│ │ └── Application test components
+│ ├── main
+│ │ ├── java
+│ │ │ └── com
+│ │ │ └── example
+│ │ │ └── recallify
+│ │ │ └── view
+│ │ │ ├── common
+│ │ │ │ ├── components
+│ │ │ │ │ ├── CustomFaq.kt
+│ │ │ │ │ ├── CustomHeader.kt
+│ │ │ │ │ ├── ImagePreview.kt
+│ │ │ │ │ ├── LoadingAnimation.kt
+│ │ │ │ │ ├── ProgressBar.kt
+│ │ │ │ │ └── TabDiary.kt
+│ │ │ │ ├── function
+│ │ │ │ │ └── DatePicker.kt
+│ │ │ │ └── resources
+│ │ │ │ ├── AccountsTopAppBar.kt
+│ │ │ │ ├── BottomBarFiller.kt
+│ │ │ │ ├── DailyDiaryTopAppBar.kt
+│ │ │ │ ├── DashboardTopAppBar.kt
+│ │ │ │ ├── DiaryActivityTopAppBar.kt
+│ │ │ │ ├── SideQuestTopAppBar.kt
+│ │ │ │ └── ThinkFastTopAppBar.kt
+│ │ │ └── ui
+│ │ │ ├── feature
+│ │ │ │ ├── application
+│ │ │ │ │ ├── dailydiary
+│ │ │ │ │ │ └── conversationSummary
+│ │ │ │ │ │ ├── ConfirmScreenSummarizeConversation
+│ │ │ │ │ │ └── SummarizeConversation
+│ │ │ │ │ └── tbi_applications
+│ │ │ │ │ ├── accounts
+│ │ │ │ │ │ └── AccountsActivity.kt
+│ │ │ │ │ ├── dailydiary
+│ │ │ │ │ │ ├── daily_activity
+│ │ │ │ │ │ │ └── DailyActivity.kt
+│ │ │ │ │ │ ├── moment_snap
+│ │ │ │ │ │ │ ├── CameraView.kt
+│ │ │ │ │ │ │ └── MomentSnapActivity.kt
+│ │ │ │ │ │ └── DailyDiaryActivity.kt
+│ │ │ │ │ ├── dashboard
+│ │ │ │ │ │ └── DashboardActivity.kt
+│ │ │ │ │ ├── sidequest
+│ │ │ │ │ │ └── SidequestActivity.kt
+│ │ │ │ │ ├── tbimainsettings
+│ │ │ │ │ └── thinkfast
+│ │ │ │ ├── guardian_application
+│ │ │ │ │ ├── guardian_account
+│ │ │ │ │ │ └── GuardianAccountsActivity.kt
+│ │ │ │ │ ├── guardiandailydiary
+│ │ │ │ │ │ └── GuardianDailyDiaryActivity.kt
+│ │ │ │ │ ├── guardiandashboard
+│ │ │ │ │ │ └── GuardianDashboardActivity.kt
+│ │ │ │ │ ├── guardiansidequest
+│ │ │ │ │ │ ├── GuardianSideQuestActivity.kt
+│ │ │ │ │ │ └── other guardian side quest related files
+│ │ │ │ │ ├── guardianthinkfast
+│ │ │ │ │ │ ├── GuardianThinkFast.kt
+│ │ │ │ │ │ └── other guardian think fast related files
+│ │ │ │ │ └── mainsettingspage
+│ │ │ │ │ ├── GuardianFactsAndQuestions.kt
+│ │ │ │ │ ├── GuardianMainSettings.kt
+│ │ │ │ │ ├── HelpAndSupport.kt
+│ │ │ │ │ ├── PrivacyAndSecurity.kt
+│ │ │ │ │ └── TermsAndConditions.kt
+│ │ │ │ └── security
+│ │ │ │ ├── forgotpassword
+│ │ │ │ │ └── ForgotPasswordActivity.kt
+│ │ │ │ ├── signin
+│ │ │ │ │ └── LoginActivity.kt
+│ │ │ │ └── signup
+│ │ │ │ └── RegisterActivity.kt
+│ │ │ └── theme
+│ │ │ ├── modules
+│ │ │ ├── Color.kt
+│ │ │ ├── Shape.kt
+│ │ │ ├── Theme.kt
+│ │ │ └── Tyoe.kt
+│ │ └── res
+│ │ ├── anim
+│ │ │ └── Screen animation files
+│ │ ├── drawables
+│ │ │ └── Application vector and image assets
+│ │ ├── font
+│ │ │ └── Application fonts
+│ │ ├── layout
+│ │ │ └── Application screens
+│ │ ├── menu
+│ │ │ └── bottom_menu.xml
+│ │ ├── mipmap
+│ │ │ └── Application launcher files for different screens
+│ │ ├── values
+│ │ │ ├── colors
+│ │ │ ├── application logo and icons
+│ │ │ └── strings.xml
+│ │ └── xml
+│ │ ├── backup files
+│ │ └── data extraction files
+│ └── test [unitTest]
+│ └── Unit test cases components
 ├── build
-│   └── build configuration files
+│ └── build configuration files
 ├── gradle
-│   └── gradle build component files
+│ └── gradle build component files
 ├── .gitignore
 ├── build.gradle
 ├── desktop.ini
@@ -155,9 +173,6 @@ Scratches and Consoles
 ```
 
 ## The features
-
-This is a manual guide on how to use the application features and what to expect from the
-application.
 
 ### 1. Dashboard
 
