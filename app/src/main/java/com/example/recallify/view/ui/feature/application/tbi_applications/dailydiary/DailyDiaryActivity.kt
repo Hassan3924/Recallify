@@ -39,7 +39,6 @@ import com.example.recallify.view.common.components.DiaryTopAppBar
 import com.example.recallify.view.common.components.TabDiary
 import com.example.recallify.view.common.components.TabPage
 import com.example.recallify.view.ui.feature.application.dailydiary.conversationSummary.SummarizeConversation
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.ActivityNotification
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_activity.DailyActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.moment_snap.MomentSnapActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.dashboard.DashboardActivity

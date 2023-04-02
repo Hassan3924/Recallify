@@ -30,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recallify.R
 import com.example.recallify.view.common.components.ImagePreviewItem
+import com.example.recallify.view.common.function.getCurrentDate
 import com.example.recallify.view.common.resources.DiaryActivityTopAppBar
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLatitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLocation
 import com.example.recallify.view.ui.feature.application.tbi_applications.accounts.copiedLongitude
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.moment_snap.copideImageLink
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi

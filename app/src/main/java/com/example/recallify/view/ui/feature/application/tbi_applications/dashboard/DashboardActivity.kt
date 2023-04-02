@@ -22,19 +22,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
 import com.example.recallify.R
-import com.example.recallify.databinding.ActivityDashboardBinding
 import com.example.recallify.view.common.components.DashBoardTopAppBar
+import com.example.recallify.view.common.function.getCurrentDate
+import com.example.recallify.view.common.resources.Constants.ANALYZE_CORRECT_VALUES_PATH
+import com.example.recallify.view.common.resources.Constants.ANALYZE_ROOT_PATH
+import com.example.recallify.view.common.resources.Constants.DAILY_DAIRY_ACTIVITY
+import com.example.recallify.view.common.resources.Constants.DATE_PATH
+import com.example.recallify.view.common.resources.Constants.DATE_PATTERN
+import com.example.recallify.view.common.resources.Constants.LOCATION_ADDRESS_PATH
+import com.example.recallify.view.common.resources.Constants.LOCATION_PATH
+import com.example.recallify.view.common.resources.Constants.SIDE_QUEST_SCORE_PATH
+import com.example.recallify.view.common.resources.Constants.USER_ROOT_PATH
+import com.example.recallify.view.common.resources.Constants.TIME_PATH
 import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.DailyDiaryActivity
-import com.example.recallify.view.ui.feature.application.tbi_applications.dailydiary.daily_log.screens.getCurrentDate
 import com.example.recallify.view.ui.feature.application.tbi_applications.sidequest.SideQuestActivity
 import com.example.recallify.view.ui.feature.application.tbi_applications.tbimainsettings.MainSettingsTBI
 import com.example.recallify.view.ui.feature.application.tbi_applications.thinkfast.ThinkFastActivity
 import com.example.recallify.view.ui.resource.controller.BottomBarFiller
 import com.example.recallify.view.ui.theme.RecallifyTheme
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -46,99 +53,95 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+/**
+ * The dashboard, one of the core components of the application that relays the latest activity and
+ * the Thinkfast and Sidequest progress report. Note: **This is the view of the TBI user**
+ *
+ * @author Hassan Enoabasi Ridinbal
+ * */
 open class DashboardActivity : AppCompatActivity() {
-    /*
-    * Unused Variables
-    * */
-    private lateinit var mainbinding: ActivityDashboardBinding
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var currentLocation: MutableLiveData<LatLng>
-    private var locationText = ""
-    private val label = "User Location"
-
-    /*
-    * Firebase related variables
-    * */
+    /**
+     * Firebase database reference to recallify's firebase console.
+     *
+     * @see FirebaseDatabase
+     * @author Hassan Enoabasi Ridinbal
+     * */
     val database = FirebaseDatabase.getInstance()
-    val locationAdd = database.reference
+
+    /**
+     * Firebase authentication reference to recallify's firebase console.
+     *
+     * @see FirebaseAuth
+     * @author Hassan Enoabasi Ridinbal
+     * */
     val auth = FirebaseAuth.getInstance()
+
+    /**
+     * The current user in the application.
+     *
+     * @author Hassan Enoabasi Ridinbal
+     * */
     val user = auth.currentUser
+
+    /**
+     * The user ID of the current user. The value has been null and safety checked.
+     *
+     * @author Hassan Enoabasi Ridinbal
+     * */
     private val userID = auth.currentUser?.uid!!
 
-    /*
-    * Date and time formatting variables
-    * */
+    /**
+     * The current local date in its raw state.
+     *
+     * @author Hassan Enoabasi Ridinbal
+     * */
     @RequiresApi(Build.VERSION_CODES.O)
     private val current = LocalDateTime.now()
 
+    /**
+     * The format of the Recallify date pattern to be used as the current date.
+     *
+     * @author Hassan Enoabasi Ridinbal
+     * */
     @RequiresApi(Build.VERSION_CODES.O)
-    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val formatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
 
+    /**
+     * The formatted date of the Recallify date pattern.
+     *
+     * @author Hassan Enoabasi Ridinbal
+     * */
     @RequiresApi(Build.VERSION_CODES.O)
     private val formatted = current.format(formatter)
 
+    /**
+     * The finalized current date of the users based on the Recallify date pattern.
+     *
+     * @author Hassan Enoabasi Ridinbal
+     * */
     @RequiresApi(Build.VERSION_CODES.O)
     val currentDate: String = formatted.toString()
-
-    /*    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-
-            super.onLocationResult(locationResult)
-            val location = locationResult.lastLocation
-            if (location != null) {
-                currentLocation.value = LatLng(location.latitude, location.longitude)
-            }
-            locationResult ?: return
-            for (location in locationResult.locations) {
-                val lat = location.latitude
-                val lng = location.longitude
-                locationText= "Current location: $lat, $lng"
-                var address = getAddressName(location.latitude,location.longitude)
-                Log.d("CurrentLocation : ",locationText)
-                addLiveLocation(lat,lng,address)
-
-            }
-        }
-    }
-
-    fun addLiveLocation(lat:Double,lng:Double,address:String){
-        user?.let {
-            val userUID = it.uid
-            locationAdd.child("users").child(userUID).child("liveLocation").child("lat").setValue(lat)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("long").setValue(lng)
-            locationAdd.child("users").child(userUID).child("liveLocation").child("address").setValue(address)
-        }
-    }*/
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        /*        // Request location permissions
-        requestLocationPermissions()
-
-        // Initialize location services
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        createLocationRequest()
-
-        // Initialize currentLocation variable
-        currentLocation = MutableLiveData()
-        getCurrentLocation()
-
-        // Start receiving location updates
-        startLocationUpdates()*/
-
-        startService(Intent(this, NotificationService::class.java)) //this is for notification
+        // Conversation summary service provider
+        startService(
+            Intent(
+                this@DashboardActivity,
+                NotificationService::class.java
+            )
+        )
 
         /**
-         * The bottom bar navigation controller
+         * The bottom bar navigation controller of the application.
+         *
          * @author enoabasi
          * */
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.selectedItemId = R.id.bottom_home
-
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.bottom_home -> true
@@ -170,55 +173,61 @@ open class DashboardActivity : AppCompatActivity() {
             }
         }
 
-
+        /**
+         * The composable view of the dashboard XML layout.
+         * @author Enoabasi
+         * */
         val dashBoardCompose: ComposeView = findViewById(R.id.activity_dash_board_screen)
         dashBoardCompose.setContent {
             RecallifyTheme {
                 DashBoardScreen()
             }
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun DashBoardScreen() {
 
-        val auth: FirebaseAuth = Firebase.auth
-
         val scrollState = rememberScrollState()
 
-        val isLoading = remember { mutableStateOf(true) }
-
-        var showDescription by remember {
-            mutableStateOf(false)
+        val isLoading = remember {
+            mutableStateOf(true)
         }
 
         val selectedBar by remember {
             mutableStateOf(-1)
         }
 
-        val chartData = remember { mutableStateOf(emptyList<BarCharInput>()) }
+        val chartData = remember {
+            mutableStateOf(emptyList<BarCharInput>())
+        }
 
-        val chartDataSQ = remember { mutableStateOf(emptyList<BarCharInputSQ>()) }
+        val chartDataSQ = remember {
+            mutableStateOf(emptyList<BarCharInputSQ>())
+        }
 
-        var isActivityLoading by remember { mutableStateOf(true) }
+        var isActivityLoading by remember {
+            mutableStateOf(true)
+        }
 
         val date = remember {
             mutableStateOf("")
         }
+
         val time = remember {
             mutableStateOf("")
         }
+
         val locationName = remember {
             mutableStateOf("")
         }
+
         val locationAddress = remember {
             mutableStateOf("")
         }
 
         LaunchedEffect(Unit) {
-
             firebaseChartData { fetchedData ->
                 chartData.value = fetchedData
                 isLoading.value = false
@@ -232,9 +241,9 @@ open class DashboardActivity : AppCompatActivity() {
 
         LaunchedEffect(getCurrentDate()) {
             val latestDB = FirebaseDatabase.getInstance().reference
-            val latestActivityPath = latestDB.child("users")
+            val latestActivityPath = latestDB.child(USER_ROOT_PATH)
                 .child(userID)
-                .child("dailyDairyDummy")
+                .child(DAILY_DAIRY_ACTIVITY)
                 .child(getCurrentDate())
 
             isActivityLoading = true
@@ -243,12 +252,14 @@ open class DashboardActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (childSnapshot in snapshot.children) {
-                            date.value = childSnapshot.child("date").value.toString()
-                            time.value = childSnapshot.child("time").value.toString()
+                            date.value =
+                                childSnapshot.child(DATE_PATH).value.toString()
+                            time.value =
+                                childSnapshot.child(TIME_PATH).value.toString()
                             locationName.value =
-                                childSnapshot.child("locationName").value.toString()
+                                childSnapshot.child(LOCATION_PATH).value.toString()
                             locationAddress.value =
-                                childSnapshot.child("locationAddress").value.toString()
+                                childSnapshot.child(LOCATION_ADDRESS_PATH).value.toString()
                         }
                     }
                 }
@@ -409,7 +420,6 @@ open class DashboardActivity : AppCompatActivity() {
                                         CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
                                     } else {
                                         BarChartSQ(
-                                            // First value as date, second value as score of that date
                                             chartDataSQ.value,
                                             modifier = Modifier.fillMaxWidth(),
                                             selectedBar = selectedBar,
@@ -424,15 +434,31 @@ open class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *  The chart data gotten from the firebase database at the Recallify firebase console.
+     *  This chart is the representation for Think Fast Progress report.
+     *
+     * @param onDataFetched A list of all the valid input data
+     * @author Hassan
+     * */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun firebaseChartData(onDataFetched: (List<BarCharInput>) -> Unit) {
 
-        Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
-
-        val auth: FirebaseAuth = Firebase.auth
-
+        /**
+         * The reference path to Recallify's firebase analysis table.
+         *
+         * @author Hassan
+         */
         val database =
-            Firebase.database.reference.child("analyzeProgressTable").child(auth.currentUser?.uid!!)
+            Firebase.database.reference
+                .child(ANALYZE_ROOT_PATH)
+                .child(userID)
+
+        /**
+         * Graph colors to be used when displaying a graph.
+         *
+         * @author Hassan
+         */
         val colors = listOf(
             Color.White,
             Color.Gray,
@@ -442,38 +468,47 @@ open class DashboardActivity : AppCompatActivity() {
             Color.Blue
         )
 
+        /**
+         * The range of records to be shown in the dashboard.
+         *
+         * @author Hassan
+         * */
         val sevenDays = (0..5).map { LocalDate.now().minusDays(it.toLong()) }
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("FirebaseChartData", "onDataChange called")
 
-                val rawData = snapshot.children.toList()
-                Log.d("FirebaseChartData", "User data: ${snapshot.getValue()}")
+                /**
+                 * The bar chart input data.
+                 *
+                 * @author Hassan
+                 * */
+                val barCharInputData = sevenDays.mapNotNull { date ->
 
-
-                val barCharInputData = sevenDays.map { date ->
+                    /**
+                     * The snapshot object provided by firebase.
+                     * @author Hassan
+                     * */
                     val dataSnapshot = snapshot.child(date.toString())
+
+                    /**
+                     * The total number of correct answers from the analysis table. To be used in
+                     * chart report calculations.
+                     *
+                     * @author Hassan
+                     * */
                     val totalCorrect =
-                        dataSnapshot.child("totalCorrect").getValue(Int::class.java) ?: 0
-                    val totalPlay = dataSnapshot.child("totalPlay").getValue(Int::class.java) ?: 0
-
-                    val score = totalCorrect
-
-                    Log.d(
-                        "FirebaseChartData2",
-                        "Fetched Date: $date, totalCorrect: $totalCorrect, totalPlay: $totalPlay"
-                    )
+                        dataSnapshot
+                            .child(ANALYZE_CORRECT_VALUES_PATH)
+                            .getValue(Int::class.java) ?: 0
 
                     BarCharInput(
-                        score,
+                        totalCorrect,
                         date.toString(),
                         colors[sevenDays.indexOf(date) % colors.size],
                         date.toString()
                     )
-                }.filterNotNull()
-
-                Log.d("FirebaseChartData", "Fetched data: $barCharInputData")
+                }
 
                 onDataFetched(barCharInputData)
             }
@@ -481,20 +516,34 @@ open class DashboardActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
                 Log.e("FirebaseChartData-onCancelled", "onCalled called ${error.message}")
             }
-
         })
     }
 
+    /**
+     *  The chart data gotten from the firebase database at the Recallify firebase console.
+     *  This chart is the representation for Side quest Progress report.
+     *
+     * @param onDataFetched A list of all the valid input data
+     * @author Hassan
+     * */
     @RequiresApi(Build.VERSION_CODES.O)
     fun firebaseChartDataSQ(onDataFetched: (List<BarCharInputSQ>) -> Unit) {
-
-        Log.d("FirebaseChartDataAtTheStart", "FirebaseChartData called")
-
-        val auth: FirebaseAuth = Firebase.auth
-
+        /**
+         * The reference path to Recallify's firebase side quest scores table.
+         *
+         * @author Hassan
+         */
         val database =
-            Firebase.database.reference.child("users").child(auth.currentUser?.uid!!)
-                .child("viewScoresTableSideQuest")
+            Firebase.database.reference
+                .child(USER_ROOT_PATH)
+                .child(userID)
+                .child(SIDE_QUEST_SCORE_PATH)
+
+        /**
+         * Graph colors to be used when displaying a graph.
+         *
+         * @author Hassan
+         */
         val colors = listOf(
             Color.White,
             Color.Gray,
@@ -504,32 +553,42 @@ open class DashboardActivity : AppCompatActivity() {
             Color.Blue
         )
 
+        /**
+         * The range of records to be shown in the dashboard.
+         *
+         * @author Hassan
+         * */
         val sevenDays = (0..5).map { LocalDate.now().minusDays(it.toLong()) }
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("FirebaseChartData", "onDataChange called")
 
-                val rawData = snapshot.children.toList()
-                Log.d("FirebaseChartData", "User data: ${snapshot.getValue()}")
-
-
+                /**
+                 * The bar chart input data.
+                 *
+                 * @author Hassan
+                 * */
                 val barCharInputData = sevenDays.map { date ->
+                    /**
+                     * The snapshot object provided by firebase.
+                     * @author Hassan
+                     * */
                     val dataSnapshot = snapshot.child(date.toString())
+
+                    /**
+                     *
+                     * @author Hass
+                     * */
                     val games = dataSnapshot.children.toList()
 
+                    /**
+                     * The total number of correct answers from the analysis table. To be used in
+                     * chart report calculations.
+                     *
+                     * @author Hassan
+                     * */
                     val score =
                         games.firstOrNull()?.child("correct")?.getValue(Int::class.java) ?: 0
-
-                    Log.d(
-                        "FirebaseChartDataSQ",
-                        "Fetched Date: $date, totalCorrect: $score"
-                    )
-
-                    Log.d(
-                        "FirebaseChartDataSQ Snapshot",
-                        "Fetched Date: $dataSnapshot"
-                    )
 
                     BarCharInputSQ(
                         value = score,
