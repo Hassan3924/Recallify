@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.recallify.databinding.ActivityAnalyzeProgressSideQuestBinding
+import com.example.recallify.databinding.ActivityGuardianAnalyzeProgressSideQuestBinding
 import com.example.recallify.view.common.resources.Constants.USER_ROOT_PATH
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -16,7 +17,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class GuardianAnalyzeProgressSideQuest : AppCompatActivity() {
-    lateinit var analyzeProgressBinding: ActivityAnalyzeProgressSideQuestBinding
+    lateinit var analyzeProgressBinding: ActivityGuardianAnalyzeProgressSideQuestBinding
     var totalCorrect = 0
     var maxTotalCorrect = 100
     var percentCorrect = 0
@@ -27,7 +28,7 @@ class GuardianAnalyzeProgressSideQuest : AppCompatActivity() {
     var tbiUserID = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        analyzeProgressBinding = ActivityAnalyzeProgressSideQuestBinding.inflate(layoutInflater)
+        analyzeProgressBinding = ActivityGuardianAnalyzeProgressSideQuestBinding.inflate(layoutInflater)
         val view = analyzeProgressBinding.root
         setContentView(view)
         val currentDate: String = intent.getStringExtra("currentDate").toString()
