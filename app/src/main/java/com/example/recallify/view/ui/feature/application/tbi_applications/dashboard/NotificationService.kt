@@ -66,7 +66,7 @@ class NotificationService : Service() {
         notificationManager.notify(notificationId, notification)
 
         // Schedule the next notification after 10 minutes
-        val delay = 2 * 60 * 1000L // 10 minutes in milliseconds
+        val delay = 10 * 60 * 1000L // 10 minutes in milliseconds
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             sendNotification()

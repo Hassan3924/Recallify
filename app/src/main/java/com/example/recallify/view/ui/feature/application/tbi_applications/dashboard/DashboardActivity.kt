@@ -128,12 +128,12 @@ open class DashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dashboard)
 
         // Conversation summary service provider
-        startService(
-            Intent(
-                this@DashboardActivity,
-                NotificationService::class.java
-            )
-        )
+//        startService(
+//            Intent(
+//                this@DashboardActivity,
+//                NotificationService::class.java
+//            )
+//        )
 
         /**
          * The bottom bar navigation controller of the application.
