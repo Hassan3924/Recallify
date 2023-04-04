@@ -11,7 +11,7 @@
 
 6.)NOTE: If 7.3.1 Android Gradle Plugin version is not supported then you can go for 7.4.1, To change it, go to file-> project structure->project and you will see Android Gradle Plugin Version in Project Structure (7.3.1 or 7.4.1 depending upon which one is supported by the android studio you can make a change).   
 
-7.) If downloading the zip file by click "<>code" at the top of the screen doesnt work then, we recommend to clone the repo and fetch it using github desktop. If you want to know, how to use github desktop application then watch this video: https://youtu.be/PvUexC0-D2s.  
+7.) If downloading the zip file by clicking "<>code" -> "Download Zip" at the top of the screen doesnt work then, we recommend to clone the repo and fetch it using github desktop. If you want to know, how to use github desktop application then watch this video: https://youtu.be/PvUexC0-D2s.  
 
 8.) If none of the steps work, you can download the apk file directly to your mobile by opening this link from your android mobile phone: https://github.com/Hassan3924/Recallify/releases/download/v0.1.5/recallify_application.apk
 
