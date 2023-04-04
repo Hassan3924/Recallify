@@ -9,7 +9,7 @@
 
 5.) If you want to run our code on android studio, you can clone it or download the zip from github and open it in android studio. For more details, check our user manual/guide. 
 
-6.) Our test users are: Account 1: TBI : alex39@gmail.com ; pass: 123456 ; Account 2: Guardian :  samantha39@gmail.com ; Pass: 123456   
+6.) Our test users are: Account 1: TBI : alex39@gmail.com ; pass: 123456 ; Account 2: Guardian :  samantha39@gmail.com ; Pass: 123456 . To view the previous data of the user, you can have a look at data on 31-03-2023 by selecting this date in the application filter date section.     
 
 7.) Please make sure to use our code on master branch. 
 
