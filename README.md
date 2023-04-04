@@ -1,7 +1,7 @@
 # Recallify
 1.) Please check CSIT321-Team-Techno-WebsiteLink+User-Manual+Poster+Final-Report.zip to find detailed user manual/guide on how to install and use Recallify application.   
 
-2.) If you want to get .apk file, then please go to the Releases section on the right side or click this link: https://github.com/Hassan3924/Recallify/releases/tag/v0.1.5 
+2.) If you want to get .apk file, then please go to the Releases section on the right side or click this link: https://github.com/Hassan3924/Recallify/releases/tag/v0.1.5 or click this link to directly download the apk file: https://github.com/Hassan3924/Recallify/releases/download/v0.1.5/recallify_application.apk
 
 3.) CSIT321-Team-Techno-WebsiteLink+User-Manual+Poster+Final-Report.zip contains Final Report, Poster, User-Manual and website link. Same has been submitted on Moodle in the respective links 
 
