@@ -15,8 +15,8 @@
 
 8.) If none of the steps work, you can download the apk file directly to your mobile by opening this link from your android mobile phone: https://github.com/Hassan3924/Recallify/releases/download/v0.1.5/recallify_application.apk
 
-6.) Our test users are: Account 1: TBI : alex39@gmail.com ; pass: 123456 ; Account 2: Guardian :  samantha39@gmail.com ; Pass: 123456 . To view the previous data of the user, you can have a look at data on 31-03-2023 by selecting this date in the application filter date section.     
+9.) Our test users are: Account 1: TBI : alex39@gmail.com ; pass: 123456 ; Account 2: Guardian :  samantha39@gmail.com ; Pass: 123456 . To view the previous data of the user, you can have a look at data on 31-03-2023 by selecting this date in the application filter date section.     
 
-7.) Please make sure to use our code on master branch. 
+10.) Please make sure to use our code on master branch. 
 
-8.) Our app demo is available on our website demo section or you can directly click this link to view demo on YouTube for TBI patients: https://www.youtube.com/watch?v=z9qs0seUqQQ ; For guardians demo video: https://www.youtube.com/watch?v=Q9wJs8nfRcA
+11.) Our app demo is available on our website demo section or you can directly click this link to view demo on YouTube for TBI patients: https://www.youtube.com/watch?v=z9qs0seUqQQ ; For guardians demo video: https://www.youtube.com/watch?v=Q9wJs8nfRcA
